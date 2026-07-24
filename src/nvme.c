@@ -544,7 +544,7 @@ bool nvme_read(u32 nsid, u64 lba, void *buffer)
     cmd.prp1 = (u64)buffer_addr;
     cmd.cdw10 = lba;
     cmd.cdw11 = lba >> 32;
-    cmd.cdw12 = 1; // 4096 bytes
+    cmd.cdw12 = 0; // #blocks, 0-based -> 1 block a 4096 bytes
 
     return nvme_exec_command(&ioq, &cmd, NULL);
 }
