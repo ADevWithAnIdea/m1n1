@@ -118,7 +118,7 @@ static const struct adt_tunable_info atc_tunables_t8122[] = {
     {"tunable_CLKMON_CFG", "apple,tunable-common-b", 0x2600, 0x100, false},
 
     {"tunable_LN0_RX_TOP_USB_DFLT", "apple,tunable-lane0-usb", 0x9000, 0x1000, true},
-    //{"tunable_LN0_RX_TOP_USB_EQA", "apple,tunable-lane0-usb", 0x0, 0x1000, true}, // TODO: offset?
+    {"tunable_LN0_RX_TOP_USB_EQA", "apple,tunable-lane0-usb", 0x9000, 0x1000, false},
     {"tunable_LN0_RX_EQ_USB_EQA", "apple,tunable-lane0-usb", 0xa000, 0x1000, true},
     {"tunable_LN0_RX_SHM_USB_DFLT", "apple,tunable-lane0-usb", 0xb000, 0x1000, true},
     {"tunable_LN0_TX_TOP_USB_DFLT", "apple,tunable-lane0-usb", 0xc000, 0x1000, true},
@@ -130,7 +130,7 @@ static const struct adt_tunable_info atc_tunables_t8122[] = {
     {"tunable_LN0_TX_SHM_CIO_DFLT", "apple,tunable-lane0-cio", 0xd000, 0x1000, true},
 
     {"tunable_LN1_RX_TOP_USB_DFLT", "apple,tunable-lane1-usb", 0x10000, 0x1000, true},
-    //{"tunable_LN1_RX_TOP_USB_EQA", "apple,tunable-lane1-usb", 0x0, 0x1000, true}, // TODO: offset?
+    {"tunable_LN1_RX_TOP_USB_EQA", "apple,tunable-lane1-usb", 0x10000, 0x1000, false},
     {"tunable_LN1_RX_EQ_USB_EQA", "apple,tunable-lane1-usb", 0x11000, 0x1000, true},
     {"tunable_LN1_RX_SHM_USB_DFLT", "apple,tunable-lane1-usb", 0x12000, 0x1000, true},
     {"tunable_LN1_TX_TOP_USB_DFLT", "apple,tunable-lane1-usb", 0x13000, 0x1000, true},
