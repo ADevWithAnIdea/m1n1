@@ -14,12 +14,13 @@
 #define ISP_VER_T6000 0xb3091
 #define ISP_VER_T8112 0xc1090
 #define ISP_VER_T6020 0xc3091
-#define ISP_VER_T6031 0xf3001
+#define ISP_VER_T603X 0xf3001
 
 // PMGR offset to enable to get the version info to work
 #define ISP_PMGR_T8103 0x4018
 #define ISP_PMGR_T6000 0x8
 #define ISP_PMGR_T6020 0x4008
+#define ISP_PMGR_T6030 0x3c8
 #define ISP_PMGR_T6031 0x4030
 
 static bool isp_initialized = false;
@@ -90,6 +91,9 @@ int isp_init(void)
         case T6020 ... T6022:
             pmgr_off = ISP_PMGR_T6020;
             break;
+        case T6030:
+            pmgr_off = ISP_PMGR_T6030;
+            break;
         case T6031 ... T6034:
             pmgr_off = ISP_PMGR_T6031;
             break;
@@ -150,7 +154,7 @@ int isp_init(void)
                     return -1;
             }
             break;
-        case ISP_VER_T6031:
+        case ISP_VER_T603X:
             switch (os_firmware.version) {
                 case V14_7:
                     heap_top = 0x1000000;
