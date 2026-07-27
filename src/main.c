@@ -20,6 +20,7 @@
 #include "payload.h"
 #include "pcie.h"
 #include "pmgr.h"
+#include "pmu.h"
 #include "sep.h"
 #include "smp.h"
 #include "string.h"
@@ -161,6 +162,10 @@ void m1n1_main(void)
     wdt_disable();
 #ifndef BRINGUP
     pmgr_init();
+    /* Before the parts of init that can crash, and before anything that runs afterwards, so a
+     * crash costs a reboot rather than a trip through recoveryOS. Best effort: a machine whose
+     * PMU is not reachable this way still boots. */
+    pmu_reset_panic_counter();
 #ifdef USE_DEBUG_USB
     tps6598x_enable_debugusb();
 #endif

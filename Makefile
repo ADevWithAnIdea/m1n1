@@ -159,6 +159,7 @@ OBJECTS := \
 	payload.o \
 	pcie.o \
 	pmgr.o \
+	pmu.o \
 	proxy.o \
 	ringbuffer.o \
 	rtkit.o \
