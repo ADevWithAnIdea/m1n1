@@ -20,7 +20,6 @@
 #define ISP_PMGR_T8103 0x4018
 #define ISP_PMGR_T6000 0x8
 #define ISP_PMGR_T6020 0x4008
-#define ISP_PMGR_T6030 0x3c8
 #define ISP_PMGR_T6031 0x4030
 
 static bool isp_initialized = false;
@@ -89,10 +88,8 @@ int isp_init(void)
             pmgr_off = ISP_PMGR_T6000;
             break;
         case T6020 ... T6022:
-            pmgr_off = ISP_PMGR_T6020;
-            break;
         case T6030:
-            pmgr_off = ISP_PMGR_T6030;
+            pmgr_off = ISP_PMGR_T6020;
             break;
         case T6031 ... T6034:
             pmgr_off = ISP_PMGR_T6031;
