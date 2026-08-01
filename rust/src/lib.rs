@@ -12,6 +12,7 @@
 extern crate alloc;
 
 pub mod adt;
+#[cfg(feature = "chainload")]
 pub mod apfs;
 #[cfg(feature = "chainload")]
 pub mod chainload;
@@ -52,3 +53,17 @@ fn panic(info: &::core::panic::PanicInfo) -> ! {
 fn alloc_error(layout: core::alloc::Layout) -> ! {
     panic!("memory allocation of {} bytes failed", layout.size())
 }
+
+#[cfg(not(feature = "chainload"))]
+use core::{ffi::c_void, ptr};
+
+#[cfg(not(feature = "chainload"))]
+#[no_mangle]
+pub unsafe extern "C" fn rust_read_gigalocker(size: *mut c_size_t) -> *mut c_void {
+    unsafe { *size = 0 };
+    ptr::null_mut()
+}
+
+#[cfg(not(feature = "chainload"))]
+#[no_mangle]
+pub unsafe extern "C" fn rust_free_gigalocker(_data: *mut c_void, _size: c_size_t) {}
