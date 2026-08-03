@@ -183,7 +183,7 @@ class ISPTracer(ADTDevTracer):
         self.dart = self.dart_tracer.dart
         self.iova_base = 0
         chip_id = hv.adt["/chosen"].chip_id
-        if 0x6020 <= chip_id <= 0x6fff:
+        if 0x6020 <= chip_id <= 0x6fff or chip_id == 0x8122:
             self.iova_base = 0x100_0000_0000
 
         self.ignored_ranges = [hv.adt[dart_dev_path].get_reg(i) for i in range(6)]
@@ -225,6 +225,7 @@ class ISPTracer(ADTDevTracer):
         self.table.get_last_tx_commands(int(val.value))
         #self.log(f"========  END DOORBELL  ========")
     w_ISP_IRQ_DOORBELL_T8112 = w_ISP_IRQ_DOORBELL
+    w_ISP_IRQ_DOORBELL_T8122 = w_ISP_IRQ_DOORBELL
     w_ISP_IRQ_DOORBELL_T6031 = w_ISP_IRQ_DOORBELL
 
     def w_ISP_GPIO_0(self, val):
