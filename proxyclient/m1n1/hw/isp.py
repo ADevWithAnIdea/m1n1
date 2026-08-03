@@ -68,8 +68,10 @@ class ISPRegs(RegMap):
     ISP_IRQ_ACK         = 0x21043fc, Register32
     ISP_IRQ_INTERRUPT_T8112 = 0x24c4000, Register32
     ISP_IRQ_DOORBELL_T8112 = 0x24c4430, Register32
+    ISP_IRQ_DOORBELL_T8122 = 0x24c4454, Register32
     ISP_IRQ_DOORBELL_T6031 = 0x24c4458, Register32
     ISP_IRQ_ACK_T8112   = 0x24c443c, Register32
+    ISP_IRQ_ACK_T8122 = 0x24c4460, Register32
     ISP_IRQ_ACK_T6031 = 0x24c4464, Register32
 
     ISP_IRQ_INTERRUPT_1 = 0x2104008, Register32
