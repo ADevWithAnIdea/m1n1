@@ -14,6 +14,7 @@
 #define ISP_VER_T6000 0xb3091
 #define ISP_VER_T8112 0xc1090
 #define ISP_VER_T6020 0xc3091
+#define ISP_VER_T8122 0xf1001
 #define ISP_VER_T603X 0xf3001
 
 // PMGR offset to enable to get the version info to work
@@ -40,6 +41,7 @@ u64 isp_iova_base(void)
 {
     switch (chip_id) {
         case 0x6020 ... 0x6fff:
+        case 0x8122:
             return 0x10000000000;
         default:
             return 0;
@@ -82,6 +84,7 @@ int isp_init(void)
     switch (chip_id) {
         case T8103:
         case T8112:
+        case T8122:
             pmgr_off = ISP_PMGR_T8103;
             break;
         case T6000 ... T6002:
@@ -152,6 +155,7 @@ int isp_init(void)
             }
             break;
         case ISP_VER_T603X:
+        case ISP_VER_T8122:
             switch (os_firmware.version) {
                 case V14_7:
                     heap_top = 0x1000000;
