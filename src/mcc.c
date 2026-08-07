@@ -65,7 +65,15 @@ struct tz_regs t602x_tz_regs = {
     .enable = 0x6c8,
 };
 
-struct tz_regs t603x_tz_regs = {
+struct tz_regs t6030_tz_regs = {
+    .count = 4,
+    .stride = 0x14,
+    .start = 0x6dc,
+    .end = 0x6e0,
+    .enable = 0x6e8,
+};
+
+struct tz_regs t6031_tz_regs = {
     .count = 4,
     .stride = 0x14,
     .start = 0x6d8,
@@ -408,13 +416,14 @@ int mcc_init_t6031(int *path, u32 reg_offset, u32 plane_count, u32 dcs_count)
         mcc_regs[i].cache_disable = 0;
         mcc_regs[i].has_cache_ctrl = true;
 
-        mcc_regs[i].tz = &t603x_tz_regs;
+        mcc_regs[i].tz = &t6031_tz_regs;
     }
 
     return 0;
 }
 
-int mcc_init_t8122(int *path, u32 reg_offset, u32 plane_count, u32 dcs_count)
+int mcc_init_t8122(int *path, u32 reg_offset, u32 plane_count, u32 dcs_count,
+                   struct tz_regs *tz_regs)
 {
     for (int i = 0; i < mcc_count; i++) {
         u64 base;
@@ -440,7 +449,7 @@ int mcc_init_t8122(int *path, u32 reg_offset, u32 plane_count, u32 dcs_count)
         mcc_regs[i].cache_disable = 0;
         mcc_regs[i].has_cache_ctrl = true;
 
-        mcc_regs[i].tz = &t8122_tz_regs;
+        mcc_regs[i].tz = tz_regs;
     }
 
     return 0;
@@ -480,7 +489,9 @@ int mcc_init_m3(int node, int *path)
 
     int ret = -1;
     if (adt_is_compatible(adt, node, "mcc,t8122"))
-        ret = mcc_init_t8122(path, reg_offset, plane_count, dcs_count);
+        ret = mcc_init_t8122(path, reg_offset, plane_count, dcs_count, &t8122_tz_regs);
+    else if (adt_is_compatible(adt, node, "mcc,t6030"))
+        ret = mcc_init_t8122(path, reg_offset, plane_count, dcs_count, &t6030_tz_regs);
     else if (adt_is_compatible(adt, node, "mcc,t6031"))
         ret = mcc_init_t6031(path, reg_offset, plane_count, dcs_count);
     else
@@ -576,6 +587,8 @@ int mcc_init(void)
     } else if (adt_is_compatible(adt, node, "mcc,t6020")) {
         return mcc_init_t6000(node, path, true);
     } else if (adt_is_compatible(adt, node, "mcc,t8122")) {
+        return mcc_init_m3(node, path);
+    } else if (adt_is_compatible(adt, node, "mcc,t6030")) {
         return mcc_init_m3(node, path);
     } else if (adt_is_compatible(adt, node, "mcc,t6031")) {
         return mcc_init_m3(node, path);
