@@ -74,7 +74,7 @@ jobs:
       - name: Archive m1n1.bin
         uses: actions/upload-artifact@v7
         with:
-          name: m1n1.bin-${{ env.M1N1_REF }}
+          name: m1n1-stage2-${{ env.M1N1_REF }}
           path: |
             build/m1n1.bin
 
