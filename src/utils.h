@@ -319,6 +319,7 @@ static inline void write64_lo_hi(u64 addr, u64 val)
 #define dc_csw(p)    cacheop("dc csw", p)
 #define dc_cisw(p)   cacheop("dc cisw", p)
 #define dc_zva(p)    cacheop("dc zva", p)
+/* WARNING: This is a noop on Apple Silicon. */
 #define dc_cvac(p)   cacheop("dc cvac", p)
 #define dc_cvau(p)   cacheop("dc cvau", p)
 #define dc_civac(p)  cacheop("dc civac", p)

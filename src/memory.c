@@ -38,6 +38,7 @@
 CACHE_RANGE_OP(ic_ivau_range, "ic ivau")
 CACHE_RANGE_OP(dc_ivac_range, "dc ivac")
 CACHE_RANGE_OP(dc_zva_range, "dc zva")
+/* WARNING: This is a noop on Apple Silicon. */
 CACHE_RANGE_OP(dc_cvac_range, "dc cvac")
 CACHE_RANGE_OP(dc_cvau_range, "dc cvau")
 CACHE_RANGE_OP(dc_civac_range, "dc civac")
