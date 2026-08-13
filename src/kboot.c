@@ -40,6 +40,9 @@
 
 #define MAX_MEM_REGIONS 32
 
+#define SYS_IMP_APL_CTRR_LOWER_EL1 sys_reg(3, 0, 11, 0, 0)
+#define SYS_IMP_APL_CTRR_UPPER_EL1 sys_reg(3, 0, 11, 0, 1)
+
 static void *dt = NULL;
 static int dt_bufsize = 0;
 static void *initrd_start = NULL;
@@ -373,6 +376,20 @@ static int dt_set_memory(void)
 
     u64 dram_min = cur_boot_args.phys_base;
     u64 dram_max = cur_boot_args.phys_base + cur_boot_args.mem_size;
+
+    // iBoot makes this CTRR range writable only from the boot CPU. Keep Linux from assigning its
+    // pages to secondary CPUs.
+    if (chip_id == T8132 || chip_id == T8140) {
+        u64 ctrr_start = ALIGN_DOWN(mrs(SYS_IMP_APL_CTRR_LOWER_EL1), get_page_size());
+        u64 ctrr_end = ALIGN_UP(mrs(SYS_IMP_APL_CTRR_UPPER_EL1) + SZ_4K, get_page_size());
+
+        if (ctrr_start < dram_min || ctrr_end <= ctrr_start || ctrr_end > dram_max)
+            bail("FDT: Invalid CTRR range 0x%lx..0x%lx\n", ctrr_start, ctrr_end);
+
+        printf("FDT: Reserving CTRR range 0x%lx..0x%lx\n", ctrr_start, ctrr_end);
+        if (fdt_add_mem_rsv(dt, ctrr_start, ctrr_end - ctrr_start))
+            bail("FDT: Could not reserve CTRR range\n");
+    }
 
     printf("FDT: DRAM at 0x%lx size 0x%lx\n", dram_base, dram_size);
     printf("FDT: Usable memory is 0x%lx..0x%lx (0x%lx)\n", dram_min, dram_max, dram_max - dram_min);
