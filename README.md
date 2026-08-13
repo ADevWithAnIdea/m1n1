@@ -79,8 +79,21 @@ Supported compression formats:
 
 ## License
 
-m1n1 is licensed under the MIT license, as included in the [LICENSE](LICENSE) file.
+Beginning with and including commit
+[`df7656cf17d04ec19de8acb8a78d57cc9b48fda1`](https://github.com/ADevWithAnIdea/m1n1/commit/df7656cf17d04ec19de8acb8a78d57cc9b48fda1),
+fork-authored contributions on this fork's main branch are licensed under the
+[GNU General Public License, version 2 only](LICENSE.GPL2) (`GPL-2.0-only`).
+The combined work distributed by this fork from that commit onward is
+distributed under the GPL version 2 only, except for components that retain a
+separate license as described below.
 
+Commits before `df7656cf17d04ec19de8acb8a78d57cc9b48fda1` retain the
+licenses that previously applied to them, including the [MIT license](LICENSE.MIT).
+Commits pulled from upstream m1n1, whether before or after that commit, retain
+their original licenses. This licensing change does not relicense third-party
+components or other separately licensed material.
+
+* Copyright Cody Ho
 * Copyright The Asahi Linux Contributors
 
 Please see the Git history for authorship information.
