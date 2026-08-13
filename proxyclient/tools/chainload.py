@@ -57,9 +57,7 @@ bootargs_off = image_size
 bootargs_size = 0x4000
 image_size += bootargs_size
 
-# On M4/A18, iBoot adds a 48 KiB region ending at top_of_kernel_data
-# that secondary CPUs can't write to. This hack avoids using that region
-# by making the next m1n1's heap start above it
+# Avoid the M4/A18 secondary-write-protected region below top_of_kernel_data.
 protected_start = u.ba.top_of_kernel_data - 3 * 0x4000
 image_end = new_base + image_size
 if image_end > protected_start:

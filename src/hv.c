@@ -5,6 +5,7 @@
 #include "cpu_regs.h"
 #include "display.h"
 #include "gxf.h"
+#include "hv_sptm.h"
 #include "memory.h"
 #include "pcie.h"
 #include "smp.h"
@@ -103,7 +104,6 @@ static void hv_config_sme(bool verbose)
 
     reg_mask(SYS_CPTR_EL2, CPTR_EL2_SMEN | CPTR_EL2_FPEN | CPTR_EL2_ZEN,
              CPTR_EL2_SMEN_NONE | CPTR_EL2_FPEN_NONE | CPTR_EL2_ZEN_NONE);
-
     if (FIELD_GET(ID_AA64MMFR0_FGT, mrs(ID_AA64MMFR0_EL1))) {
         reg_set(SYS_HFGRTR_EL2, HFGxTR_EL2_nTPIDR2_EL0 | HFGxTR_EL2_nSMPRI_EL1);
         reg_set(SYS_HFGWTR_EL2, HFGxTR_EL2_nTPIDR2_EL0 | HFGxTR_EL2_nSMPRI_EL1);
@@ -140,13 +140,6 @@ void hv_init(void)
               HCR_AMO | // Trap SError exceptions
               HCR_VM;   // Enable stage 2 translation
 
-    /*
-     * On guarded (M4-class) SoCs the Apple impdef sysregs are GL2-only and fault
-     * when executed from EL2, so trap the guest's EL1 accesses to us and soft-
-     * model/shadow them. Do NOT set TIDCP on unlocked SoCs: there the guest
-     * accesses these registers directly at EL1 and trapping them would regress
-     * existing (M1-M3) virtualization.
-     */
     if (!cpu_features->apple_sysregs_unlocked)
         hcr |= HCR_TIDCP;
 
@@ -191,6 +184,8 @@ static void hv_set_gxf_vbar(void)
 
 void hv_start(void *entry, u64 regs[4])
 {
+    sptm_boot_prepare_start(&entry, regs, false);
+
     if (boot_cpu_idx == -1) {
         printf("Boot CPU has not been found, can't start hypervisor\n");
         return;
@@ -344,8 +339,11 @@ static void hv_enter_secondary(void *entry, u64 regs[4])
 
 void hv_start_secondary(int cpu, void *entry, u64 regs[4])
 {
+    sptm_boot_prepare_start(&entry, regs, true);
+
     if (!cpu_features->apple_sysregs_unlocked)
         hv_capture_guest_el12_state(&hv_secondary_info);
+
     mmu_init_secondary(cpu);
     smp_call4(cpu, hv_init_secondary, (u64)&hv_secondary_info, 0, 0, 0);
     smp_wait(cpu);

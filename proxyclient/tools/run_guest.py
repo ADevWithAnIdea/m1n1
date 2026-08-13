@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-import sys, pathlib, traceback
+import argparse
+import pathlib
+import sys
+import traceback
+
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 
-import argparse, pathlib
 from io import BytesIO
 
 def volumespec(s):
@@ -20,8 +23,13 @@ def sptm_hv_boot_args(extra=()):
         "wdt=-1",                # disables some internal XNU watchdog
         "sprr_tpro=0",           # disable XNU's TPRO boot policy; the commpage bit is patched separately
         "sprr_tpro_pagers=0",    # ... same, for pager mappings
+        "wfi=0",                 # raw M4 WFI can lose PE state without CYC_OVRD
+        "cluster_power=0",       # EL2 owns live cluster state until warm power-up is emulated
+        "processor_exit=0",      # keep every booted logical CPU available to the scheduler
+        "vm_compressor=0",       # avoid WKDMC instruction that faults in raw mode
         "-v",                    # Optional: verbose boot
         f"msgbuf={1024 * 1024}", # Optional: enlarge the kernel msgbuf
+        "amfi_get_out_of_my_way=1", # Optional: allow guest tooling to run
     ]
     for arg in defaults:
         key = boot_arg_key(arg)
@@ -66,7 +74,7 @@ from m1n1.hw.pmu import PMU
 iface = UartInterface()
 p = M1N1Proxy(iface, debug=False)
 bootstrap_port(iface, p)
-u = ProxyUtils(p, heap_size = 128 * 1024 * 1024)
+u = ProxyUtils(p, heap_size=128 * 1024 * 1024)
 
 # Setup counter redirect / AHCR_EL2 as expected by macOS for macho payloads
 if not args.raw:
@@ -156,6 +164,17 @@ if args.raw:
     hv.load_raw(payload.read(), args.entry_point)
 else:
     hv.load_macho(payload, symfile=symfile)
+
+if not args.raw and not u.cpu_features.apple_sysregs_unlocked:
+    sptm_symbols = tuple(
+        hv.symbol_dict[f"com.apple.kernel:{name}"]
+        for name in (
+            "_cons_ops",
+            "_PAGE_SHIFT_CONST",
+            "__TEXT",
+        )
+    )
+    hv.sptm_symbols = sptm_symbols
 
 PMU(u).reset_panic_counter()
 

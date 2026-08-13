@@ -120,6 +120,7 @@ class HV(Reloadable):
         self.switching_context = False
         self.show_timestamps = False
         self.virtio_devs = {}
+        self.sptm_symbols = None
 
     def _reloadme(self):
         super()._reloadme()
@@ -774,6 +775,10 @@ class HV(Reloadable):
 
     def handle_hvc(self, ctx):
         idx = ctx.esr.ISS
+        if self.sptm is not None and (
+            idx <= 4 or 0x1c0 <= idx < 0x280 or 0x400 <= idx < 0xac0
+        ):
+            return False
         if idx == 0:
             return False
 
@@ -1026,7 +1031,9 @@ class HV(Reloadable):
             self._sigint_pending = False
 
             signal.signal(signal.SIGINT, self.default_sigint)
-            ret = self.run_shell("Entering hypervisor shell", "Returning from exception")
+            ret = self.run_shell(
+                "Entering hypervisor shell", "Returning from exception"
+            )
             signal.signal(signal.SIGINT, self._handle_sigint)
 
             if ret is None:
@@ -1440,7 +1447,6 @@ class HV(Reloadable):
             hcr.AMO = 0
         else:
             hcr.TACR = 1
-        hcr.TIDCP = 0
         hcr.TVM = 0
         hcr.FMO = 1
         hcr.IMO = 0
@@ -1452,7 +1458,9 @@ class HV(Reloadable):
         if not self.novm:
             #hacr.TRAP_CPU_EXT = 1
             #hacr.TRAP_SPRR = 1
-            #hacr.TRAP_GXF = 1
+            # Route raw-mode GXF save/restore accesses to the target-side shadows.
+            if not self.u.cpu_features.apple_sysregs_unlocked:
+                hacr.TRAP_GXF = 1
             hacr.TRAP_CTRR = 1
             hacr.TRAP_EHID = 1
             hacr.TRAP_HID = 1
@@ -1795,7 +1803,7 @@ class HV(Reloadable):
 
         print(f"Physical memory: 0x{phys_base:x} .. 0x{mem_top:x}")
         print(f"Guest region start: 0x{guest_base:x}")
-        
+
         self.entry = guest_base + entryoffset
 
         print(f"Mapping guest physical memory...")
@@ -1987,30 +1995,130 @@ class HV(Reloadable):
                     p += 1
                     continue
                 opcode = a[p // 4]
-                if 0x00201420 <= opcode <= 0x00201424:  # genter #imm (imm 0..4)
+                if opcode == 0x00201420:
+                    # The dispatch ABI is entirely carried in x16.
                     a[p // 4] = self.hvc(0)
+                elif opcode == 0x00201424:
+                    # Complete the paired guarded exit locally.
+                    a[p // 4] = self.hvc(4)
                 p += 4
 
-            # sysreg neutralization: NOP writes to guarded impdef regs and
-            # SME control register
+            hvc_sysregs = {}
+
+            def sysreg_opcode(read, op0, op1, crn, crm, op2):
+                opcode = 0xd5300000 if read else 0xd5100000
+                return (
+                    opcode
+                    | (op0 << 19)
+                    | (op1 << 16)
+                    | (crn << 12)
+                    | (crm << 8)
+                    | (op2 << 5)
+                )
+
+            # Route locked PMCR0 accesses through the target-side model.
+            if not self.u.cpu_features.apple_sysregs_unlocked:
+                hvc_sysregs.update({
+                    0xd519f000: 0x380,
+                    0xd539f000: 0x3c0,
+                })
+            # These CLPC sysregs are undefined at EL1 when Apple sysregs are locked.
+            # Lower counter reads to CNTPCT and route other accesses to EL2.
+            clpc_regs = [
+                (3, 7, 15, 0, 3),   # CORE_PERF0
+                (3, 7, 15, 1, 3),   # CORE_PERF_ENABLE0
+                (3, 7, 15, 2, 3),   # CORE_PERF1
+                (3, 7, 15, 3, 3),   # CORE_PERF_ENABLE1
+                (3, 7, 15, 4, 3),   # CORE_PERF2
+                (3, 7, 15, 5, 3),   # CORE_PERF_ENABLE2
+                (3, 7, 15, 6, 3),   # CORE_PERF3
+                (3, 7, 15, 7, 3),   # CORE_PERF_ENABLE3
+                (3, 7, 15, 8, 3),   # CORE_PERF4
+                (3, 7, 15, 9, 3),   # CORE_PERF_ENABLE4
+                (3, 7, 15, 10, 3),  # CORE_PERF5
+                (3, 7, 15, 11, 3),  # CORE_PERF_ENABLE5
+                (3, 7, 15, 12, 3),  # CORE_PERF6
+                (3, 7, 15, 13, 3),  # CORE_PERF_ENABLE6
+                (3, 7, 15, 14, 3),  # CORE_PERF7
+                (3, 7, 15, 15, 3),  # CORE_PERF_ENABLE7
+                (3, 7, 15, 5, 0),   # CORE_PERF_CTRL2
+                (3, 1, 15, 8, 3),   # CORE_ACC0
+                (3, 1, 15, 9, 3),   # CORE_ACC1
+                (3, 1, 15, 10, 3),  # CORE_ACC2
+                (3, 1, 15, 11, 3),  # CORE_ACC3
+                (3, 1, 15, 12, 3),  # CORE_ACC4
+                (3, 1, 15, 0, 3),   # MEM_STALL_CFG0
+                (3, 1, 15, 1, 3),   # MEM_STALL_CFG1
+                (3, 1, 15, 2, 3),   # MEM_STALL_CFG2
+            ]
+            clpc_counter_sysregs = set()
+            for reg_index, encoding in enumerate(clpc_regs):
+                for is_read in (False, True):
+                    is_counter = (
+                        (reg_index < 16 and not (reg_index & 1)) or
+                        17 <= reg_index <= 21
+                    )
+                    if is_read and is_counter:
+                        clpc_counter_sysregs.add(
+                            sysreg_opcode(True, *encoding)
+                        )
+                        continue
+                    operation = reg_index * 2 + int(is_read)
+                    hvc_sysregs[sysreg_opcode(is_read, *encoding)] = (
+                        0x400 + (operation << 5)
+                    )
+
+            hvc_sysregs.update({
+                0xd53ef1a0: 0x1c0,  # mrs SPRR_PERM_EL0
+                0xd51ef1a0: 0x1e0,  # msr SPRR_PERM_EL0
+                0xd53ef1c0: 0x200,  # mrs SPRR_PERM_EL1
+                0xd51ef1c0: 0x220,  # msr SPRR_PERM_EL1
+            })
+
+            # Route undefined ObjC breakpoint registers through the C shadows.
+            hvc_sysregs.update({
+                0xd51ef080: 0xa40,  # msr S3_6_C15_C0_4
+                0xd53ef080: 0xa60,  # mrs S3_6_C15_C0_4
+                0xd51ef0a0: 0xa80,  # msr S3_6_C15_C0_5
+                0xd53ef0a0: 0xaa0,  # mrs S3_6_C15_C0_5
+            })
+
+            # NOP writes to guarded impdef and SME control registers.
             nop_msr = [
                 0xd51cf100,   # msr KERNKEYLO_EL1   (s3_4_c15_c1_0)
                 0xd51cf120,   # msr KERNKEYHI_EL1   (s3_4_c15_c1_1)
                 0xd51cfdc0,   # msr s3_4_c15_c13_6  (Apple PAC key)
                 0xd51cfde0,   # msr s3_4_c15_c13_7  (Apple PAC key)
+                0xd519f1a0,   # msr AGTCNTRDIR_EL1  (s3_1_c15_c1_5)
+                0xd51cfec0,   # msr AGTCNTRDIR_EL12 (s3_4_c15_c14_6)
+                0xd51cf180,   # msr AMX_CTL_EL1     (s3_4_c15_c1_4)
+                0xd519f740,   # msr alternate PMCR1 (s3_1_c15_c7_2)
                 0xd51c12a0,   # msr SMPRIMAP_EL2    (s3_4_c1_c2_5)
+                0xd51cfc00,   # msr guarded c12 state (s3_4_c15_c12_0)
+                0xd519fd80,   # msr Apple physical timer ctl (s3_1_c15_c13_4)
+                0xd51df2c0,   # msr WATCHDOGDIAG0 (s3_5_c15_c2_6)
+                0xd51cffc0,   # msr JCTL_EL0       (s3_4_c15_c15_6)
+                0xd51ef300,   # msr SPRR_UMPRR_EL1 (s3_6_c15_c3_0)
             ]
-            p = 0
-            while (p := data.find(b"\x1c\xd5", p)) != -1:
-                if (p & 3) != 2:
-                    p += 1
+            for word_index, instruction in enumerate(a):
+                opcode = instruction & ~0x1f
+                if opcode in clpc_counter_sysregs:
+                    rt = instruction & 0x1f
+                    a[word_index] = (
+                        sysreg_opcode(True, 3, 3, 14, 0, 1) | rt
+                    )
                     continue
-                opcode = a[p // 4] & ~0x1f
+                if opcode == 0xd53ef300:
+                    # Avoid an EL2 round trip for each page-policy read.
+                    rt = instruction & 0x1f
+                    a[word_index] = 0xaa1f03e0 | rt  # mov xRt, xzr
+                    continue
+                if opcode in hvc_sysregs:
+                    rt = instruction & 0x1f
+                    a[word_index] = self.hvc(hvc_sysregs[opcode] | rt)
+                    continue
                 if opcode in nop_msr:
-                    if opcode == 0xd51c12a0:
-                        print(f"  0x{seg_vmaddr + (p & ~3):x}: SMPRIMAP_EL2 -> noop")
-                    a[p // 4] = nop
-                p += 4
+                    a[word_index] = nop
 
             # commpage: force XNU to publish VM-safe userspace feature policy
             # bytes. The Apple timebase path and HW-TPRO/SPRR path use
@@ -2125,6 +2233,9 @@ class HV(Reloadable):
         print(f"Uploading ADT (0x{len(adt_blob):x} bytes)...")
         assert len(adt_blob) <= align(self.u.ba.devtree_size)
         self.iface.writemem(self.adt_base, adt_blob)
+
+        if self.sptm_symbols is not None:
+            self.p.hv_sptm_init(self.adt_base, *self.sptm_symbols)
 
         print("Improving logo...")
         self.p.fb_improve_logo()
