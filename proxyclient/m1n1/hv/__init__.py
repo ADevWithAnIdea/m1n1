@@ -2178,33 +2178,6 @@ class HV(Reloadable):
                 if opcode in nop_msr:
                     a[word_index] = nop
 
-            # commpage: force XNU to publish VM-safe userspace feature policy
-            # bytes. The Apple timebase path and HW-TPRO/SPRR path use
-            # userspace-inaccessible Apple registers under this EL1 guest.
-            #
-            # hard coded kernelcache addresses is a hack we should find a way
-            # to avoid
-            off = 0xfffffe000b5a3330 - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x52800068:
-                    raise RuntimeError("_COMM_PAGE_USER_TIMEBASE patch target mismatch")
-                a[off // 4] = 0x52800008
-                print(f"  0xfffffe000b5a3330: _COMM_PAGE_USER_TIMEBASE=0")
-
-            off = 0xfffffe000b5a3388 - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x52800028:
-                    raise RuntimeError("_COMM_PAGE_CONT_HWCLOCK patch target mismatch")
-                a[off // 4] = 0x52800008
-                print(f"  0xfffffe000b5a3388: _COMM_PAGE_CONT_HWCLOCK=0")
-
-            off = 0xfffffe000b5a358c - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x39043128:
-                    raise RuntimeError("_COMM_PAGE_HW_TPRO patch target mismatch")
-                a[off // 4] = 0x3904313f
-                print(f"  0xfffffe000b5a358c: _COMM_PAGE_HW_TPRO=0")
-
             print("Done.")
             return a.tobytes()
 

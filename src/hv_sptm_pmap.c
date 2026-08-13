@@ -134,6 +134,22 @@ static void sptm_write_stage1_descriptor(u64 slot, u64 value)
     write64(slot, value);
 }
 
+void sptm_publish_commpage_policy(void)
+{
+    if (sptm.commpage_policy_published)
+        return;
+
+    for (size_t index = 0; index < sptm.commpage_rw_count; index++) {
+        u64 pa = sptm.commpage_rw[index];
+        write8(pa + SPTM_COMMPAGE_USER_TIMEBASE_OFFSET, 0);
+        write8(pa + SPTM_COMMPAGE_CONT_HWCLOCK_OFFSET, 0);
+        write8(pa + SPTM_COMMPAGE_HW_TPRO_OFFSET, 0);
+        printf("HV: SPTM updated XNU commpage policy at PA 0x%lx\n", pa);
+    }
+    sysop("dsb sy");
+    sptm.commpage_policy_published = true;
+}
+
 bool sptm_retype_frame(struct exc_info *ctx)
 {
     u64 pa = ctx->regs[0] & ~SPTM_PAGE_MASK;
@@ -232,6 +248,12 @@ bool sptm_retype_frame(struct exc_info *ctx)
             write16((u64)entry + 10, (ctx->regs[3] >> 32) & 0xffff);
             entry[12] = ctx->regs[3] & 0xff;
         }
+    }
+
+    // Defer commpage policy changes until the shared region is configured.
+    if (new_type == SPTM_FRAME_XNU_COMMPAGE_RW &&
+        sptm.commpage_rw_count < ARRAY_SIZE(sptm.commpage_rw)) {
+        sptm.commpage_rw[sptm.commpage_rw_count++] = pa;
     }
 
     spin_unlock(&sptm.frame_lock);

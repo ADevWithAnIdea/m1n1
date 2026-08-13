@@ -35,6 +35,7 @@
 #define SPTM_MAX_DART_TUNABLES   256
 #define SPTM_MAX_DART_CLOCK_REFS 64
 #define SPTM_MAX_SURT_ROOTS      128
+#define SPTM_MAX_COMMPAGE_RW     2
 
 #define SPTM_TXM_RECORD_OFFSET 0x3c00
 #define SPTM_TXM_RECORD_SIZE   0x58
@@ -199,11 +200,15 @@
 #define SPTM_FRAME_XNU_IO                  26
 #define SPTM_FRAME_PROTECTED_IO            27
 #define SPTM_FRAME_COPROCESSOR_RO_IO       28
+#define SPTM_FRAME_XNU_COMMPAGE_RW         29
 #define SPTM_FRAME_RESTRICTED_IO           38
 #define SPTM_FRAME_RESTRICTED_IO_TELEMETRY 39
 #define SPTM_FRAME_SK_IO                   65
 #define SPTM_FRAME_TXM_SECURE_CHANNEL      61
 
+#define SPTM_COMMPAGE_USER_TIMEBASE_OFFSET 0x90
+#define SPTM_COMMPAGE_CONT_HWCLOCK_OFFSET  0x91
+#define SPTM_COMMPAGE_HW_TPRO_OFFSET       0x10c
 struct sptm_cpu {
     u32 phys_id;
     u8 logical_id;
@@ -417,6 +422,9 @@ struct sptm_state {
     u64 sprr_perm[2];
     u32 sprr_umprr;
     u8 max_cpus;
+    u64 commpage_rw[SPTM_MAX_COMMPAGE_RW];
+    u8 commpage_rw_count;
+    bool commpage_policy_published;
     struct sptm_dart darts[SPTM_MAX_DARTS];
     size_t dart_count;
     struct sptm_dart_clock_ref dart_clock_refs[SPTM_MAX_DART_CLOCK_REFS];
@@ -469,6 +477,7 @@ bool sptm_handle_uat(struct exc_info *ctx, u32 endpoint);
 struct sptm_surt_root *sptm_find_surt_root(u64 root);
 u64 sptm_walk(u64 root, u64 va, unsigned int target_level, struct sptm_geometry *geometry_out);
 void sptm_publish_stage1(void);
+void sptm_publish_commpage_policy(void);
 bool sptm_retype_frame(struct exc_info *ctx);
 bool sptm_configure_shared_region(struct exc_info *ctx);
 bool sptm_map_page(struct exc_info *ctx);

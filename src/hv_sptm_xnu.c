@@ -101,8 +101,12 @@ bool sptm_handle_xnu_bootstrap(struct exc_info *ctx, u32 endpoint)
             return sptm_unmap_disjoint(ctx);
         case 9: /* CONFIGURE_SHAREDREGION */
             return sptm_configure_shared_region(ctx);
-        case 10: /* NEST_REGION */
-            return sptm_nest_region(ctx, true);
+        case 10: { /* NEST_REGION */
+            bool handled = sptm_nest_region(ctx, true);
+            if (handled)
+                sptm_publish_commpage_policy();
+            return handled;
+        }
         case 11: /* UNNEST_REGION */
             return sptm_nest_region(ctx, false);
         case 14: { /* REGISTER_CPU */
