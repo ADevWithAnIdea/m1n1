@@ -56,6 +56,16 @@ int chainload_image(void *image, size_t size, char **vars, size_t var_cnt)
     const size_t bootargs_size = SZ_16K;
     image_size += bootargs_size;
 
+    // On M4/A18, iBoot adds a 48 KiB region ending at top_of_kernel_data
+    // that secondary CPUs can't write to. This hack avoids using that region
+    // by making the next m1n1's heap start above it
+    u64 protected_start = cur_boot_args.top_of_kernel_data - 3 * SZ_16K;
+    if (new_base + image_size > protected_start) {
+        printf("chainload: Image 0x%lx..0x%lx overlaps protected range 0x%lx..0x%lx\n", new_base,
+               new_base + image_size, protected_start, cur_boot_args.top_of_kernel_data);
+        return -1;
+    }
+
     printf("chainload: Total image size: 0x%lx\n", image_size);
 
     size_t stub_size = _chainload_stub_end - _chainload_stub_start;
@@ -92,7 +102,7 @@ int chainload_image(void *image, size_t size, char **vars, size_t var_cnt)
     // Copy bootargs
     struct boot_args *new_boot_args = new_image + bootargs_off;
     *new_boot_args = cur_boot_args;
-    new_boot_args->top_of_kernel_data = new_base + image_size;
+    new_boot_args->top_of_kernel_data = cur_boot_args.top_of_kernel_data;
 
     // Copy chainload stub
     void *stub = new_image + image_size;

@@ -55,6 +55,17 @@ bootargs_off = image_size
 bootargs_size = 0x4000
 image_size += bootargs_size
 
+# On M4/A18, iBoot adds a 48 KiB region ending at top_of_kernel_data
+# that secondary CPUs can't write to. This hack avoids using that region
+# by making the next m1n1's heap start above it
+protected_start = u.ba.top_of_kernel_data - 3 * 0x4000
+image_end = new_base + image_size
+if image_end > protected_start:
+    raise RuntimeError(
+        f"Chainload image 0x{new_base:x}..0x{image_end:x} overlaps "
+        f"protected range 0x{protected_start:x}..0x{u.ba.top_of_kernel_data:x}"
+    )
+
 print(f"Total region size: 0x{image_size:x} bytes")
 image_addr = u.malloc(image_size)
 
@@ -113,7 +124,7 @@ u.push_adt()
 print("Setting up bootargs...")
 tba = u.ba.copy()
 
-tba.top_of_kernel_data = new_base + image_size
+tba.top_of_kernel_data = u.ba.top_of_kernel_data
 
 if len(args.boot_args) > 0:
     boot_args = " ".join(args.boot_args)
