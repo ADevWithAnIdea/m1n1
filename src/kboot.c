@@ -596,6 +596,10 @@ static int dt_set_cpus(void)
         } else {
             printf("FDT: Reserving stack for CPU %d 0x%lx\n", cpu, (uint64_t)secondary_stacks[cpu]);
             fdt_add_mem_rsv(dt, (uint64_t)secondary_stacks[cpu], SECONDARY_STACK_SIZE);
+            printf("FDT: Reserving reset stack for CPU %d 0x%lx\n", cpu,
+                   (uint64_t)secondary_reset_stacks[cpu]);
+            fdt_add_mem_rsv(dt, (uint64_t)secondary_reset_stacks[cpu],
+                            SECONDARY_RESET_STACK_SIZE);
             if (has_el3()) {
                 printf("FDT: Reserving EL3 stack for CPU %d 0x%lx\n", cpu,
                        (uint64_t)secondary_stacks_el3[cpu]);
