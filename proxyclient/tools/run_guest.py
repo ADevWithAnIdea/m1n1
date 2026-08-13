@@ -37,6 +37,9 @@ parser.add_argument('-S', '--shell', action="store_true")
 parser.add_argument('-e', '--hook-exceptions', action="store_true")
 parser.add_argument('-d', '--debug-xnu', action="store_true")
 parser.add_argument('-l', '--logfile', type=pathlib.Path)
+parser.add_argument('--verbose', action='store_true',
+                    help='Show detailed launch progress, including individual '
+                         'MMIO, ADT, page-table, and Mach-O segment entries.')
 parser.add_argument('-C', '--cpus', default=None)
 parser.add_argument('--strip-node', action="append", default=[], metavar='SUBSTR',
                     help='Remove every ADT node whose name contains SUBSTR.')
@@ -72,7 +75,7 @@ if not args.raw:
         u.msr(AGTCNTRDIR_EL1, 3)
         u.msr(AGTCNTRDIR_EL12, 3)
 
-hv = HV(iface, p, u)
+hv = HV(iface, p, u, verbose=args.verbose)
 
 hv.hook_exceptions = args.hook_exceptions
 

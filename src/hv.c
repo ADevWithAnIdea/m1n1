@@ -344,22 +344,14 @@ static void hv_enter_secondary(void *entry, u64 regs[4])
 
 void hv_start_secondary(int cpu, void *entry, u64 regs[4])
 {
-    printf("HV: Initializing secondary %d\n", cpu);
-    iodev_console_flush();
-
     if (!cpu_features->apple_sysregs_unlocked)
         hv_capture_guest_el12_state(&hv_secondary_info);
     mmu_init_secondary(cpu);
-    iodev_console_flush();
     smp_call4(cpu, hv_init_secondary, (u64)&hv_secondary_info, 0, 0, 0);
     smp_wait(cpu);
-    iodev_console_flush();
 
-    printf("HV: Entering guest secondary %d at %p\n", cpu, entry);
     hv_started_cpus[cpu] = true;
     __atomic_or_fetch(&hv_cpus_in_guest, BIT(cpu), __ATOMIC_ACQUIRE);
-
-    iodev_console_flush();
     smp_call4(cpu, hv_enter_secondary, (u64)entry, (u64)regs, 0, 0);
 }
 

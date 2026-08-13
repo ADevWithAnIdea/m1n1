@@ -74,10 +74,12 @@ class HV(Reloadable):
     AIC_EVT_TYPE_HW = 1
     IRQTRACE_IRQ = 1
 
-    def __init__(self, iface, proxy, utils):
+    def __init__(self, iface, proxy, utils, *, verbose=False):
         self.iface = iface
         self.p = proxy
         self.u = utils
+        self.verbose = verbose
+        self.verbose_print = print if verbose else lambda *args, **kwargs: None
         self.pac_mask = self.PAC_MASK
         self.user_pac_mask = self.PAC_MASK
         self.vbar_el1 = None
@@ -140,18 +142,18 @@ class HV(Reloadable):
 
         self.shell_locals["ctx"] = self.context
 
-    def log(self, s, *args, show_cpu=True, **kwargs):
+    def log(self, s, *args, show_cpu=True, console=True, **kwargs):
+        prefix = ""
         if self.ctx is not None and show_cpu:
             ts=""
             if self.show_timestamps:
                 ts = f"[{self.u.mrs(CNTPCT_EL0):#x}]"
-            print(ts+f"[cpu{self.ctx.cpu_id}] " + s, *args, **kwargs)
-            if self.print_tracer.log_file:
-                print(f"# {ts}[cpu{self.ctx.cpu_id}] " + s, *args, file=self.print_tracer.log_file, **kwargs)
-        else:
-            print(s, *args, **kwargs)
-            if self.print_tracer.log_file:
-                print("# " + s, *args, file=self.print_tracer.log_file, **kwargs)
+            prefix = ts + f"[cpu{self.ctx.cpu_id}] "
+        if console:
+            print(prefix + s, *args, **kwargs)
+        if self.print_tracer.log_file:
+            print("# " + prefix + s, *args,
+                  file=self.print_tracer.log_file, **kwargs)
 
     def unmap(self, ipa, size):
         assert self.p.hv_map(ipa, 0, size, 0) >= 0
@@ -300,6 +302,8 @@ class HV(Reloadable):
         self.mmio_maps.compact()
 
         top = 0
+        mapped_regions = 0
+        unmapped_regions = 0
 
         for zone in self.dirty_maps:
             if zone.stop <= top:
@@ -311,7 +315,9 @@ class HV(Reloadable):
                     continue
                 if top < mzone.start:
                     self.unmap(top, mzone.start - top)
-                    self.log(f"PT[{top:09x}:{mzone.start:09x}] -> *UNMAPPED*")
+                    unmapped_regions += 1
+                    self.log(f"PT[{top:09x}:{mzone.start:09x}] -> *UNMAPPED*",
+                             console=self.verbose)
 
                 top = mzone.stop
                 if not maps:
@@ -323,7 +329,12 @@ class HV(Reloadable):
                 need_write = any(m[3] for m in maps)
 
                 if mode == TraceMode.RESERVED:
-                    self.log(f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> RESERVED {ident}")
+                    mapped_regions += 1
+                    self.log(
+                        f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> "
+                        f"RESERVED {ident}",
+                        console=self.verbose,
+                    )
                     continue
                 elif mode in (TraceMode.HOOK, TraceMode.SYNC):
                     self.map_hook_idx(mzone.start, mzone.stop - mzone.start, 0,
@@ -347,7 +358,12 @@ class HV(Reloadable):
                     self.map_sw(mzone.start, pa, mzone.stop - mzone.start)
                 elif mode == TraceMode.OFF:
                     self.map_hw(mzone.start, mzone.start, mzone.stop - mzone.start)
-                    self.log(f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> HW:{ident}")
+                    mapped_regions += 1
+                    self.log(
+                        f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> "
+                        f"HW:{ident}",
+                        console=self.verbose,
+                    )
                     continue
 
                 rest = [m[1] for m in maps[1:] if m[0] != TraceMode.OFF]
@@ -356,14 +372,27 @@ class HV(Reloadable):
                 else:
                     rest = ""
 
-                self.log(f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> {mode.name}.{'R' if read else ''}{'W' if read else ''} {ident}{rest}")
+                mapped_regions += 1
+                self.log(
+                    f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> "
+                    f"{mode.name}.{'R' if read else ''}"
+                    f"{'W' if read else ''} {ident}{rest}",
+                    console=self.verbose,
+                )
 
             if top < zone.stop:
                 self.unmap(top, zone.stop - top)
-                self.log(f"PT[{top:09x}:{zone.stop:09x}] -> *UNMAPPED*")
+                unmapped_regions += 1
+                self.log(f"PT[{top:09x}:{zone.stop:09x}] -> *UNMAPPED*",
+                         console=self.verbose)
 
         self.u.inst(0xd50c83df) # tlbi vmalls12e1is
         self.dirty_maps.clear()
+        self.log(
+            f"Updated page tables: {mapped_regions + unmapped_regions} "
+            f"regions ({mapped_regions} mapped/reserved, "
+            f"{unmapped_regions} unmapped)"
+        )
 
     def shellwrap(self, func, description, update=None, needs_ret=False):
 
@@ -1374,7 +1403,7 @@ class HV(Reloadable):
         # disable unused USB iodev early so interrupts can be reenabled in hv_init()
         for iodev in IODEV:
             if iodev >= IODEV.USB0 and iodev != self.iodev:
-                print(f"Disable iodev {iodev!s}")
+                self.verbose_print(f"Disable iodev {iodev!s}")
                 self.p.iodev_set_usage(iodev, 0)
 
         print("Initializing hypervisor over iodev %s" % self.iodev)
@@ -1396,8 +1425,13 @@ class HV(Reloadable):
         self.iface.set_event_handler(EVENT.IRQTRACE, self.handle_irqtrace)
 
         # Map MMIO ranges as HW by default
-        for r in self.adt["/arm-io"].ranges:
-            print(f"Mapping MMIO range: {r.parent_addr:#x} .. {r.parent_addr + r.size:#x}")
+        mmio_ranges = list(self.adt["/arm-io"].ranges)
+        print(f"Registering {len(mmio_ranges)} MMIO ranges")
+        for r in mmio_ranges:
+            self.verbose_print(
+                f"Mapping MMIO range: {r.parent_addr:#x} .. "
+                f"{r.parent_addr + r.size:#x}"
+            )
             self.add_tracer(irange(r.parent_addr, r.size), "HW", TraceMode.OFF)
 
         hcr = HCR(self.u.mrs(HCR_EL2))
@@ -1637,6 +1671,9 @@ class HV(Reloadable):
         # to re-enable XNU serial output for newer macOS versions
         self.adt["defaults"].serial_device = getattr(self.adt["/arm-io/uart0"], "AAPL,phandle")
 
+        adt_candidates = 0
+        adt_removed = 0
+
         if self.iodev >= IODEV.USB0:
             idx = self.iodev - IODEV.USB0
             for prefix in ("/arm-io/dart-usb%d",
@@ -1659,28 +1696,43 @@ class HV(Reloadable):
                            "/arm-io/atc-phy%d",
                           ):
                 name = prefix % idx
-                print(f"Removing ADT node {name}")
+                adt_candidates += 1
+                self.verbose_print(f"Removing ADT node {name}")
                 try:
                     del self.adt[name]
                 except KeyError:
                     pass
+                else:
+                    adt_removed += 1
 
         if self.wdt_cpu is not None:
             name = f"/cpus/cpu{self.wdt_cpu}"
-            print(f"Removing ADT node {name}")
+            adt_candidates += 1
+            self.verbose_print(f"Removing ADT node {name}")
             try:
                 del self.adt[name]
             except KeyError:
                 pass
+            else:
+                adt_removed += 1
 
         if not self.smp:
             for cpu in list(self.adt["cpus"]):
                 if cpu.state != "running":
-                    print(f"Removing ADT node {cpu._path}")
+                    adt_candidates += 1
+                    self.verbose_print(f"Removing ADT node {cpu._path}")
                     try:
                         del self.adt["cpus"][cpu.name]
                     except KeyError:
                         pass
+                    else:
+                        adt_removed += 1
+
+        if adt_candidates:
+            print(
+                f"ADT pruning: removed {adt_removed} of "
+                f"{adt_candidates} candidate nodes"
+            )
 
     def set_bootargs(self, boot_args):
         if "-v" in boot_args.split():
@@ -1992,12 +2044,12 @@ class HV(Reloadable):
 
         chip_id = self.u.adt["/chosen"].chip_id
         if chip_id in (0x8122, 0x6030, 0x6031, 0x6032, 0x6034):
-            image = macho.prepare_image(load_hook_m3)
+            image = macho.prepare_image(load_hook_m3, verbose=self.verbose)
         elif chip_id in (0x8132, 0x8140, 0x6040, 0x6041):
             # M4 / A18 Pro class: T8132, T8140, T6040 (M4 Pro), T6041 (M4 Max)
-            image = macho.prepare_image(load_hook_m4)
+            image = macho.prepare_image(load_hook_m4, verbose=self.verbose)
         else:
-            image = macho.prepare_image()
+            image = macho.prepare_image(verbose=self.verbose)
         self.load_raw(image, entryoffset=(macho.entry - macho.vmin), use_xnu_symbols=self.xnu_mode and symfile is not None, vmin=macho.vmin)
 
     def update_pac_mask(self):
@@ -2055,11 +2107,14 @@ class HV(Reloadable):
         exec(code, self.shell_locals)
 
     def start(self):
-        print("Disabling other iodevs...")
-        for iodev in IODEV:
-            if iodev != self.iodev:
-                print(f" - {iodev!s}")
-                self.p.iodev_set_usage(iodev, 0)
+        other_iodevs = [iodev for iodev in IODEV if iodev != self.iodev]
+        if self.verbose:
+            print("Disabling other iodevs...")
+        else:
+            print(f"Disabling {len(other_iodevs)} other iodevs...")
+        for iodev in other_iodevs:
+            self.verbose_print(f" - {iodev!s}")
+            self.p.iodev_set_usage(iodev, 0)
 
         print("Doing essential MMIO remaps...")
         self.map_essential()
