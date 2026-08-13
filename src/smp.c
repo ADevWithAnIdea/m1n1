@@ -4,6 +4,7 @@
 #include "adt.h"
 #include "aic.h"
 #include "aic_regs.h"
+#include "assert.h"
 #include "cpu_regs.h"
 #include "malloc.h"
 #include "memory.h"
@@ -27,13 +28,19 @@
 #define RVBAR_LOCK BIT(0)
 #define RVBAR_ADDR GENMASK(47, 12)
 
-struct spin_table {
-    u64 mpidr;
-    u64 flag;
-    u64 target;
-    u64 args[4];
-    u64 retval;
+#define SPIN_TABLE_STRIDE    128
+#define SPIN_TABLE_PAGE_SIZE SZ_16K
+
+struct spin_table_entry {
+    volatile u64 mpidr;
+    volatile u64 flag;
+    volatile u64 target;
+    volatile u64 args[4];
+    volatile u64 retval;
+    /* Keep independently active CPU slots on separate Apple cache lines. */
+    u8 padding[SPIN_TABLE_STRIDE - 8 * sizeof(u64)];
 };
+static_assert(sizeof(struct spin_table_entry) == SPIN_TABLE_STRIDE, "invalid spin-table stride");
 
 void *_reset_stack;
 void *_reset_stack_el1;
@@ -43,13 +50,21 @@ u8 dummy_stack[DUMMY_STACK_SIZE];     // Highest EL
 u8 dummy_stack_el1[DUMMY_STACK_SIZE]; // EL1 stack if EL3 exists
 
 u8 *secondary_stacks[MAX_CPUS] = {dummy_stack};
+u8 *secondary_reset_stacks[MAX_CPUS] = {dummy_stack};
 u8 *secondary_stacks_el3[MAX_EL3_CPUS];
 
 static bool wfe_mode = false;
 
 static int target_cpu;
 static int cpu_nodes[MAX_CPUS];
-static struct spin_table spin_table[MAX_CPUS];
+static union {
+    struct spin_table_entry entries[MAX_CPUS];
+    u8 page[SPIN_TABLE_PAGE_SIZE];
+} spin_table_page ALIGNED(SPIN_TABLE_PAGE_SIZE);
+static_assert(sizeof(spin_table_page.entries) <= sizeof(spin_table_page.page),
+              "spin table does not fit in one page");
+#define spin_table spin_table_page.entries
+static bool spin_table_published;
 static u64 pmgr_reg;
 static u64 cpu_start_off;
 
@@ -59,7 +74,7 @@ u64 boot_cpu_mpidr = 0;
 
 void smp_secondary_entry(void)
 {
-    struct spin_table *me = &spin_table[target_cpu];
+    struct spin_table_entry *me = &spin_table[target_cpu];
 
     if (in_el2())
         msr(TPIDR_EL2, target_cpu);
@@ -71,7 +86,7 @@ void smp_secondary_entry(void)
     me->mpidr = mrs(MPIDR_EL1) & 0xFFFFFF;
 
     sysop("dmb sy");
-    me->flag = 1;
+    me->flag++;
     sysop("dmb sy");
     u64 target;
     if (!cpu_features->fast_ipi)
@@ -111,6 +126,11 @@ void smp_secondary_prep_el3(void)
     return;
 }
 
+u64 smp_secondary_stack_top(void)
+{
+    return (u64)secondary_stacks[smp_id()] + SECONDARY_STACK_SIZE;
+}
+
 static void smp_start_cpu(int index, int die, int cluster, int core, u64 impl, u64 cpu_start_base)
 {
     int i;
@@ -132,18 +152,36 @@ static void smp_start_cpu(int index, int die, int cluster, int core, u64 impl, u
 
     printf("Starting CPU %d (%d:%d:%d)... ", index, die, cluster, core);
 
-    memset(&spin_table[index], 0, sizeof(struct spin_table));
+    memset(&spin_table[index], 0, sizeof(struct spin_table_entry));
 
     target_cpu = index;
+    dc_civac_range(&target_cpu, sizeof(target_cpu));
     secondary_stacks[index] = memalign(0x4000, SECONDARY_STACK_SIZE);
+    secondary_reset_stacks[index] = memalign(0x4000, SECONDARY_RESET_STACK_SIZE);
+    if (!secondary_stacks[index] || !secondary_reset_stacks[index])
+        panic("Failed to allocate stacks for CPU %d\n", index);
+
+    memset(secondary_stacks[index], 0, SECONDARY_STACK_SIZE);
+    dc_civac_range(secondary_stacks[index], SECONDARY_STACK_SIZE);
+    dc_civac_range(&secondary_stacks[index], sizeof(secondary_stacks[index]));
+
+    memset(secondary_reset_stacks[index], 0, SECONDARY_RESET_STACK_SIZE);
+    mmu_map_ram_range_nc((u64)secondary_reset_stacks[index], SECONDARY_RESET_STACK_SIZE);
+    dc_civac_range(&secondary_reset_stacks[index], sizeof(secondary_reset_stacks[index]));
+
     if (has_el3()) {
         secondary_stacks_el3[index] = memalign(0x4000, SECONDARY_STACK_SIZE);
+        if (!secondary_stacks_el3[index])
+            panic("Failed to allocate EL3 stack for CPU %d\n", index);
+        memset(secondary_stacks_el3[index], 0, SECONDARY_STACK_SIZE);
+        dc_civac_range(secondary_stacks_el3[index], SECONDARY_STACK_SIZE);
         _reset_stack = secondary_stacks_el3[index] + SECONDARY_STACK_SIZE; // EL3
-        _reset_stack_el1 = secondary_stacks[index] + SECONDARY_STACK_SIZE; // EL1
+        _reset_stack_el1 =
+            secondary_reset_stacks[index] + SECONDARY_RESET_STACK_SIZE; // EL1
 
         dc_civac_range(&_reset_stack_el1, sizeof(void *));
     } else
-        _reset_stack = secondary_stacks[index] + SECONDARY_STACK_SIZE;
+        _reset_stack = secondary_reset_stacks[index] + SECONDARY_RESET_STACK_SIZE;
 
     dc_civac_range(&_reset_stack, sizeof(void *));
 
@@ -164,19 +202,25 @@ static void smp_start_cpu(int index, int die, int cluster, int core, u64 impl, u
     write32(cpu_start_base + 0x8 + 4 * cluster, 1 << core);
 
     for (i = 0; i < 100; i++) {
-        sysop("dmb ld");
-        if (spin_table[index].flag)
+        if (spin_table[index].flag) {
+            // Acquire the MPIDR published before the flag.
+            sysop("dmb ld");
             break;
+        }
         udelay(1000);
     }
 
-    if (i >= 100)
+    if (i >= 100) {
         printf("Failed!\n");
-    else
+    } else {
         printf("  Started.\n");
+    }
 
     _reset_stack = dummy_stack + DUMMY_STACK_SIZE;
     _reset_stack_el1 = dummy_stack_el1 + DUMMY_STACK_SIZE;
+    dc_civac_range(&_reset_stack, sizeof(_reset_stack));
+    dc_civac_range(&_reset_stack_el1, sizeof(_reset_stack_el1));
+    sysop("dsb sy");
 }
 
 static void smp_stop_cpu(int index, int die, int cluster, int core, u64 impl, u64 cpu_start_base,
@@ -206,7 +250,8 @@ static void smp_stop_cpu(int index, int die, int cluster, int core, u64 impl, u6
     if (deep_sleep) {
         udelay(10000);
         printf("  Presumed stopped.\n");
-        memset(&spin_table[index], 0, sizeof(struct spin_table));
+        memset(&spin_table[index], 0, sizeof(struct spin_table_entry));
+        sysop("dsb sy");
         return;
     }
 
@@ -223,13 +268,25 @@ static void smp_stop_cpu(int index, int die, int cluster, int core, u64 impl, u6
     } else {
         printf("  Stopped.\n");
 
-        memset(&spin_table[index], 0, sizeof(struct spin_table));
+        memset(&spin_table[index], 0, sizeof(struct spin_table_entry));
+        sysop("dsb sy");
     }
 }
 
 void smp_start_secondaries(void)
 {
     printf("Starting secondary CPUs...\n");
+
+    if (!spin_table_published) {
+        memset(&spin_table_page, 0, sizeof(spin_table_page));
+        /* Retype the entire mailbox page only after publishing its WB state. */
+        dc_civac_range(&spin_table_page, sizeof(spin_table_page));
+        sysop("dsb sy");
+        mmu_retype_mapping((u64)&spin_table_page, (u64)&spin_table_page,
+                           sizeof(spin_table_page), MAIR_IDX_DEVICE_nGnRnE,
+                           PERM_RW);
+        spin_table_published = true;
+    }
 
     int pmgr_path[8];
 
@@ -351,6 +408,10 @@ void smp_start_secondaries(void)
         return;
     }
 
+    dc_civac_range(&boot_cpu_idx, sizeof(boot_cpu_idx));
+    dc_civac_range(&boot_cpu_mpidr, sizeof(boot_cpu_mpidr));
+    sysop("dsb sy");
+
     spin_table[boot_cpu_idx].mpidr = mrs(MPIDR_EL1) & 0xFFFFFF;
 
     for (int i = 0; i < MAX_CPUS; i++) {
@@ -435,7 +496,7 @@ void smp_stop_secondaries(bool deep_sleep)
 
 void smp_send_ipi(int cpu)
 {
-    if (cpu >= MAX_CPUS)
+    if (cpu < 0 || cpu >= MAX_CPUS)
         return;
 
     u64 mpidr = spin_table[cpu].mpidr;
@@ -448,12 +509,12 @@ void smp_send_ipi(int cpu)
 
 void smp_call4(int cpu, void *func, u64 arg0, u64 arg1, u64 arg2, u64 arg3)
 {
-    if (cpu >= MAX_CPUS)
+    if (cpu < 0 || cpu >= MAX_CPUS || cpu == boot_cpu_idx)
         return;
 
-    struct spin_table *target = &spin_table[cpu];
+    struct spin_table_entry *target = &spin_table[cpu];
 
-    if (cpu == boot_cpu_idx)
+    if (!target->flag || target->target)
         return;
 
     u64 flag = target->flag;
@@ -471,25 +532,30 @@ void smp_call4(int cpu, void *func, u64 arg0, u64 arg1, u64 arg2, u64 arg3)
         smp_send_ipi(cpu);
 
     while (target->flag == flag)
-        sysop("dmb sy");
+        udelay(1);
 }
 
 u64 smp_wait(int cpu)
 {
-    if (cpu >= MAX_CPUS)
+    if (cpu < 0 || cpu >= MAX_CPUS)
         return 0;
 
-    struct spin_table *target = &spin_table[cpu];
+    struct spin_table_entry *target = &spin_table[cpu];
 
-    while (target->target)
-        sysop("dmb sy");
+    while (true) {
+        if (!target->target)
+            break;
+        udelay(1);
+    }
 
+    sysop("dmb ld");
     return target->retval;
 }
 
 void smp_set_wfe_mode(bool new_mode)
 {
     wfe_mode = new_mode;
+    dc_civac_range(&wfe_mode, sizeof(wfe_mode));
     sysop("dsb sy");
 
     for (int cpu = 0; cpu < MAX_CPUS; cpu++)
@@ -517,14 +583,15 @@ uint64_t smp_get_mpidr(int cpu)
 
 u64 smp_get_release_addr(int cpu)
 {
-    struct spin_table *target = &spin_table[cpu];
-
-    if (cpu >= MAX_CPUS)
+    if (cpu < 0 || cpu >= MAX_CPUS)
         return 0;
+
+    struct spin_table_entry *target = &spin_table[cpu];
 
     target->args[0] = 0;
     target->args[1] = 0;
     target->args[2] = 0;
     target->args[3] = 0;
+    sysop("dsb sy");
     return (u64)&target->target;
 }
