@@ -511,6 +511,7 @@ struct midr_part_features {
     bool actlr_el2;
     bool counter_redirect;
     bool sme_enabled;
+    bool sapt;
 };
 
 extern bool is_mac;

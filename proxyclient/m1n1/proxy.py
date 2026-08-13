@@ -514,6 +514,8 @@ CPUFeatures = Struct(
     "actlr_el2" / bool_,
     "counter_redirect" / bool_,
     "sme_enabled" / bool_,
+    "sapt" / bool_,
+    Padding(3),
 )
 
 # Uses UartInterface.proxyreq() to send requests to M1N1 and process
