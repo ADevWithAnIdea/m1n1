@@ -1834,6 +1834,8 @@ class HV(Reloadable):
         self.xnu_mode = True
 
         self.macho = macho = MachO(data)
+        if "com.apple.kernel" in macho.subfiles:
+            macho.add_fileset_symbols("com.apple.kernel")
         if symfile is not None:
             if isinstance(symfile, str):
                 symfile = open(symfile, "rb")

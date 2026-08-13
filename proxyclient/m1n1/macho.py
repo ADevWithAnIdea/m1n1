@@ -223,14 +223,26 @@ class MachO:
                 sname = f"{filename}:{sym}"
                 self.symbols[sname] = addr - sym_seg.args.vmaddr + seg.args.vmaddr
 
-    def load_symbols(self, demangle=False):
+    def add_fileset_symbols(self, filename, demangle=False):
+        subfile = self.subfiles[filename]
+        if not list(subfile.get_cmds(MachOLoadCmdType.SYMTAB)):
+            return
+
+        subfile.load_symbols(demangle=demangle, file_base=self.off)
+        for name, addr in subfile.symbols.items():
+            self.symbols[f"{filename}:{name}"] = addr
+
+    def load_symbols(self, demangle=False, file_base=None):
         self.symbols = {}
+
+        if file_base is None:
+            file_base = self.off
 
         cmd = self.get_cmd(MachOLoadCmdType.SYMTAB)
 
         nsyms = cmd.args.nsyms
         length = NList.sizeof() * nsyms
-        self.io.seek(self.off + cmd.args.symoff)
+        self.io.seek(file_base + cmd.args.symoff)
         symdata = self.io.read(length)
 
         symbols = Array(nsyms, NList).parse(symdata)
@@ -238,7 +250,7 @@ class MachO:
         symbols_dict = {}
         for i in symbols:
             off = cmd.args.stroff + i.n_strx
-            self.io.seek(self.off + off)
+            self.io.seek(file_base + off)
             name = self.io.read(1024).split(b"\x00")[0].decode("ascii")
             symbols_dict[name] = i.n_value
 
