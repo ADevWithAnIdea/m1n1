@@ -40,9 +40,6 @@
 
 #define MAX_MEM_REGIONS 32
 
-#define SYS_IMP_APL_CTRR_LOWER_EL1 sys_reg(3, 0, 11, 0, 0)
-#define SYS_IMP_APL_CTRR_UPPER_EL1 sys_reg(3, 0, 11, 0, 1)
-
 static void *dt = NULL;
 static int dt_bufsize = 0;
 static void *initrd_start = NULL;

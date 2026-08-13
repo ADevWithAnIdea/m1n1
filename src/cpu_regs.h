@@ -805,3 +805,7 @@
 #define AIDR_EL1_GXF            BIT(16)
 #define AIDR_EL1_APFLG          BIT(19)
 #define AIDR_EL1_PSRV           BIT(20)
+
+/* 48kb read only region given to us by iBoot */
+#define SYS_IMP_APL_CTRR_LOWER_EL1 sys_reg(3, 0, 11, 0, 0)
+#define SYS_IMP_APL_CTRR_UPPER_EL1 sys_reg(3, 0, 11, 0, 1)
