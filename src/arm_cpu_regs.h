@@ -25,6 +25,9 @@
 #define CNTHCTL_EL0VCTEN BIT(1)
 #define CNTHCTL_EL0PCTEN BIT(0)
 
+// governs EL0/EL1 counter access and event stream
+#define SYS_CNTKCTL_EL12 sys_reg(3, 5, 14, 1, 0)
+
 #define SYS_CNTV_CTL_EL0  sys_reg(3, 3, 14, 3, 1)
 #define SYS_CNTV_CTL_EL02 sys_reg(3, 5, 14, 3, 1)
 #define SYS_CNTP_CTL_EL0  sys_reg(3, 3, 14, 2, 1)
