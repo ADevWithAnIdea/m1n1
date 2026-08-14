@@ -25,9 +25,9 @@ class HV(Reloadable):
 
     PTE_MEMATTR_UNCHANGED   = 0b1111 << 2
     PTE_S2AP_RW             = 0b11 << 6
-    PTE_SH_NS               = 0b11 << 8
+    PTE_SH_IS               = 0b11 << 8
     PTE_ACCESS              = 1 << 10
-    PTE_ATTRIBUTES          = PTE_ACCESS | PTE_SH_NS | PTE_S2AP_RW | PTE_MEMATTR_UNCHANGED
+    PTE_ATTRIBUTES          = PTE_ACCESS | PTE_SH_IS | PTE_S2AP_RW | PTE_MEMATTR_UNCHANGED
 
     SPTE_TRACE_READ         = 1 << 63
     SPTE_TRACE_WRITE        = 1 << 62
