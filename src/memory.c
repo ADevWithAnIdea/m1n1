@@ -175,11 +175,82 @@ enum SPRR_val_t {
 
 static u64 *mmu_pt_L0;
 
+#define MMU_MAX_PENDING_PTE_UPDATES 16384
+struct mmu_pending_pte_update {
+    u64 *slot;
+    u64 value;
+};
+static struct mmu_pending_pte_update mmu_pending_pte_updates[MMU_MAX_PENDING_PTE_UPDATES];
+static size_t mmu_pending_pte_update_count;
+
+static void mmu_publish_mappings(void);
+
+static bool mmu_pt_pending_value(u64 *slot, u64 *value)
+{
+    for (size_t index = mmu_pending_pte_update_count; index; index--) {
+        struct mmu_pending_pte_update *update = &mmu_pending_pte_updates[index - 1];
+        if (update->slot == slot) {
+            *value = update->value;
+            return true;
+        }
+    }
+    *value = *slot;
+    return false;
+}
+
+static void mmu_pt_queue_update(u64 *slot, u64 value)
+{
+    if (!mmu_active()) {
+        *slot = value;
+        return;
+    }
+
+    if (mmu_pending_pte_update_count >= ARRAY_SIZE(mmu_pending_pte_updates))
+        panic("Too many pending MMU PTE updates before publication\n");
+    mmu_pending_pte_updates[mmu_pending_pte_update_count++] =
+        (struct mmu_pending_pte_update){slot, value};
+}
+
+static void mmu_pt_install_table(u64 from, u64 *parent, u64 parent_idx, u64 *child,
+                                 u64 block_offset_bits, bool needs_break, bool publish_now)
+{
+    u64 descriptor = (u64)child | FIELD_PREP(PTE_TYPE, PTE_TABLE) | PTE_VALID;
+
+    if (needs_break) {
+        u64 *slot = &parent[parent_idx];
+        u64 *make_slot = slot;
+
+        // Use a WB alias if the parent lives inside the block being split.
+        if (((u64)slot & ~MASK(block_offset_bits)) ==
+            (from & ~MASK(block_offset_bits)))
+            make_slot = (u64 *)((u64)slot | REGION_RW_EL0);
+
+        // Keep asynchronous handlers out of the identity-map break.
+        u64 daif = mrs(DAIF);
+        msr(DAIF, daif | (7UL << 6));
+        sysop("isb");
+
+        mmu_pt_queue_update(slot, 0);
+        mmu_publish_mappings();
+        mmu_pt_queue_update(make_slot, descriptor);
+        mmu_publish_mappings();
+
+        msr(DAIF, daif);
+        sysop("isb");
+        return;
+    }
+
+    mmu_pt_queue_update(&parent[parent_idx], descriptor);
+    if (publish_now && mmu_active())
+        mmu_publish_mappings();
+}
+
 static u64 *mmu_pt_get_l1(u64 from)
 {
     u64 l0idx = from >> VADDR_L0_OFFSET_BITS;
     assert(l0idx < ENTRIES_PER_L0_TABLE);
-    u64 l0d = mmu_pt_L0[l0idx];
+    u64 l0d;
+    mmu_pt_pending_value(&mmu_pt_L0[l0idx], &l0d);
 
     if (L0_IS_TABLE(l0d))
         return (u64 *)(l0d & PTE_TARGET_MASK);
@@ -188,13 +259,13 @@ static u64 *mmu_pt_get_l1(u64 from)
     assert(!IS_PTE(l0d));
     memset64(l1, 0, ENTRIES_PER_L1_TABLE * sizeof(u64));
 
-    l0d = ((u64)l1) | FIELD_PREP(PTE_TYPE, PTE_TABLE) | PTE_VALID;
-    mmu_pt_L0[l0idx] = l0d;
+    mmu_pt_install_table(from, mmu_pt_L0, l0idx, l1, VADDR_L0_OFFSET_BITS, false, true);
     return l1;
 }
 
 static void mmu_pt_map_l1(u64 from, u64 to, u64 size)
 {
+    assert(!mmu_active());
     assert((from & MASK(VADDR_L1_OFFSET_BITS)) == 0);
     assert((to & PTE_TARGET_MASK & MASK(VADDR_L1_OFFSET_BITS)) == 0);
     assert((size & MASK(VADDR_L1_OFFSET_BITS)) == 0);
@@ -219,7 +290,8 @@ static u64 *mmu_pt_get_l2(u64 from)
     u64 *l1 = mmu_pt_get_l1(from);
     u64 l1idx = (from >> VADDR_L1_OFFSET_BITS) & MASK(VADDR_L1_INDEX_BITS);
     assert(l1idx < ENTRIES_PER_L1_TABLE);
-    u64 l1d = l1[l1idx];
+    u64 l1d;
+    mmu_pt_pending_value(&l1[l1idx], &l1d);
 
     if (L1_IS_TABLE(l1d))
         return (u64 *)(l1d & PTE_TARGET_MASK);
@@ -235,8 +307,8 @@ static u64 *mmu_pt_get_l2(u64 from)
         memset64(l2, 0, ENTRIES_PER_L2_TABLE * sizeof(u64));
     }
 
-    l1d = ((u64)l2) | FIELD_PREP(PTE_TYPE, PTE_TABLE) | PTE_VALID;
-    l1[l1idx] = l1d;
+    mmu_pt_install_table(from, l1, l1idx, l2, VADDR_L1_OFFSET_BITS,
+                         mmu_active() && IS_PTE(l1d), true);
     return l2;
 }
 
@@ -252,24 +324,37 @@ static void mmu_pt_map_l2(u64 from, u64 to, u64 size)
         u64 idx = (from >> VADDR_L2_OFFSET_BITS) & MASK(VADDR_L2_INDEX_BITS);
         u64 *l2 = mmu_pt_get_l2(from);
 
-        if (L2_IS_TABLE(l2[idx]))
-            free((void *)(l2[idx] & PTE_TARGET_MASK));
+        u64 old;
+        mmu_pt_pending_value(&l2[idx], &old);
+        if (L2_IS_TABLE(old) && !mmu_active())
+            free((void *)(old & PTE_TARGET_MASK));
 
-        l2[idx] = to;
+        mmu_pt_queue_update(&l2[idx], to);
         from += BIT(VADDR_L2_OFFSET_BITS);
         to += BIT(VADDR_L2_OFFSET_BITS);
     }
 }
 
-static u64 *mmu_pt_get_l3(u64 from)
+// Prepare the L3 table before publishing its parent.
+static u64 *mmu_pt_prepare_l3(u64 from, u64 **parent, u64 *parent_idx,
+                              bool *needs_publish, bool *needs_break,
+                              bool *mutable)
 {
     u64 *l2 = mmu_pt_get_l2(from);
     u64 l2idx = (from >> VADDR_L2_OFFSET_BITS) & MASK(VADDR_L2_INDEX_BITS);
     assert(l2idx < ENTRIES_PER_L2_TABLE);
-    u64 l2d = l2[l2idx];
+    u64 l2d;
+    bool parent_pending = mmu_pt_pending_value(&l2[l2idx], &l2d);
 
-    if (L2_IS_TABLE(l2d))
+    *parent = l2;
+    *parent_idx = l2idx;
+
+    if (L2_IS_TABLE(l2d)) {
+        *needs_publish = false;
+        *needs_break = false;
+        *mutable = !mmu_active() || parent_pending;
         return (u64 *)(l2d & PTE_TARGET_MASK);
+    }
 
     u64 *l3 = (u64 *)memalign(PAGE_SIZE, ENTRIES_PER_L3_TABLE * sizeof(u64));
     if (IS_PTE(l2d)) {
@@ -282,9 +367,16 @@ static u64 *mmu_pt_get_l3(u64 from)
         memset64(l3, 0, ENTRIES_PER_L3_TABLE * sizeof(u64));
     }
 
-    l2d = ((u64)l3) | FIELD_PREP(PTE_TYPE, PTE_TABLE) | PTE_VALID;
-    l2[l2idx] = l2d;
+    *needs_publish = true;
+    *needs_break = mmu_active() && IS_PTE(l2d);
+    *mutable = true;
     return l3;
+}
+
+static void mmu_pt_publish_l3(u64 from, u64 *parent, u64 parent_idx,
+                              u64 *l3, bool needs_break)
+{
+    mmu_pt_install_table(from, parent, parent_idx, l3, VADDR_L2_OFFSET_BITS, needs_break, false);
 }
 
 static void mmu_pt_map_l3(u64 from, u64 to, u64 size)
@@ -295,13 +387,34 @@ static void mmu_pt_map_l3(u64 from, u64 to, u64 size)
 
     to |= FIELD_PREP(PTE_TYPE, PTE_PAGE);
 
-    for (; size; size -= BIT(VADDR_L3_OFFSET_BITS)) {
-        u64 idx = (from >> VADDR_L3_OFFSET_BITS) & MASK(VADDR_L3_INDEX_BITS);
-        u64 *l3 = mmu_pt_get_l3(from);
+    while (size) {
+        u64 l2_remaining = BIT(VADDR_L2_OFFSET_BITS) -
+                           (from & MASK(VADDR_L2_OFFSET_BITS));
+        u64 chunk = min(size, l2_remaining);
+        u64 *parent;
+        u64 parent_idx;
+        bool needs_publish;
+        bool needs_break;
+        bool mutable;
+        u64 *l3 = mmu_pt_prepare_l3(from, &parent, &parent_idx,
+                                    &needs_publish, &needs_break, &mutable);
 
-        l3[idx] = to;
-        from += BIT(VADDR_L3_OFFSET_BITS);
-        to += BIT(VADDR_L3_OFFSET_BITS);
+        for (u64 offset = 0; offset < chunk;
+             offset += BIT(VADDR_L3_OFFSET_BITS)) {
+            u64 idx = ((from + offset) >> VADDR_L3_OFFSET_BITS) &
+                      MASK(VADDR_L3_INDEX_BITS);
+            if (mutable)
+                l3[idx] = to + offset;
+            else
+                mmu_pt_queue_update(&l3[idx], to + offset);
+        }
+
+        if (needs_publish)
+            mmu_pt_publish_l3(from, parent, parent_idx, l3, needs_break);
+
+        from += chunk;
+        to += chunk;
+        size -= chunk;
     }
 }
 
@@ -327,7 +440,7 @@ int mmu_map(u64 from, u64 to, u64 size)
     }
 
     // 16K does not support L1 blocks without FEAT_LPA2
-    if (!is_16k()) {
+    if (!mmu_active() && !is_16k()) {
         // Map L2 until L1-aligned or reached end of mapping
         u64 boundary_l1 = ALIGN_UP(from, MASK(VADDR_L1_OFFSET_BITS));
         chunk = min(ALIGN_DOWN(size, MASK(VADDR_L1_OFFSET_BITS)), boundary_l1 - from);
@@ -349,12 +462,14 @@ int mmu_map(u64 from, u64 to, u64 size)
     }
 
     // L2 mappings
-    chunk = ALIGN_DOWN(size, MASK(VADDR_L2_OFFSET_BITS));
-    if (chunk && (to & VADDR_L2_ALIGN_MASK) == 0) {
-        mmu_pt_map_l2(from, to, chunk);
-        from += chunk;
-        to += chunk;
-        size -= chunk;
+    if (!mmu_active()) {
+        chunk = ALIGN_DOWN(size, MASK(VADDR_L2_OFFSET_BITS));
+        if (chunk && (to & VADDR_L2_ALIGN_MASK) == 0) {
+            mmu_pt_map_l2(from, to, chunk);
+            from += chunk;
+            to += chunk;
+            size -= chunk;
+        }
     }
 
     // L3 mappings to end
@@ -372,17 +487,49 @@ static void mmu_init_pagetables(void)
     return;
 }
 
-void mmu_add_mapping(u64 from, u64 to, size_t size, u8 attribute_index, u64 perms)
+void mmu_add_mapping(u64 from, u64 to, size_t size, u8 attribute_index,
+                     u64 perms)
 {
     if (mmu_map(from,
-                to | PTE_MAIR_IDX(attribute_index) | PTE_ACCESS | PTE_VALID | PTE_SH_OS | perms,
+                to | PTE_MAIR_IDX(attribute_index) | PTE_ACCESS | PTE_VALID |
+                    PTE_SH_OS | perms,
                 size) < 0)
         panic("Failed to add MMU mapping 0x%lx -> 0x%lx (0x%lx)\n", from, to, size);
+
+    mmu_publish_mappings();
+}
+
+static void mmu_publish_mappings(void)
+{
+    if (mmu_pending_pte_update_count) {
+        // Fill new child tables completely before publishing their parent.
+        for (size_t index = 0; index < mmu_pending_pte_update_count; index++) {
+            struct mmu_pending_pte_update *update = &mmu_pending_pte_updates[index];
+            *update->slot = update->value;
+        }
+        mmu_pending_pte_update_count = 0;
+    }
 
     sysop("dsb ishst");
     sysop("tlbi vmalle1is");
     sysop("dsb ish");
     sysop("isb");
+}
+
+void mmu_retype_mapping(u64 from, u64 to, size_t size, u8 attribute_index,
+                        u64 perms)
+{
+    if (mmu_map(from, 0, size) < 0)
+        panic("Failed to break MMU mapping at 0x%lx (0x%lx)\n", from, size);
+    mmu_publish_mappings();
+
+    if (mmu_map(from,
+                to | PTE_MAIR_IDX(attribute_index) | PTE_ACCESS | PTE_VALID |
+                    PTE_SH_OS | perms,
+                size) < 0)
+        panic("Failed to remake MMU mapping 0x%lx -> 0x%lx (0x%lx)\n",
+              from, to, size);
+    mmu_publish_mappings();
 }
 
 void mmu_rm_mapping(u64 from, size_t size)

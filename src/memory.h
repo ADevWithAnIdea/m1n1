@@ -72,6 +72,7 @@ void mmu_init(void);
 void mmu_init_secondary(int cpu);
 void mmu_shutdown(void);
 void mmu_add_mapping(u64 from, u64 to, size_t size, u8 attribute_index, u64 perms);
+void mmu_retype_mapping(u64 from, u64 to, size_t size, u8 attribute_index, u64 perms);
 void mmu_rm_mapping(u64 from, size_t size);
 void mmu_map_framebuffer(u64 addr, size_t size);
 
