@@ -10,6 +10,7 @@ u64 hv_sptm_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_text
 void hv_sptm_configure(u64 managed_start, u64 managed_end, u64 physmap_base, u64 scratch_pa,
                        u64 kernel_root, u64 cpu_info);
 void hv_sptm_configure_frames(u64 frame_table_pa);
+void hv_sptm_configure_panic(u64 state_pa);
 void hv_sptm_configure_uat(u64 shared_l2_pa, u64 shared_l2_size, u64 info, u64 global_state,
                            u64 gpu_contexts, u64 shared_l2_va);
 void hv_sptm_configure_uat_handoff(u64 handoff_pa, u64 handoff_size);

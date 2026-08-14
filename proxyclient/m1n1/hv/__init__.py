@@ -121,6 +121,7 @@ class HV(Reloadable):
         self.show_timestamps = False
         self.virtio_devs = {}
         self.sptm_symbols = None
+        self.sptm_panic_state_pa = 0
 
     def _reloadme(self):
         super()._reloadme()
@@ -814,15 +815,7 @@ class HV(Reloadable):
             if elr_phys:
                 self.u.disassemble_at(elr_phys - 4 * 4, 9 * 4, elr - 4 * 4, elr, sym=self.get_sym)
             if self.sym(elr)[1] == "com.apple.kernel:_panic_trap_to_debugger":
-                self.log("Panic! Trying to decode panic...")
-                try:
-                    self.decode_panic_call()
-                except:
-                    self.log("Error decoding panic.")
-                try:
-                    self.bt()
-                except:
-                    pass
+                self.report_xnu_panic()
                 return False
             if esr.EC == ESR_EC.UNKNOWN:
                 instr = self.p.read32(elr_phys)
@@ -997,6 +990,7 @@ class HV(Reloadable):
 
         handled = False
         user_interrupt = False
+        xnu_panic = False
 
         try:
             if reason == START.EXCEPTION_LOWER:
@@ -1013,6 +1007,18 @@ class HV(Reloadable):
                 elif code == HV_EVENT.USER_INTERRUPT:
                     handled = True
                     user_interrupt = True
+                elif code == HV_EVENT.XNU_PANIC:
+                    handled = True
+                    xnu_panic = True
+                    owner = domain = None
+                    if self.sptm_panic_state_pa:
+                        state = self.iface.readmem(self.sptm_panic_state_pa, 16)
+                        owner = struct.unpack_from("<H", state, 8)[0]
+                        domain = struct.unpack_from("<I", state, 12)[0]
+                    self.log(
+                        f"XNU panic suspended in EL2 "
+                        f"(owner={owner}, domain={domain})"
+                    )
         except Exception as e:
             self.log(f"Python exception while handling guest exception:")
             traceback.print_exc()
@@ -1027,13 +1033,29 @@ class HV(Reloadable):
             self.update_pac_mask()
             self.u.print_context(ctx, self.is_fault, sym=self.get_sym)
 
-        if self._sigint_pending or not handled or user_interrupt:
+        if self._sigint_pending or not handled or user_interrupt or xnu_panic:
             self._sigint_pending = False
 
             signal.signal(signal.SIGINT, self.default_sigint)
-            ret = self.run_shell(
-                "Entering hypervisor shell", "Returning from exception"
-            )
+            if xnu_panic:
+                self.report_xnu_panic()
+                ret = None
+                while ret is None:
+                    ret = self.run_shell(
+                        "XNU panic suspended. Inspect with context(), bt(), "
+                        "decode_panic_call(), and cpu(). Use cont() to resume "
+                        "XNU explicitly or hv.exit() to request guest exit.",
+                        "XNU panic remains suspended",
+                    )
+                    if ret is None:
+                        self.log(
+                            "XNU panic remains suspended; use cont() or "
+                            "hv.exit() explicitly"
+                        )
+            else:
+                ret = self.run_shell(
+                    "Entering hypervisor shell", "Returning from exception"
+                )
             signal.signal(signal.SIGINT, self._handle_sigint)
 
             if ret is None:
@@ -1297,7 +1319,42 @@ class HV(Reloadable):
         xnutools.decode_debugger_state(self.u, self.ctx)
 
     def decode_panic_call(self):
-        xnutools.decode_panic_call(self.u, self.ctx)
+        if (
+            self.exc_reason == START.HV
+            and self.exc_code == HV_EVENT.XNU_PANIC
+            and not self.ctx.regs[0]
+        ):
+            # The panic wrapper moves the format string and va_list to x2/x3.
+            xnutools.decode_panic(self.u, self.ctx.regs[2], self.ctx.regs[3])
+        else:
+            xnutools.decode_panic_call(self.u, self.ctx)
+
+    def report_xnu_panic(self):
+        """Best-effort panic report which must never block the debug shell."""
+        self.log("Panic! Trying to decode panic...")
+
+        try:
+            self.log(
+                f"Panic context: ELR={self.addr(self.ctx.elr)} "
+                f"LR={self.addr(self.ctx.regs[30])}"
+            )
+        except Exception:
+            self.log(
+                f"Panic context: ELR=0x{self.ctx.elr:x} "
+                f"LR=0x{self.ctx.regs[30]:x} (symbolization failed)"
+            )
+
+        try:
+            self.decode_panic_call()
+        except Exception:
+            self.log("Error decoding panic string:")
+            traceback.print_exc()
+
+        try:
+            self.bt()
+        except Exception:
+            self.log("Error decoding panic backtrace:")
+            traceback.print_exc()
 
     def context(self):
         f = f" (orig: #{self.exc_orig_cpu})" if self.ctx.cpu_id != self.exc_orig_cpu else ""
@@ -1428,6 +1485,7 @@ class HV(Reloadable):
         self.iface.set_handler(START.HV, HV_EVENT.CPU_SWITCH, self.handle_exception)
         self.iface.set_handler(START.HV, HV_EVENT.VIRTIO, self.handle_virtio)
         self.iface.set_handler(START.HV, HV_EVENT.PANIC, self.handle_bark)
+        self.iface.set_handler(START.HV, HV_EVENT.XNU_PANIC, self.handle_exception)
         self.iface.set_event_handler(EVENT.MMIOTRACE, self.handle_mmiotrace)
         self.iface.set_event_handler(EVENT.IRQTRACE, self.handle_irqtrace)
 
@@ -1999,7 +2057,7 @@ class HV(Reloadable):
                     # The dispatch ABI is entirely carried in x16.
                     a[p // 4] = self.hvc(0)
                 elif opcode == 0x00201424:
-                    # Complete the paired guarded exit locally.
+                    # genter #SPTM_GENTER_XNU_PANIC_BEGIN
                     a[p // 4] = self.hvc(4)
                 p += 4
 
@@ -2235,7 +2293,9 @@ class HV(Reloadable):
         self.iface.writemem(self.adt_base, adt_blob)
 
         if self.sptm_symbols is not None:
-            self.p.hv_sptm_init(self.adt_base, *self.sptm_symbols)
+            self.sptm_panic_state_pa = self.p.hv_sptm_init(
+                self.adt_base, *self.sptm_symbols
+            )
 
         print("Improving logo...")
         self.p.fb_improve_logo()

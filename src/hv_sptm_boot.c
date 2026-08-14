@@ -705,6 +705,7 @@ u64 sptm_boot_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_te
     hv_sptm_configure(context.managed_start, context.managed_end, context.physmap_base,
                       context.scratch_pa, context.ttbr1_pa, context.cpu_map_pa);
     hv_sptm_configure_frames(context.frame_table_pa);
+    hv_sptm_configure_panic(context.panic_state_pa);
     u64 uat_info = uat_mode | (u64)uat_va_width << 8 | (u64)uat_segment_limit << 16 |
                    (u64)uat_mapping_limit << 32 | (u64)uat_tlbi_at_retype << 48;
     hv_sptm_configure_uat(context.uat_l2_pa, uat_l2_size, uat_info, context.uat_global_state_pa,
