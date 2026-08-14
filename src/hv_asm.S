@@ -166,8 +166,9 @@ hv_enter_guest:
     str x5, [x6, x7, LSL #3]
 
     mrs x5, daif
-    mov x6, #5
-    orr x5, x5, x6 // EL1h
+    // XNU requires all exceptions, including debug, masked on kernel entry.
+    mov x6, #0x3c5 // D | A | I | F | EL1h
+    orr x5, x5, x6
     msr spsr_el2, x5
 
     msr elr_el2, x4
