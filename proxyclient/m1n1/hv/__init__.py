@@ -2045,8 +2045,7 @@ class HV(Reloadable):
         chip_id = self.u.adt["/chosen"].chip_id
         if chip_id in (0x8122, 0x6030, 0x6031, 0x6032, 0x6034):
             image = macho.prepare_image(load_hook_m3, verbose=self.verbose)
-        elif chip_id in (0x8132, 0x8140, 0x6040, 0x6041):
-            # M4 / A18 Pro class: T8132, T8140, T6040 (M4 Pro), T6041 (M4 Max)
+        elif not self.u.cpu_features.apple_sysregs_unlocked:
             image = macho.prepare_image(load_hook_m4, verbose=self.verbose)
         else:
             image = macho.prepare_image(verbose=self.verbose)

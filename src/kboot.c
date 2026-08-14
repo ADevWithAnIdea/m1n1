@@ -376,7 +376,7 @@ static int dt_set_memory(void)
 
     // iBoot makes this CTRR range writable only from the boot CPU. Keep Linux from assigning its
     // pages to secondary CPUs.
-    if (chip_id == T8132 || chip_id == T8140) {
+    if (!cpu_features->apple_sysregs_unlocked) {
         u64 ctrr_start = ALIGN_DOWN(mrs(SYS_IMP_APL_CTRR_LOWER_EL1), get_page_size());
         u64 ctrr_end = ALIGN_UP(mrs(SYS_IMP_APL_CTRR_UPPER_EL1) + SZ_4K, get_page_size());
 

@@ -108,17 +108,15 @@ if args.strip_node:
 if args.debug_xnu:
     hv.adt["chosen"].debug_enabled = 1
 
-# Exclaves are not yet supported
-if not args.raw and u.adt["/chosen"].chip_id in (0x8132, 0x8140, 0x6040, 0x6041):
+# Exclaves are not yet supported by the locked-Apple-sysreg guest path.
+if not args.raw and not u.cpu_features.apple_sysregs_unlocked:
     for name in ("/arm-io/exdisplaypipe", "/arm-io/exdisplaypipe-s-proxy",
                  "/arm-io/dcp-exclave-ioreporting", "/arm-io/dcp-exclave-mailbox"):
         try:
             del hv.adt[name]
         except KeyError:
             pass
-    # The internal DCP's iop-dcp-nub binds its RTKit transport to the (now-gone)
-    # dcp-exclave-mailbox via routes=206; clearing routes makes the DCP firmware
-    # fall back to the plain ASC mailbox like the routeless external dcpext.
+    # Clear the stale exclave route so DCP falls back to its ASC mailbox.
     try:
         nub = hv.adt["/arm-io/dcp/iop-dcp-nub"]
         if getattr(nub, "routes", None) is not None:
@@ -133,8 +131,8 @@ if args.volume:
 if args.logfile:
     hv.set_logfile(args.logfile.open("w"))
 
-# macOS-under-HV needs a specific boot-arg set on the M4/macOS chip_ids
-if not args.raw and u.adt["/chosen"].chip_id in (0x8132, 0x8140, 0x6040, 0x6041):
+# macOS-under-HV needs a specific boot-arg set when Apple sysregs are locked.
+if not args.raw and not u.cpu_features.apple_sysregs_unlocked:
     hv.set_bootargs(sptm_hv_boot_args(args.boot_args))
 elif len(args.boot_args) > 0:
     boot_args = " ".join(args.boot_args)
