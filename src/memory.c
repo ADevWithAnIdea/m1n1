@@ -43,7 +43,6 @@ CACHE_RANGE_OP(dc_cvau_range, "dc cvau")
 CACHE_RANGE_OP(dc_civac_range, "dc civac")
 
 extern u8 _stack_top[];
-extern void mmu_secondary_setup(void);
 
 uint64_t ram_base = 0;
 
@@ -58,6 +57,8 @@ static inline void write_sctlr(u64 val)
     msr(SCTLR_EL1, val);
     sysop("isb");
 }
+
+extern void mmu_secondary_setup(void);
 
 #define VADDR_L3_INDEX_BITS (is_16k() ? 11 : 9)
 #define VADDR_L2_INDEX_BITS (is_16k() ? 11 : 9)
@@ -539,6 +540,252 @@ void mmu_rm_mapping(u64 from, size_t size)
         panic("Failed to rm MMU mapping at 0x%lx (0x%lx)\n", from, size);
 }
 
+static size_t mmu_sort_unique_pages(u64 *pages, size_t count)
+{
+    for (size_t index = 1; index < count; index++) {
+        u64 value = pages[index];
+        size_t insert = index;
+        while (insert && pages[insert - 1] > value) {
+            pages[insert] = pages[insert - 1];
+            insert--;
+        }
+        pages[insert] = value;
+    }
+
+    size_t unique = 0;
+    for (size_t index = 0; index < count; index++) {
+        if (!unique || pages[index] != pages[unique - 1])
+            pages[unique++] = pages[index];
+    }
+    return unique;
+}
+
+static void mmu_map_ram_page_alias(u64 *pages, size_t count, u64 region,
+                                   u64 attributes, bool valid)
+{
+    size_t first = 0;
+    while (first < count) {
+        u64 first_va = pages[first] | region;
+        u64 l2_base = first_va & ~MASK(VADDR_L2_OFFSET_BITS);
+        size_t end = first + 1;
+        while (end < count &&
+               ((pages[end] | region) & ~MASK(VADDR_L2_OFFSET_BITS)) == l2_base)
+            end++;
+
+        u64 *parent;
+        u64 parent_idx;
+        bool needs_publish;
+        bool needs_break;
+        bool mutable;
+        u64 *l3 = mmu_pt_prepare_l3(first_va, &parent, &parent_idx,
+                                    &needs_publish, &needs_break, &mutable);
+
+        for (size_t index = first; index < end; index++) {
+            u64 va = pages[index] | region;
+            u64 l3idx = (va >> VADDR_L3_OFFSET_BITS) & MASK(VADDR_L3_INDEX_BITS);
+            u64 value = valid ? pages[index] | attributes |
+                                    FIELD_PREP(PTE_TYPE, PTE_PAGE)
+                              : FIELD_PREP(PTE_TYPE, PTE_PAGE);
+            if (mutable)
+                l3[l3idx] = value;
+            else
+                mmu_pt_queue_update(&l3[l3idx], value);
+        }
+
+        if (needs_publish)
+            mmu_pt_publish_l3(first_va, parent, parent_idx, l3, needs_break);
+        first = end;
+    }
+}
+
+static void mmu_map_ram_page_aliases(u64 *pages, size_t count,
+                                     u8 attribute_index, bool valid)
+{
+    u64 shareability = attribute_index == MAIR_IDX_NORMAL_NC ? PTE_SH_NS : PTE_SH_OS;
+    u64 common = PTE_MAIR_IDX(attribute_index) | PTE_ACCESS | PTE_VALID | shareability;
+
+    mmu_map_ram_page_alias(pages, count, 0, common | PERM_RWX, valid);
+    mmu_map_ram_page_alias(pages, count, REGION_RWX_EL0,
+                           common | PERM_RWX_EL0, valid);
+    mmu_map_ram_page_alias(pages, count, REGION_RW_EL0,
+                           common | PERM_RW_EL0, valid);
+    mmu_map_ram_page_alias(pages, count, REGION_RX_EL1,
+                           common | PERM_RX_EL0, valid);
+}
+
+static u64 mmu_get_mapping(u64 va)
+{
+    u64 l0idx = va >> VADDR_L0_OFFSET_BITS;
+    if (l0idx >= ENTRIES_PER_L0_TABLE)
+        return 0;
+
+    u64 l0d;
+    mmu_pt_pending_value(&mmu_pt_L0[l0idx], &l0d);
+    if (!L0_IS_TABLE(l0d))
+        return l0d;
+
+    u64 *l1 = (u64 *)(l0d & PTE_TARGET_MASK);
+    u64 l1idx = (va >> VADDR_L1_OFFSET_BITS) & MASK(VADDR_L1_INDEX_BITS);
+    u64 l1d;
+    mmu_pt_pending_value(&l1[l1idx], &l1d);
+    if (!L1_IS_TABLE(l1d))
+        return l1d;
+
+    u64 *l2 = (u64 *)(l1d & PTE_TARGET_MASK);
+    u64 l2idx = (va >> VADDR_L2_OFFSET_BITS) & MASK(VADDR_L2_INDEX_BITS);
+    u64 l2d;
+    mmu_pt_pending_value(&l2[l2idx], &l2d);
+    if (!L2_IS_TABLE(l2d))
+        return l2d;
+
+    u64 *l3 = (u64 *)(l2d & PTE_TARGET_MASK);
+    u64 l3d;
+    mmu_pt_pending_value(&l3[(va >> VADDR_L3_OFFSET_BITS) & MASK(VADDR_L3_INDEX_BITS)], &l3d);
+    return l3d;
+}
+
+static bool mmu_ram_page_aliases_nc(u64 pa)
+{
+    const u64 aliases[] = {
+        pa,
+        pa | REGION_RWX_EL0,
+        pa | REGION_RW_EL0,
+        pa | REGION_RX_EL1,
+    };
+
+    for (size_t index = 0; index < ARRAY_SIZE(aliases); index++) {
+        u64 descriptor = mmu_get_mapping(aliases[index]);
+        if (!(descriptor & PTE_VALID) ||
+            (descriptor & PTE_MAIR_IDX(7)) != PTE_MAIR_IDX(MAIR_IDX_NORMAL_NC) ||
+            (descriptor & (3ULL << 8)) != PTE_SH_NS)
+            return false;
+    }
+    return true;
+}
+
+static bool mmu_ram_page_aliases_wb(u64 pa)
+{
+    const u64 aliases[] = {
+        pa,
+        pa | REGION_RWX_EL0,
+        pa | REGION_RW_EL0,
+        pa | REGION_RX_EL1,
+    };
+
+    for (size_t index = 0; index < ARRAY_SIZE(aliases); index++) {
+        u64 descriptor = mmu_get_mapping(aliases[index]);
+        if (!(descriptor & PTE_VALID) ||
+            (descriptor & PTE_MAIR_IDX(7)) != PTE_MAIR_IDX(MAIR_IDX_NORMAL) ||
+            (descriptor & (3ULL << 8)) != PTE_SH_OS)
+            return false;
+    }
+    return true;
+}
+
+static bool mmu_ram_page_has_nc_aperture(u64 pa)
+{
+    u64 descriptor = mmu_get_mapping(pa | REGION_NORMAL_NC);
+
+    return (descriptor & PTE_VALID) && (descriptor & PTE_TARGET_MASK) == pa &&
+           (descriptor & PTE_MAIR_IDX(7)) == PTE_MAIR_IDX(MAIR_IDX_NORMAL_NC) &&
+           !(descriptor & (3ULL << 8));
+}
+
+static void mmu_validate_ram_page(u64 pa, const char *operation)
+{
+    if ((pa & (PAGE_SIZE - 1)) || pa < ram_base || pa >= ram_base + mem_size_actual ||
+        PAGE_SIZE > ram_base + mem_size_actual - pa)
+        panic("Invalid RAM page 0x%lx in %s\n", pa, operation);
+}
+
+size_t mmu_map_ram_pages_nc(u64 *pages, size_t count, bool dedicated_alias)
+{
+    if (!count)
+        return 0;
+
+    size_t pending = 0;
+    for (size_t index = 0; index < count; index++) {
+        mmu_validate_ram_page(pages[index], "Normal-NC remap");
+        bool has_aperture = mmu_ram_page_has_nc_aperture(pages[index]);
+        if (mmu_ram_page_aliases_nc(pages[index])) {
+            if (has_aperture != dedicated_alias)
+                panic("Normal-NC RAM page 0x%lx has unexpected dedicated-alias state\n",
+                      pages[index]);
+            continue;
+        }
+        if (has_aperture)
+            panic("Cacheable RAM page 0x%lx retains its dedicated NC alias\n",
+                  pages[index]);
+        pages[pending++] = pages[index];
+    }
+    count = mmu_sort_unique_pages(pages, pending);
+    if (!count)
+        return 0;
+
+    // Retire cacheable state before changing any of m1n1's aliases.
+    for (size_t index = 0; index < count; index++)
+        dc_civac_range((void *)pages[index], PAGE_SIZE);
+    sysop("dsb sy");
+
+    // Break-before-make the four cacheable aliases as one batch.
+    mmu_map_ram_page_aliases(pages, count, 0, false);
+    mmu_publish_mappings();
+
+    mmu_map_ram_page_aliases(pages, count, MAIR_IDX_NORMAL_NC, true);
+    if (dedicated_alias) {
+        // Give live IOMMU tables a dedicated alias which has never been WB.
+        u64 attributes = PTE_MAIR_IDX(MAIR_IDX_NORMAL_NC) | PTE_ACCESS |
+                         PTE_VALID | PTE_SH_NS | PERM_RW;
+        mmu_map_ram_page_alias(pages, count, REGION_NORMAL_NC, attributes, true);
+    }
+    mmu_publish_mappings();
+
+    return count;
+}
+
+size_t mmu_restore_ram_pages_wb(u64 *pages, size_t count, bool dedicated_alias)
+{
+    if (!count)
+        return 0;
+
+    size_t pending = 0;
+    for (size_t index = 0; index < count; index++) {
+        mmu_validate_ram_page(pages[index], "Normal-WB alias restoration");
+        if (mmu_ram_page_aliases_wb(pages[index])) {
+            if (mmu_ram_page_has_nc_aperture(pages[index]))
+                panic("Normal-WB RAM page 0x%lx retains its dedicated NC alias\n",
+                      pages[index]);
+            continue;
+        }
+        pages[pending++] = pages[index];
+    }
+    count = mmu_sort_unique_pages(pages, pending);
+    if (!count)
+        return 0;
+
+    /* Break first to follow Arm's required memory-type transition ordering. */
+    for (size_t index = 0; index < count; index++) {
+        if (!mmu_ram_page_aliases_nc(pages[index]) ||
+            mmu_ram_page_has_nc_aperture(pages[index]) != dedicated_alias)
+            panic("Unexpected RAM/dedicated-alias state restoring 0x%lx to Normal-WB\n",
+                  pages[index]);
+    }
+
+    if (dedicated_alias) {
+        /* Retire the never-WB aperture before ordinary aliases become WB. */
+        mmu_map_ram_page_alias(pages, count, REGION_NORMAL_NC, 0, false);
+        mmu_publish_mappings();
+    }
+
+    mmu_map_ram_page_aliases(pages, count, 0, false);
+    mmu_publish_mappings();
+
+    mmu_map_ram_page_aliases(pages, count, MAIR_IDX_NORMAL, true);
+    mmu_publish_mappings();
+
+    return count;
+}
+
 static void mmu_map_mmio(void)
 {
     int node = adt_path_offset(adt, "/arm-io");
@@ -611,68 +858,9 @@ void mmu_map_ram_range_nc(u64 addr, size_t size)
 
 void mmu_map_framebuffer(u64 addr, size_t size)
 {
-    printf("MMU: Adding Normal-NC mapping at 0x%lx (0x%zx) for framebuffer\n", addr, size);
     dc_civac_range((void *)addr, size);
-    mmu_add_mapping(addr, addr, size, MAIR_IDX_NORMAL_NC, PERM_RW_EL0);
-}
-
-int display_get_vram(u64 *paddr, u64 *size);
-
-static int mmu_get_iboot_handoff_range(u64 *start, u64 *size)
-{
-    u64 range[2];
-    int chosen = adt_path_offset(adt, "/chosen");
-
-    if (chosen >= 0 &&
-        ADT_GETPROP_ARRAY(adt, chosen, "iboot-handoff", range) == sizeof(range))
-        goto found;
-
-    int carveouts = adt_path_offset(adt, "/chosen/carveout-memory-map");
-    if (carveouts >= 0 &&
-        ADT_GETPROP_ARRAY(adt, carveouts, "region-id-1", range) == sizeof(range))
-        goto found;
-
-    return -1;
-
-found:
-    if (!range[0] || !range[1])
-        return -1;
-
-    *start = ALIGN_DOWN(range[0], PAGE_SIZE);
-    *size = ALIGN_UP(range[0] + range[1], PAGE_SIZE) - *start;
-    return 0;
-}
-
-static void mmu_add_ram_mapping_handoff_nc(u64 from, u64 to, size_t size,
-                                           u8 attribute_index, u64 perms,
-                                           u64 handoff_start,
-                                           u64 handoff_size)
-{
-    u64 end = to + size;
-    u64 handoff_end = handoff_start + handoff_size;
-
-    if (!handoff_start || !handoff_size || handoff_end <= to ||
-        handoff_start >= end) {
-        mmu_add_mapping(from, to, size, attribute_index, perms);
-        return;
-    }
-
-    u64 cur_to = to;
-    if (handoff_start > cur_to) {
-        u64 before_size = handoff_start - cur_to;
-        mmu_add_mapping(from, cur_to, before_size, attribute_index, perms);
-        from += before_size;
-        cur_to += before_size;
-    }
-
-    u64 nc_end = min(handoff_end, end);
-    u64 nc_size = nc_end - cur_to;
-    mmu_add_mapping(from, cur_to, nc_size, MAIR_IDX_NORMAL_NC, perms);
-    from += nc_size;
-    cur_to += nc_size;
-
-    if (cur_to < end)
-        mmu_add_mapping(from, cur_to, end - cur_to, attribute_index, perms);
+    sysop("dsb sy");
+    mmu_map_nc_aliases(addr, size, "framebuffer");
 }
 
 static void mmu_map_nc_aliases(u64 addr, size_t size, const char *name)
@@ -686,6 +874,17 @@ static void mmu_map_nc_aliases(u64 addr, size_t size, const char *name)
 
     printf("MMU: Adding Normal-NC mappings at 0x%lx..0x%lx for %s\n",
            start, end, name);
+
+    // Break all live aliases before changing the framebuffer from WB to NC.
+    if (mmu_active()) {
+        if (mmu_map(start, 0, map_size) < 0 ||
+            mmu_map(start | REGION_RWX_EL0, 0, map_size) < 0 ||
+            mmu_map(start | REGION_RW_EL0, 0, map_size) < 0 ||
+            mmu_map(start | REGION_RX_EL1, 0, map_size) < 0)
+            panic("Failed to break live mappings for %s\n", name);
+        mmu_publish_mappings();
+    }
+
     mmu_add_mapping(start, start, map_size, MAIR_IDX_NORMAL_NC, PERM_RWX);
     mmu_add_mapping(start | REGION_RWX_EL0, start, map_size,
                     MAIR_IDX_NORMAL_NC, PERM_RWX_EL0);
@@ -695,24 +894,11 @@ static void mmu_map_nc_aliases(u64 addr, size_t size, const char *name)
                     MAIR_IDX_NORMAL_NC, PERM_RX_EL0);
 }
 
-static void mmu_map_iboot_handoff_nc(void)
-{
-    u64 start, size;
-
-    if (mmu_get_iboot_handoff_range(&start, &size) < 0)
-        return;
-
-    mmu_map_nc_aliases(start, size, "/chosen/iboot-handoff");
-
-}
-
 static void mmu_add_default_mappings(void)
 {
     ram_base = ALIGN_DOWN(cur_boot_args.phys_base, BIT(32));
     uint64_t ram_size = cur_boot_args.mem_size + cur_boot_args.phys_base - ram_base;
     ram_size = ALIGN_DOWN(ram_size, PAGE_SIZE);
-    u64 handoff_start = 0, handoff_size = 0;
-    mmu_get_iboot_handoff_range(&handoff_start, &handoff_size);
 
     printf("MMU: RAM base: 0x%lx\n", ram_base);
     printf("MMU: Top of normal RAM: 0x%lx\n", ram_base + ram_size);
@@ -724,24 +910,10 @@ static void mmu_add_default_mappings(void)
      * With SPRR enabled, this becomes RW.
      * This range includes all real RAM, including carveouts
      */
-    mmu_add_ram_mapping_handoff_nc(ram_base, ram_base, mem_size_actual,
-                                   MAIR_IDX_NORMAL, PERM_RWX,
-                                   handoff_start, handoff_size);
+    mmu_add_mapping(ram_base, ram_base, mem_size_actual, MAIR_IDX_NORMAL, PERM_RWX);
 
     /* Unmap carveout regions */
     mcc_unmap_carveouts();
-
-    /*
-     * Re-map the boot framebuffer (/vram) Normal-NC. The Normal-WB identity map
-     * lets m1n1/iBoot cacheable accesses allocate AMCC SLC directory tags
-     * for /vram; after handoff XNU's non-coherent framebuffer writes hit those
-     * stale tags and the AMCC raises UNEXP_RT_HIT_DIR -> PEH panic.
-     */
-    {
-        u64 fb_pa = 0, fb_size = 0;
-        if (display_get_vram(&fb_pa, &fb_size) == 0 && fb_pa && fb_size)
-            mmu_map_framebuffer(fb_pa, fb_size);
-    }
 
     /*
      * Remap m1n1 executable code as RX.
@@ -759,32 +931,22 @@ static void mmu_add_default_mappings(void)
      * read/writable/exec by EL0 (but not executable by EL1)
      * With SPRR enabled, this becomes RX_EL0.
      */
-    mmu_add_ram_mapping_handoff_nc(ram_base | REGION_RWX_EL0, ram_base,
-                                   ram_size, MAIR_IDX_NORMAL, PERM_RWX_EL0,
-                                   handoff_start, handoff_size);
+    mmu_add_mapping(ram_base | REGION_RWX_EL0, ram_base, ram_size,
+                    MAIR_IDX_NORMAL, PERM_RWX_EL0);
     /*
      * Create mapping for RAM from 0x98_0000_0000,
      * read/writable by EL0 (but not executable by EL1)
      * With SPRR enabled, this becomes RW_EL0.
      */
-    mmu_add_ram_mapping_handoff_nc(ram_base | REGION_RW_EL0, ram_base,
-                                   ram_size, MAIR_IDX_NORMAL, PERM_RW_EL0,
-                                   handoff_start, handoff_size);
+    mmu_add_mapping(ram_base | REGION_RW_EL0, ram_base, ram_size,
+                    MAIR_IDX_NORMAL, PERM_RW_EL0);
     /*
      * Create mapping for RAM from 0xa8_0000_0000,
      * read/executable by EL1
      * This allows executing from dynamic regions in EL1
      */
-    mmu_add_ram_mapping_handoff_nc(ram_base | REGION_RX_EL1, ram_base,
-                                   ram_size, MAIR_IDX_NORMAL, PERM_RX_EL0,
-                                   handoff_start, handoff_size);
-
-    /*
-     * The iBoot handoff page is a protected low carveout on T8140
-     * (/chosen/iboot-handoff, region-id-1). Keep m1n1's aliases uncached so
-     * we do not add any new WB state for this page.
-     */
-    mmu_map_iboot_handoff_nc();
+    mmu_add_mapping(ram_base | REGION_RX_EL1, ram_base, ram_size,
+                    MAIR_IDX_NORMAL, PERM_RX_EL0);
 
     /*
      * Create four separate full mappings of MMIO space, with different access types
