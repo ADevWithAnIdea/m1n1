@@ -60,6 +60,8 @@ static u64 hv_sprr_perm_el0 = 0x2010002030100000;
 static u64 hv_sprr_perm_el1 = 0x2020a506f020f0e0;
 static u64 hv_sprr_umprr_el1;
 
+#define APPLE_CNTV_FREQ 24000000ULL
+
 /*
  * Track EL2/proxy time hidden from the guest. The architectural counter and
  * Apple CNTVCT alias run in different clock domains, so each needs its own
@@ -141,7 +143,7 @@ static bool hv_kernel_cntv_pending(void)
            (CNTx_CTL_ISTATUS | CNTx_CTL_ENABLE);
 }
 
-#define KERNEL_CNTKCTL_CNTHCTL_MASK                                                               \
+#define KERNEL_CNTKCTL_MASK                                                                       \
     (CNTHCTL_EL0PCTEN | CNTHCTL_EL0VCTEN | CNTHCTL_EVNTI | CNTHCTL_EVNTDIR | CNTHCTL_EVNTEN)
 
 static bool hv_handle_kernel_cntkctl(struct exc_info *ctx, u64 rt, bool is_read)
@@ -155,14 +157,29 @@ static bool hv_handle_kernel_cntkctl(struct exc_info *ctx, u64 rt, bool is_read)
     u64 val = rt < 31 ? ctx->regs[rt] : 0;
     PERCPU(kernel_cntkctl_el1) = val;
 
-    /*
-     * XNU programs WFE timeout events and EL0 timebase access through this
-     * Apple alias. On guarded SoCs, direct EL2 writes to the Apple register can
-     * fault, so mirror only the architectural CNTHCTL_EL2 bits that correspond
-     * to the guest-visible Apple control state.
-     */
-    msr(SYS_CNTHCTL_EL2, (mrs(SYS_CNTHCTL_EL2) & ~KERNEL_CNTKCTL_CNTHCTL_MASK) |
-                             (val & KERNEL_CNTKCTL_CNTHCTL_MASK));
+    // Rescale the event bit from XNU's 24 MHz counter to CNTFRQ_EL0.
+    u64 cntkctl = val & KERNEL_CNTKCTL_MASK;
+    if (val & CNTHCTL_EVNTEN) {
+        u32 apple_index = FIELD_GET(CNTHCTL_EVNTI, val);
+        u64 apple_period = 1ULL << (apple_index + 1);
+        u64 arch_period =
+            (apple_period * mrs(CNTFRQ_EL0) + APPLE_CNTV_FREQ / 2) / APPLE_CNTV_FREQ;
+        u32 arch_index = 0;
+        u64 candidate_period = 2;
+
+        while (arch_index < 15 && candidate_period < arch_period) {
+            candidate_period <<= 1;
+            arch_index++;
+        }
+        if (arch_index && candidate_period >= arch_period &&
+            arch_period - (candidate_period >> 1) < candidate_period - arch_period)
+            arch_index--;
+
+        cntkctl &= ~CNTHCTL_EVNTI;
+        cntkctl |= FIELD_PREP(CNTHCTL_EVNTI, arch_index);
+    }
+
+    msr(SYS_CNTKCTL_EL12, (mrs(SYS_CNTKCTL_EL12) & ~KERNEL_CNTKCTL_MASK) | cntkctl);
     sysop("isb");
     return true;
 }
