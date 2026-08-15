@@ -402,7 +402,8 @@ static void sptm_boot_sort_io_filters(struct sptm_boot_io_filter *filters, u32 c
     }
 }
 
-u64 sptm_boot_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_text)
+u64 sptm_boot_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_text, u64 amx_version,
+                   u64 cpu_capabilities)
 {
     memset(&sptm_boot, 0, sizeof(sptm_boot));
     void *firmware_adt = adt;
@@ -704,6 +705,9 @@ u64 sptm_boot_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_te
 
     hv_sptm_configure(context.managed_start, context.managed_end, context.physmap_base,
                       context.scratch_pa, context.ttbr1_pa, context.cpu_map_pa);
+    if (amx_version && cpu_capabilities)
+        hv_sptm_configure_amx_policy(context.kernel_pa + amx_version - context.kernel_vmin,
+                                     context.kernel_pa + cpu_capabilities - context.kernel_vmin);
     hv_sptm_configure_frames(context.frame_table_pa);
     hv_sptm_configure_panic(context.panic_state_pa);
     u64 uat_info = uat_mode | (u64)uat_va_width << 8 | (u64)uat_segment_limit << 16 |

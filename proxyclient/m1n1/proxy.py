@@ -1154,13 +1154,16 @@ class M1N1Proxy(Reloadable):
         return self.request(self.P_HV_EXIT_CPU, cpu)
     def hv_add_time(self, time):
         return self.request(self.P_HV_ADD_TIME, time)
-    def hv_sptm_init(self, guest_adt, cons_ops, page_shift_const, xnu_text):
+    def hv_sptm_init(self, guest_adt, cons_ops, page_shift_const, xnu_text,
+                     amx_version, cpu_capabilities):
         return self.request(
             self.P_HV_SPTM_INIT,
             guest_adt,
             cons_ops,
             page_shift_const,
             xnu_text,
+            amx_version,
+            cpu_capabilities,
         )
     def fb_init(self):
         return self.request(self.P_FB_INIT)

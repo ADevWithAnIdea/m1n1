@@ -174,7 +174,11 @@ if not args.raw and not u.cpu_features.apple_sysregs_unlocked:
             "__TEXT",
         )
     )
-    hv.sptm_symbols = sptm_symbols
+    sptm_amx_symbols = tuple(
+        hv.symbol_dict.get(f"com.apple.kernel:{name}", 0)
+        for name in ("_arm_amx_version", "__cpu_capabilities")
+    )
+    hv.sptm_symbols = sptm_symbols + sptm_amx_symbols
 
 PMU(u).reset_panic_counter()
 

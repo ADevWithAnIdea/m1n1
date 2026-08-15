@@ -139,12 +139,29 @@ void sptm_publish_commpage_policy(void)
     if (sptm.commpage_policy_published)
         return;
 
+    if (sptm.amx_version_pa && sptm.cpu_capabilities_pa) {
+        u64 version = read64(sptm.amx_version_pa);
+        u64 capabilities = read64(sptm.cpu_capabilities_pa);
+        u64 replacement = capabilities & ~SPTM_HW_CAP_AMX_VERSION_MASK;
+
+        write64(sptm.amx_version_pa, 0);
+        write64(sptm.cpu_capabilities_pa, replacement);
+        printf("HV: SPTM disabled XNU AMX policy (version 0x%lx -> 0, "
+               "caps 0x%lx -> 0x%lx)\n",
+               version, capabilities, replacement);
+    }
+
     for (size_t index = 0; index < sptm.commpage_rw_count; index++) {
         u64 pa = sptm.commpage_rw[index];
+        u64 caps = read64(pa + SPTM_COMMPAGE_CPU_CAPS64_OFFSET);
+        u64 replacement = caps & SPTM_CPU_CAP_PRE_AMX_MASK;
+        write64(pa + SPTM_COMMPAGE_CPU_CAPS64_OFFSET, replacement);
         write8(pa + SPTM_COMMPAGE_USER_TIMEBASE_OFFSET, 0);
         write8(pa + SPTM_COMMPAGE_CONT_HWCLOCK_OFFSET, 0);
         write8(pa + SPTM_COMMPAGE_HW_TPRO_OFFSET, 0);
-        printf("HV: SPTM updated XNU commpage policy at PA 0x%lx\n", pa);
+        printf("HV: SPTM hid XNU AMX commpage policy at PA 0x%lx "
+               "(caps 0x%lx -> 0x%lx)\n",
+               pa, caps, replacement);
     }
     sysop("dsb sy");
     sptm.commpage_policy_published = true;

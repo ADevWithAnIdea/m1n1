@@ -209,6 +209,10 @@
 #define SPTM_COMMPAGE_USER_TIMEBASE_OFFSET 0x90
 #define SPTM_COMMPAGE_CONT_HWCLOCK_OFFSET  0x91
 #define SPTM_COMMPAGE_HW_TPRO_OFFSET       0x10c
+#define SPTM_COMMPAGE_CPU_CAPS64_OFFSET    0x10
+#define SPTM_CPU_CAP_PRE_AMX_MASK          0ULL
+#define SPTM_HW_CAP_AMX_VERSION_MASK       (3ULL << 38)
+
 struct sptm_cpu {
     u32 phys_id;
     u8 logical_id;
@@ -389,6 +393,8 @@ struct sptm_state {
     u64 scratch_pa;
     u64 kernel_root;
     u64 panic_state_pa;
+    u64 amx_version_pa;
+    u64 cpu_capabilities_pa;
     u64 frame_table_pa;
     u64 external_ref_table_pa;
     u64 uat_global_state;
@@ -449,7 +455,8 @@ bool sptm_dart_flush_all(struct sptm_dart *dart);
 struct sptm_dart_sid *sptm_dart_sid(const struct sptm_dart *dart, u32 sid);
 bool sptm_dart_valid_table(const struct sptm_dart_sid *state, u64 pa, size_t size);
 void sptm_init_platform(u64 guest_adt, u64 aux_start, u64 aux_end);
-u64 sptm_boot_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_text);
+u64 sptm_boot_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_text, u64 amx_version,
+                   u64 cpu_capabilities);
 bool sptm_dart_power(struct exc_info *ctx, bool power_up);
 bool sptm_dart_init(struct exc_info *ctx);
 bool sptm_dart_error_endpoint(struct exc_info *ctx);

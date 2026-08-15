@@ -11,9 +11,11 @@
 #define SPTM_PANIC_CPU_OFFSET       8
 #define SPTM_PANIC_DOMAIN_OFFSET    12
 #define SPTM_PANIC_STATE_SIZE       13
-u64 hv_sptm_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_text)
+u64 hv_sptm_init(u64 guest_adt, u64 cons_ops, u64 page_shift_const, u64 xnu_text, u64 amx_version,
+                 u64 cpu_capabilities)
 {
-    return sptm_boot_init(guest_adt, cons_ops, page_shift_const, xnu_text);
+    return sptm_boot_init(guest_adt, cons_ops, page_shift_const, xnu_text, amx_version,
+                          cpu_capabilities);
 }
 
 void hv_sptm_configure_panic(u64 state_pa)
@@ -24,6 +26,18 @@ void hv_sptm_configure_panic(u64 state_pa)
     }
 
     sptm.panic_state_pa = state_pa;
+}
+
+void hv_sptm_configure_amx_policy(u64 version_pa, u64 capabilities_pa)
+{
+    if (!sptm.enabled || (version_pa & 7) || (capabilities_pa & 7) ||
+        !sptm_valid_pa(version_pa, sizeof(u64)) || !sptm_valid_pa(capabilities_pa, sizeof(u64))) {
+        printf("HV: refusing invalid SPTM AMX-policy configuration\n");
+        return;
+    }
+
+    sptm.amx_version_pa = version_pa;
+    sptm.cpu_capabilities_pa = capabilities_pa;
 }
 
 static bool sptm_handle_xnu_panic_begin(struct exc_info *ctx)

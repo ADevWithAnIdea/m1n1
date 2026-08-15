@@ -546,7 +546,7 @@ int proxy_process(ProxyRequest *request, ProxyReply *reply)
             break;
         case P_HV_SPTM_INIT:
             reply->retval = hv_sptm_init(request->args[0], request->args[1], request->args[2],
-                                         request->args[3]);
+                                         request->args[3], request->args[4], request->args[5]);
             break;
         case P_FB_INIT:
             fb_init(request->args[0]);

@@ -71,6 +71,7 @@
 #define ESR_EC_MSR          0b011000
 #define ESR_EC_SVE          0b011001
 #define ESR_EC_PAUTH_FAIL   0b011100
+#define ESR_EC_SME          0b011101
 #define ESR_EC_IABORT_LOWER 0b100000
 #define ESR_EC_IABORT       0b100001
 #define ESR_EC_PC_ALIGN     0b100010
@@ -199,6 +200,10 @@
 #define CPTR_EL2_FPEN_NONE (0x3UL << 20)
 #define CPTR_EL2_ZEN GENMASK(17, 16)
 #define CPTR_EL2_ZEN_NONE (0x3UL << 16)
+
+#define SYS_SMCR_EL2  sys_reg(3, 4, 1, 2, 6)
+#define SMCR_EL2_EZT0 BIT(30)
+#define SMCR_EL2_LEN  GENMASK(3, 0)
 
 #define SYS_HFGRTR_EL2 sys_reg(3, 4, 1, 1, 4)
 #define SYS_HFGWTR_EL2 sys_reg(3, 4, 1, 1, 5)
