@@ -481,6 +481,7 @@ void hv_arm_tick(bool secondary)
     else
         msr(CNTP_TVAL_EL0, hv_tick_interval);
     msr(CNTP_CTL_EL0, CNTx_CTL_ENABLE);
+    hv_rearm_soft_timer();
 }
 
 void hv_maybe_exit(void)

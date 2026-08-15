@@ -92,6 +92,33 @@ static inline s64 hv_kernel_cntv_delta(void)
     return (s64)(PERCPU(kernel_cntv_cval) - hv_kernel_cntv_now());
 }
 
+void hv_rearm_soft_timer(void)
+{
+    if (cpu_features->apple_sysregs_unlocked || !PERCPU(kernel_cntv_valid))
+        return;
+
+    u64 ctl = PERCPU(kernel_cntv_ctl) & (CNTx_CTL_ENABLE | CNTx_CTL_IMASK);
+    if (ctl != CNTx_CTL_ENABLE)
+        return;
+
+    s64 apple_delta = hv_kernel_cntv_delta();
+    if (apple_delta <= 0)
+        return;
+
+    u64 frequency = mrs(CNTFRQ_EL0);
+    u64 arch_delta = (u64)(((__uint128_t)(u64)apple_delta * frequency +
+                            APPLE_CNTV_FREQ - 1) /
+                           APPLE_CNTV_FREQ);
+    u64 deadline = mrs(CNTPCT_EL0) + arch_delta;
+    u64 host_ctl = mrs(CNTP_CTL_EL0);
+
+    if (!(host_ctl & CNTx_CTL_ENABLE) ||
+        (s64)(deadline - mrs(CNTP_CVAL_EL0)) < 0) {
+        msr(CNTP_CVAL_EL0, deadline);
+        msr(CNTP_CTL_EL0, CNTx_CTL_ENABLE);
+    }
+}
+
 static void hv_kernel_cntv_init(void)
 {
     if (PERCPU(kernel_cntv_valid))
@@ -103,6 +130,7 @@ static void hv_kernel_cntv_init(void)
         mrs(SYS_IMP_APL_KERNEL_CNTV_CTL_EL0) & (CNTx_CTL_ENABLE | CNTx_CTL_IMASK);
     PERCPU(kernel_cntv_cval) = hv_kernel_cntv_now() + (s64)(s32)tval;
     PERCPU(kernel_cntv_valid) = true;
+    hv_rearm_soft_timer();
 }
 
 static u64 hv_kernel_cntv_read_ctl(void)
@@ -125,12 +153,14 @@ static void hv_kernel_cntv_write_ctl(u64 val)
 {
     hv_kernel_cntv_init();
     PERCPU(kernel_cntv_ctl) = val & (CNTx_CTL_ENABLE | CNTx_CTL_IMASK);
+    hv_rearm_soft_timer();
 }
 
 static void hv_kernel_cntv_write_tval(u64 val)
 {
     hv_kernel_cntv_init();
     PERCPU(kernel_cntv_cval) = hv_kernel_cntv_now() + (s64)(s32)(u32)val;
+    hv_rearm_soft_timer();
 }
 
 static bool hv_kernel_cntv_pending(void)
@@ -306,18 +336,24 @@ void hv_set_time_stealing(bool enabled, bool reset)
 void hv_apply_time_stealing_offset(void)
 {
     msr(CNTVOFF_EL2, stolen_time);
+    if (!cpu_features->apple_sysregs_unlocked)
+        hv_rearm_soft_timer();
 }
 
 void hv_add_time(s64 time)
 {
     u64 ticks = time < 0 ? (u64)-time : (u64)time;
-    u64 kernel_ticks = (u64)((__uint128_t)ticks * 24000000ULL / mrs(CNTFRQ_EL0));
+    u64 kernel_ticks =
+        (u64)((__uint128_t)ticks * APPLE_CNTV_FREQ / mrs(CNTFRQ_EL0));
 
     stolen_time -= (u64)time;
     if (time < 0)
         stolen_time_kernel_cntv += kernel_ticks;
     else
         stolen_time_kernel_cntv -= kernel_ticks;
+
+    if (!cpu_features->apple_sysregs_unlocked)
+        hv_rearm_soft_timer();
 }
 
 static void hv_update_fiq(void)
