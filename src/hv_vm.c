@@ -24,6 +24,7 @@ extern uint64_t ram_base;
 #define PTE_SH_IS             (0b11L << 8)
 #define PTE_S2AP_RW           (0b11L << 6)
 #define PTE_S2AP_RO           (0b01L << 6)
+#define PTE_MEMATTR           GENMASK(5, 2)
 #define PTE_MEMATTR_UNCHANGED (0b1111L << 2)
 
 #define PTE_ATTRIBUTES    (PTE_ACCESS | PTE_SH_IS | PTE_S2AP_RW | PTE_MEMATTR_UNCHANGED)
@@ -309,6 +310,9 @@ int hv_map(u64 from, u64 to, u64 size, u64 incr)
 {
     u64 chunk;
     bool hw = IS_HW(to);
+    bool force_l3 =
+        hw && FIELD_GET(PTE_MEMATTR, to) !=
+                  FIELD_GET(PTE_MEMATTR, PTE_MEMATTR_UNCHANGED);
 
     if (from & MASK(VADDR_L4_OFFSET_BITS) || size & MASK(VADDR_L4_OFFSET_BITS))
         return -1;
@@ -344,7 +348,8 @@ int hv_map(u64 from, u64 to, u64 size, u64 incr)
 
     // L2 mappings
     chunk = ALIGN_DOWN(size, BIT(VADDR_L2_OFFSET_BITS));
-    if (chunk && (!hw || (to & VADDR_L2_ALIGN_MASK) == 0)) {
+    if (chunk && !force_l3 &&
+        (!hw || (to & VADDR_L2_ALIGN_MASK) == 0)) {
         hv_pt_map_l2(from, to, chunk, incr);
         from += chunk;
         to += incr * chunk;
