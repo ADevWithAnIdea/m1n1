@@ -12,6 +12,8 @@ parser.add_argument('-c', '--call', action="store_true", help="Use call mode")
 parser.add_argument('-r', '--raw', action="store_true", help="Image is raw")
 parser.add_argument('-E', '--entry-point', action="store", type=int, help="Entry point for the raw image", default=0x800)
 parser.add_argument('-x', '--xnu', action="store_true", help="Set up for chainloading XNU")
+parser.add_argument('--verbose', action="store_true",
+                    help="Show individual Mach-O segment entries")
 parser.add_argument('payload', type=pathlib.Path)
 parser.add_argument('boot_args', default=[], nargs="*")
 args = parser.parse_args()
@@ -29,7 +31,7 @@ if args.raw:
     entry = new_base + args.entry_point
 else:
     macho = MachO(args.payload.read_bytes())
-    image = macho.prepare_image()
+    image = macho.prepare_image(verbose=args.verbose)
     image += b"\x00\x00\x00\x00"
     entry = macho.entry
     entry -= macho.vmin
@@ -55,9 +57,7 @@ bootargs_off = image_size
 bootargs_size = 0x4000
 image_size += bootargs_size
 
-# On M4/A18, iBoot adds a 48 KiB region ending at top_of_kernel_data
-# that secondary CPUs can't write to. This hack avoids using that region
-# by making the next m1n1's heap start above it
+# Avoid the M4/A18 secondary-write-protected region below top_of_kernel_data.
 protected_start = u.ba.top_of_kernel_data - 3 * 0x4000
 image_end = new_base + image_size
 if image_end > protected_start:

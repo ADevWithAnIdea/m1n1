@@ -250,13 +250,10 @@ static void mcc_unmap_adt_tz_carveouts(void)
 
 int mcc_unmap_carveouts(void)
 {
-    if (!mcc_initialized)
-        return -1;
-
     mcc_carveout_count = 0;
     memset(mcc_carveouts, 0, sizeof mcc_carveouts);
 
-    if (mcc_regs[0].tz) {
+    if (mcc_initialized && mcc_regs[0].tz) {
         // All MCCs and planes should have identical configs
         // Note: For unhandled machines, the TZ regions can be found (on m1, m2, m3) by looking at
         // region-id-2 and region-id-4 on a booted macos, in the /chosen/carveout-memory-map DT node.

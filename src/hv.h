@@ -49,6 +49,7 @@ typedef enum _hv_entry_type {
     HV_CPU_SWITCH,
     HV_VIRTIO,
     HV_PANIC,
+    HV_XNU_PANIC,
 } hv_entry_type;
 
 /* VM */
@@ -60,7 +61,8 @@ int hv_map_hw_ro(u64 from, u64 to, u64 size);
 int hv_map_sw(u64 from, u64 to, u64 size);
 int hv_map_hook(u64 from, hv_hook_t *hook, u64 size);
 
-/* T8140 CPU/ACC/CPM write guard (no-op on other SoCs); see hv_t8140.c. */
+/* SoC-specific guards for unsafe guest CPU/ACC/CPM writes. */
+int hv_t8132_map_cpu_power_regs(void);
 int hv_t8140_map_accumulators(void);
 
 bool hv_pt_is_ram(u64 ipa);
@@ -84,6 +86,8 @@ void virtio_put_buffer(u64 base, int qu, u32 id, u32 len);
 
 /* Exceptions */
 void hv_exc_proxy(struct exc_info *ctx, uartproxy_boot_reason_t reason, u32 type, void *extra);
+bool hv_handle_pmc_hvc(struct exc_info *ctx, u32 immediate);
+bool hv_handle_objc_bp_hvc(struct exc_info *ctx, u32 immediate);
 void hv_set_time_stealing(bool enabled, bool reset);
 void hv_apply_time_stealing_offset(void);
 void hv_add_time(s64 time);
@@ -124,6 +128,7 @@ void hv_rendezvous(void);
 bool hv_switch_cpu(int cpu);
 void hv_pin_cpu(int cpu);
 void hv_arm_tick(bool secondary);
+void hv_rearm_soft_timer(void);
 void hv_rearm(void);
 void hv_maybe_exit(void);
 void hv_tick(struct exc_info *ctx);

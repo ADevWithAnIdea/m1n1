@@ -144,7 +144,11 @@ OBJECTS := \
 	firmware.o \
 	gxf.o gxf_asm.o \
 	heapblock.o \
-	hv.o hv_vm.o hv_exc.o hv_vuart.o hv_wdt.o hv_asm.o hv_aic.o hv_t8140.o hv_virtio.o \
+	hv.o hv_vm.o hv_exc.o hv_sptm.o \
+	hv_sptm_boot.o hv_sptm_core.o hv_sptm_dart.o hv_sptm_dart_power.o \
+	hv_sptm_frame.o hv_sptm_init.o hv_sptm_nvme.o hv_sptm_pmap.o \
+	hv_sptm_sart.o hv_sptm_txm.o hv_sptm_uat.o hv_sptm_xnu.o \
+	hv_vuart.o hv_wdt.o hv_asm.o hv_aic.o hv_t8132.o hv_t8140.o hv_virtio.o \
 	i2c.o \
 	iodev.o \
 	iova.o \
@@ -162,6 +166,7 @@ OBJECTS := \
 	proxy.o \
 	ringbuffer.o \
 	rtkit.o \
+	sapt.o \
 	sart.o \
 	sep.o \
 	sio.o \

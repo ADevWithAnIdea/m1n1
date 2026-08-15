@@ -25,9 +25,9 @@ class HV(Reloadable):
 
     PTE_MEMATTR_UNCHANGED   = 0b1111 << 2
     PTE_S2AP_RW             = 0b11 << 6
-    PTE_SH_NS               = 0b11 << 8
+    PTE_SH_IS               = 0b11 << 8
     PTE_ACCESS              = 1 << 10
-    PTE_ATTRIBUTES          = PTE_ACCESS | PTE_SH_NS | PTE_S2AP_RW | PTE_MEMATTR_UNCHANGED
+    PTE_ATTRIBUTES          = PTE_ACCESS | PTE_SH_IS | PTE_S2AP_RW | PTE_MEMATTR_UNCHANGED
 
     SPTE_TRACE_READ         = 1 << 63
     SPTE_TRACE_WRITE        = 1 << 62
@@ -74,10 +74,12 @@ class HV(Reloadable):
     AIC_EVT_TYPE_HW = 1
     IRQTRACE_IRQ = 1
 
-    def __init__(self, iface, proxy, utils):
+    def __init__(self, iface, proxy, utils, *, verbose=False):
         self.iface = iface
         self.p = proxy
         self.u = utils
+        self.verbose = verbose
+        self.verbose_print = print if verbose else lambda *args, **kwargs: None
         self.pac_mask = self.PAC_MASK
         self.user_pac_mask = self.PAC_MASK
         self.vbar_el1 = None
@@ -118,6 +120,8 @@ class HV(Reloadable):
         self.switching_context = False
         self.show_timestamps = False
         self.virtio_devs = {}
+        self.sptm_symbols = None
+        self.sptm_panic_state_pa = 0
 
     def _reloadme(self):
         super()._reloadme()
@@ -140,18 +144,18 @@ class HV(Reloadable):
 
         self.shell_locals["ctx"] = self.context
 
-    def log(self, s, *args, show_cpu=True, **kwargs):
+    def log(self, s, *args, show_cpu=True, console=True, **kwargs):
+        prefix = ""
         if self.ctx is not None and show_cpu:
             ts=""
             if self.show_timestamps:
                 ts = f"[{self.u.mrs(CNTPCT_EL0):#x}]"
-            print(ts+f"[cpu{self.ctx.cpu_id}] " + s, *args, **kwargs)
-            if self.print_tracer.log_file:
-                print(f"# {ts}[cpu{self.ctx.cpu_id}] " + s, *args, file=self.print_tracer.log_file, **kwargs)
-        else:
-            print(s, *args, **kwargs)
-            if self.print_tracer.log_file:
-                print("# " + s, *args, file=self.print_tracer.log_file, **kwargs)
+            prefix = ts + f"[cpu{self.ctx.cpu_id}] "
+        if console:
+            print(prefix + s, *args, **kwargs)
+        if self.print_tracer.log_file:
+            print("# " + prefix + s, *args,
+                  file=self.print_tracer.log_file, **kwargs)
 
     def unmap(self, ipa, size):
         assert self.p.hv_map(ipa, 0, size, 0) >= 0
@@ -300,6 +304,8 @@ class HV(Reloadable):
         self.mmio_maps.compact()
 
         top = 0
+        mapped_regions = 0
+        unmapped_regions = 0
 
         for zone in self.dirty_maps:
             if zone.stop <= top:
@@ -311,7 +317,9 @@ class HV(Reloadable):
                     continue
                 if top < mzone.start:
                     self.unmap(top, mzone.start - top)
-                    self.log(f"PT[{top:09x}:{mzone.start:09x}] -> *UNMAPPED*")
+                    unmapped_regions += 1
+                    self.log(f"PT[{top:09x}:{mzone.start:09x}] -> *UNMAPPED*",
+                             console=self.verbose)
 
                 top = mzone.stop
                 if not maps:
@@ -323,7 +331,12 @@ class HV(Reloadable):
                 need_write = any(m[3] for m in maps)
 
                 if mode == TraceMode.RESERVED:
-                    self.log(f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> RESERVED {ident}")
+                    mapped_regions += 1
+                    self.log(
+                        f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> "
+                        f"RESERVED {ident}",
+                        console=self.verbose,
+                    )
                     continue
                 elif mode in (TraceMode.HOOK, TraceMode.SYNC):
                     self.map_hook_idx(mzone.start, mzone.stop - mzone.start, 0,
@@ -347,7 +360,12 @@ class HV(Reloadable):
                     self.map_sw(mzone.start, pa, mzone.stop - mzone.start)
                 elif mode == TraceMode.OFF:
                     self.map_hw(mzone.start, mzone.start, mzone.stop - mzone.start)
-                    self.log(f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> HW:{ident}")
+                    mapped_regions += 1
+                    self.log(
+                        f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> "
+                        f"HW:{ident}",
+                        console=self.verbose,
+                    )
                     continue
 
                 rest = [m[1] for m in maps[1:] if m[0] != TraceMode.OFF]
@@ -356,14 +374,27 @@ class HV(Reloadable):
                 else:
                     rest = ""
 
-                self.log(f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> {mode.name}.{'R' if read else ''}{'W' if read else ''} {ident}{rest}")
+                mapped_regions += 1
+                self.log(
+                    f"PT[{mzone.start:09x}:{mzone.stop:09x}] -> "
+                    f"{mode.name}.{'R' if read else ''}"
+                    f"{'W' if read else ''} {ident}{rest}",
+                    console=self.verbose,
+                )
 
             if top < zone.stop:
                 self.unmap(top, zone.stop - top)
-                self.log(f"PT[{top:09x}:{zone.stop:09x}] -> *UNMAPPED*")
+                unmapped_regions += 1
+                self.log(f"PT[{top:09x}:{zone.stop:09x}] -> *UNMAPPED*",
+                         console=self.verbose)
 
         self.u.inst(0xd50c83df) # tlbi vmalls12e1is
         self.dirty_maps.clear()
+        self.log(
+            f"Updated page tables: {mapped_regions + unmapped_regions} "
+            f"regions ({mapped_regions} mapped/reserved, "
+            f"{unmapped_regions} unmapped)"
+        )
 
     def shellwrap(self, func, description, update=None, needs_ret=False):
 
@@ -745,6 +776,10 @@ class HV(Reloadable):
 
     def handle_hvc(self, ctx):
         idx = ctx.esr.ISS
+        if self.sptm is not None and (
+            idx <= 4 or 0x1c0 <= idx < 0x280 or 0x400 <= idx < 0xac0
+        ):
+            return False
         if idx == 0:
             return False
 
@@ -780,15 +815,7 @@ class HV(Reloadable):
             if elr_phys:
                 self.u.disassemble_at(elr_phys - 4 * 4, 9 * 4, elr - 4 * 4, elr, sym=self.get_sym)
             if self.sym(elr)[1] == "com.apple.kernel:_panic_trap_to_debugger":
-                self.log("Panic! Trying to decode panic...")
-                try:
-                    self.decode_panic_call()
-                except:
-                    self.log("Error decoding panic.")
-                try:
-                    self.bt()
-                except:
-                    pass
+                self.report_xnu_panic()
                 return False
             if esr.EC == ESR_EC.UNKNOWN:
                 instr = self.p.read32(elr_phys)
@@ -963,6 +990,7 @@ class HV(Reloadable):
 
         handled = False
         user_interrupt = False
+        xnu_panic = False
 
         try:
             if reason == START.EXCEPTION_LOWER:
@@ -979,6 +1007,18 @@ class HV(Reloadable):
                 elif code == HV_EVENT.USER_INTERRUPT:
                     handled = True
                     user_interrupt = True
+                elif code == HV_EVENT.XNU_PANIC:
+                    handled = True
+                    xnu_panic = True
+                    owner = domain = None
+                    if self.sptm_panic_state_pa:
+                        state = self.iface.readmem(self.sptm_panic_state_pa, 16)
+                        owner = struct.unpack_from("<H", state, 8)[0]
+                        domain = struct.unpack_from("<I", state, 12)[0]
+                    self.log(
+                        f"XNU panic suspended in EL2 "
+                        f"(owner={owner}, domain={domain})"
+                    )
         except Exception as e:
             self.log(f"Python exception while handling guest exception:")
             traceback.print_exc()
@@ -993,11 +1033,29 @@ class HV(Reloadable):
             self.update_pac_mask()
             self.u.print_context(ctx, self.is_fault, sym=self.get_sym)
 
-        if self._sigint_pending or not handled or user_interrupt:
+        if self._sigint_pending or not handled or user_interrupt or xnu_panic:
             self._sigint_pending = False
 
             signal.signal(signal.SIGINT, self.default_sigint)
-            ret = self.run_shell("Entering hypervisor shell", "Returning from exception")
+            if xnu_panic:
+                self.report_xnu_panic()
+                ret = None
+                while ret is None:
+                    ret = self.run_shell(
+                        "XNU panic suspended. Inspect with context(), bt(), "
+                        "decode_panic_call(), and cpu(). Use cont() to resume "
+                        "XNU explicitly or hv.exit() to request guest exit.",
+                        "XNU panic remains suspended",
+                    )
+                    if ret is None:
+                        self.log(
+                            "XNU panic remains suspended; use cont() or "
+                            "hv.exit() explicitly"
+                        )
+            else:
+                ret = self.run_shell(
+                    "Entering hypervisor shell", "Returning from exception"
+                )
             signal.signal(signal.SIGINT, self._handle_sigint)
 
             if ret is None:
@@ -1261,7 +1319,42 @@ class HV(Reloadable):
         xnutools.decode_debugger_state(self.u, self.ctx)
 
     def decode_panic_call(self):
-        xnutools.decode_panic_call(self.u, self.ctx)
+        if (
+            self.exc_reason == START.HV
+            and self.exc_code == HV_EVENT.XNU_PANIC
+            and not self.ctx.regs[0]
+        ):
+            # The panic wrapper moves the format string and va_list to x2/x3.
+            xnutools.decode_panic(self.u, self.ctx.regs[2], self.ctx.regs[3])
+        else:
+            xnutools.decode_panic_call(self.u, self.ctx)
+
+    def report_xnu_panic(self):
+        """Best-effort panic report which must never block the debug shell."""
+        self.log("Panic! Trying to decode panic...")
+
+        try:
+            self.log(
+                f"Panic context: ELR={self.addr(self.ctx.elr)} "
+                f"LR={self.addr(self.ctx.regs[30])}"
+            )
+        except Exception:
+            self.log(
+                f"Panic context: ELR=0x{self.ctx.elr:x} "
+                f"LR=0x{self.ctx.regs[30]:x} (symbolization failed)"
+            )
+
+        try:
+            self.decode_panic_call()
+        except Exception:
+            self.log("Error decoding panic string:")
+            traceback.print_exc()
+
+        try:
+            self.bt()
+        except Exception:
+            self.log("Error decoding panic backtrace:")
+            traceback.print_exc()
 
     def context(self):
         f = f" (orig: #{self.exc_orig_cpu})" if self.ctx.cpu_id != self.exc_orig_cpu else ""
@@ -1374,7 +1467,7 @@ class HV(Reloadable):
         # disable unused USB iodev early so interrupts can be reenabled in hv_init()
         for iodev in IODEV:
             if iodev >= IODEV.USB0 and iodev != self.iodev:
-                print(f"Disable iodev {iodev!s}")
+                self.verbose_print(f"Disable iodev {iodev!s}")
                 self.p.iodev_set_usage(iodev, 0)
 
         print("Initializing hypervisor over iodev %s" % self.iodev)
@@ -1392,12 +1485,18 @@ class HV(Reloadable):
         self.iface.set_handler(START.HV, HV_EVENT.CPU_SWITCH, self.handle_exception)
         self.iface.set_handler(START.HV, HV_EVENT.VIRTIO, self.handle_virtio)
         self.iface.set_handler(START.HV, HV_EVENT.PANIC, self.handle_bark)
+        self.iface.set_handler(START.HV, HV_EVENT.XNU_PANIC, self.handle_exception)
         self.iface.set_event_handler(EVENT.MMIOTRACE, self.handle_mmiotrace)
         self.iface.set_event_handler(EVENT.IRQTRACE, self.handle_irqtrace)
 
         # Map MMIO ranges as HW by default
-        for r in self.adt["/arm-io"].ranges:
-            print(f"Mapping MMIO range: {r.parent_addr:#x} .. {r.parent_addr + r.size:#x}")
+        mmio_ranges = list(self.adt["/arm-io"].ranges)
+        print(f"Registering {len(mmio_ranges)} MMIO ranges")
+        for r in mmio_ranges:
+            self.verbose_print(
+                f"Mapping MMIO range: {r.parent_addr:#x} .. "
+                f"{r.parent_addr + r.size:#x}"
+            )
             self.add_tracer(irange(r.parent_addr, r.size), "HW", TraceMode.OFF)
 
         hcr = HCR(self.u.mrs(HCR_EL2))
@@ -1406,7 +1505,6 @@ class HV(Reloadable):
             hcr.AMO = 0
         else:
             hcr.TACR = 1
-        hcr.TIDCP = 0
         hcr.TVM = 0
         hcr.FMO = 1
         hcr.IMO = 0
@@ -1418,7 +1516,9 @@ class HV(Reloadable):
         if not self.novm:
             #hacr.TRAP_CPU_EXT = 1
             #hacr.TRAP_SPRR = 1
-            #hacr.TRAP_GXF = 1
+            # Route raw-mode GXF save/restore accesses to the target-side shadows.
+            if not self.u.cpu_features.apple_sysregs_unlocked:
+                hacr.TRAP_GXF = 1
             hacr.TRAP_CTRR = 1
             hacr.TRAP_EHID = 1
             hacr.TRAP_HID = 1
@@ -1637,6 +1737,9 @@ class HV(Reloadable):
         # to re-enable XNU serial output for newer macOS versions
         self.adt["defaults"].serial_device = getattr(self.adt["/arm-io/uart0"], "AAPL,phandle")
 
+        adt_candidates = 0
+        adt_removed = 0
+
         if self.iodev >= IODEV.USB0:
             idx = self.iodev - IODEV.USB0
             for prefix in ("/arm-io/dart-usb%d",
@@ -1659,28 +1762,43 @@ class HV(Reloadable):
                            "/arm-io/atc-phy%d",
                           ):
                 name = prefix % idx
-                print(f"Removing ADT node {name}")
+                adt_candidates += 1
+                self.verbose_print(f"Removing ADT node {name}")
                 try:
                     del self.adt[name]
                 except KeyError:
                     pass
+                else:
+                    adt_removed += 1
 
         if self.wdt_cpu is not None:
             name = f"/cpus/cpu{self.wdt_cpu}"
-            print(f"Removing ADT node {name}")
+            adt_candidates += 1
+            self.verbose_print(f"Removing ADT node {name}")
             try:
                 del self.adt[name]
             except KeyError:
                 pass
+            else:
+                adt_removed += 1
 
         if not self.smp:
             for cpu in list(self.adt["cpus"]):
                 if cpu.state != "running":
-                    print(f"Removing ADT node {cpu._path}")
+                    adt_candidates += 1
+                    self.verbose_print(f"Removing ADT node {cpu._path}")
                     try:
                         del self.adt["cpus"][cpu.name]
                     except KeyError:
                         pass
+                    else:
+                        adt_removed += 1
+
+        if adt_candidates:
+            print(
+                f"ADT pruning: removed {adt_removed} of "
+                f"{adt_candidates} candidate nodes"
+            )
 
     def set_bootargs(self, boot_args):
         if "-v" in boot_args.split():
@@ -1743,7 +1861,7 @@ class HV(Reloadable):
 
         print(f"Physical memory: 0x{phys_base:x} .. 0x{mem_top:x}")
         print(f"Guest region start: 0x{guest_base:x}")
-        
+
         self.entry = guest_base + entryoffset
 
         print(f"Mapping guest physical memory...")
@@ -1834,6 +1952,8 @@ class HV(Reloadable):
         self.xnu_mode = True
 
         self.macho = macho = MachO(data)
+        if "com.apple.kernel" in macho.subfiles:
+            macho.add_fileset_symbols("com.apple.kernel")
         if symfile is not None:
             if isinstance(symfile, str):
                 symfile = open(symfile, "rb")
@@ -1933,69 +2053,141 @@ class HV(Reloadable):
                     p += 1
                     continue
                 opcode = a[p // 4]
-                if 0x00201420 <= opcode <= 0x00201424:  # genter #imm (imm 0..4)
+                if opcode == 0x00201420:
+                    # The dispatch ABI is entirely carried in x16.
                     a[p // 4] = self.hvc(0)
+                elif opcode == 0x00201424:
+                    # genter #SPTM_GENTER_XNU_PANIC_BEGIN
+                    a[p // 4] = self.hvc(4)
                 p += 4
 
-            # sysreg neutralization: NOP writes to guarded impdef regs and
-            # SME control register
+            hvc_sysregs = {}
+
+            def sysreg_opcode(read, op0, op1, crn, crm, op2):
+                opcode = 0xd5300000 if read else 0xd5100000
+                return (
+                    opcode
+                    | (op0 << 19)
+                    | (op1 << 16)
+                    | (crn << 12)
+                    | (crm << 8)
+                    | (op2 << 5)
+                )
+
+            # Route locked PMCR0 accesses through the target-side model.
+            if not self.u.cpu_features.apple_sysregs_unlocked:
+                hvc_sysregs.update({
+                    0xd519f000: 0x380,
+                    0xd539f000: 0x3c0,
+                })
+            # These CLPC sysregs are undefined at EL1 when Apple sysregs are locked.
+            # Lower counter reads to CNTPCT and route other accesses to EL2.
+            clpc_regs = [
+                (3, 7, 15, 0, 3),   # CORE_PERF0
+                (3, 7, 15, 1, 3),   # CORE_PERF_ENABLE0
+                (3, 7, 15, 2, 3),   # CORE_PERF1
+                (3, 7, 15, 3, 3),   # CORE_PERF_ENABLE1
+                (3, 7, 15, 4, 3),   # CORE_PERF2
+                (3, 7, 15, 5, 3),   # CORE_PERF_ENABLE2
+                (3, 7, 15, 6, 3),   # CORE_PERF3
+                (3, 7, 15, 7, 3),   # CORE_PERF_ENABLE3
+                (3, 7, 15, 8, 3),   # CORE_PERF4
+                (3, 7, 15, 9, 3),   # CORE_PERF_ENABLE4
+                (3, 7, 15, 10, 3),  # CORE_PERF5
+                (3, 7, 15, 11, 3),  # CORE_PERF_ENABLE5
+                (3, 7, 15, 12, 3),  # CORE_PERF6
+                (3, 7, 15, 13, 3),  # CORE_PERF_ENABLE6
+                (3, 7, 15, 14, 3),  # CORE_PERF7
+                (3, 7, 15, 15, 3),  # CORE_PERF_ENABLE7
+                (3, 7, 15, 5, 0),   # CORE_PERF_CTRL2
+                (3, 1, 15, 8, 3),   # CORE_ACC0
+                (3, 1, 15, 9, 3),   # CORE_ACC1
+                (3, 1, 15, 10, 3),  # CORE_ACC2
+                (3, 1, 15, 11, 3),  # CORE_ACC3
+                (3, 1, 15, 12, 3),  # CORE_ACC4
+                (3, 1, 15, 0, 3),   # MEM_STALL_CFG0
+                (3, 1, 15, 1, 3),   # MEM_STALL_CFG1
+                (3, 1, 15, 2, 3),   # MEM_STALL_CFG2
+            ]
+            clpc_counter_sysregs = set()
+            for reg_index, encoding in enumerate(clpc_regs):
+                for is_read in (False, True):
+                    is_counter = (
+                        (reg_index < 16 and not (reg_index & 1)) or
+                        17 <= reg_index <= 21
+                    )
+                    if is_read and is_counter:
+                        clpc_counter_sysregs.add(
+                            sysreg_opcode(True, *encoding)
+                        )
+                        continue
+                    operation = reg_index * 2 + int(is_read)
+                    hvc_sysregs[sysreg_opcode(is_read, *encoding)] = (
+                        0x400 + (operation << 5)
+                    )
+
+            hvc_sysregs.update({
+                0xd53ef1a0: 0x1c0,  # mrs SPRR_PERM_EL0
+                0xd51ef1a0: 0x1e0,  # msr SPRR_PERM_EL0
+                0xd53ef1c0: 0x200,  # mrs SPRR_PERM_EL1
+                0xd51ef1c0: 0x220,  # msr SPRR_PERM_EL1
+            })
+
+            # Route undefined ObjC breakpoint registers through the C shadows.
+            hvc_sysregs.update({
+                0xd51ef080: 0xa40,  # msr S3_6_C15_C0_4
+                0xd53ef080: 0xa60,  # mrs S3_6_C15_C0_4
+                0xd51ef0a0: 0xa80,  # msr S3_6_C15_C0_5
+                0xd53ef0a0: 0xaa0,  # mrs S3_6_C15_C0_5
+            })
+
+            # NOP writes to guarded impdef and SME control registers.
             nop_msr = [
                 0xd51cf100,   # msr KERNKEYLO_EL1   (s3_4_c15_c1_0)
                 0xd51cf120,   # msr KERNKEYHI_EL1   (s3_4_c15_c1_1)
                 0xd51cfdc0,   # msr s3_4_c15_c13_6  (Apple PAC key)
                 0xd51cfde0,   # msr s3_4_c15_c13_7  (Apple PAC key)
+                0xd519f1a0,   # msr AGTCNTRDIR_EL1  (s3_1_c15_c1_5)
+                0xd51cfec0,   # msr AGTCNTRDIR_EL12 (s3_4_c15_c14_6)
+                0xd51cf180,   # msr AMX_CTL_EL1     (s3_4_c15_c1_4)
+                0xd519f740,   # msr alternate PMCR1 (s3_1_c15_c7_2)
                 0xd51c12a0,   # msr SMPRIMAP_EL2    (s3_4_c1_c2_5)
+                0xd51cfc00,   # msr guarded c12 state (s3_4_c15_c12_0)
+                0xd519fd80,   # msr Apple physical timer ctl (s3_1_c15_c13_4)
+                0xd51df2c0,   # msr WATCHDOGDIAG0 (s3_5_c15_c2_6)
+                0xd51cffc0,   # msr JCTL_EL0       (s3_4_c15_c15_6)
+                0xd51ef300,   # msr SPRR_UMPRR_EL1 (s3_6_c15_c3_0)
             ]
-            p = 0
-            while (p := data.find(b"\x1c\xd5", p)) != -1:
-                if (p & 3) != 2:
-                    p += 1
+            for word_index, instruction in enumerate(a):
+                opcode = instruction & ~0x1f
+                if opcode in clpc_counter_sysregs:
+                    rt = instruction & 0x1f
+                    a[word_index] = (
+                        sysreg_opcode(True, 3, 3, 14, 0, 1) | rt
+                    )
                     continue
-                opcode = a[p // 4] & ~0x1f
+                if opcode == 0xd53ef300:
+                    # Avoid an EL2 round trip for each page-policy read.
+                    rt = instruction & 0x1f
+                    a[word_index] = 0xaa1f03e0 | rt  # mov xRt, xzr
+                    continue
+                if opcode in hvc_sysregs:
+                    rt = instruction & 0x1f
+                    a[word_index] = self.hvc(hvc_sysregs[opcode] | rt)
+                    continue
                 if opcode in nop_msr:
-                    if opcode == 0xd51c12a0:
-                        print(f"  0x{seg_vmaddr + (p & ~3):x}: SMPRIMAP_EL2 -> noop")
-                    a[p // 4] = nop
-                p += 4
-
-            # commpage: force XNU to publish VM-safe userspace feature policy
-            # bytes. The Apple timebase path and HW-TPRO/SPRR path use
-            # userspace-inaccessible Apple registers under this EL1 guest.
-            #
-            # hard coded kernelcache addresses is a hack we should find a way
-            # to avoid
-            off = 0xfffffe000b5a3330 - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x52800068:
-                    raise RuntimeError("_COMM_PAGE_USER_TIMEBASE patch target mismatch")
-                a[off // 4] = 0x52800008
-                print(f"  0xfffffe000b5a3330: _COMM_PAGE_USER_TIMEBASE=0")
-
-            off = 0xfffffe000b5a3388 - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x52800028:
-                    raise RuntimeError("_COMM_PAGE_CONT_HWCLOCK patch target mismatch")
-                a[off // 4] = 0x52800008
-                print(f"  0xfffffe000b5a3388: _COMM_PAGE_CONT_HWCLOCK=0")
-
-            off = 0xfffffe000b5a358c - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x39043128:
-                    raise RuntimeError("_COMM_PAGE_HW_TPRO patch target mismatch")
-                a[off // 4] = 0x3904313f
-                print(f"  0xfffffe000b5a358c: _COMM_PAGE_HW_TPRO=0")
+                    a[word_index] = nop
 
             print("Done.")
             return a.tobytes()
 
         chip_id = self.u.adt["/chosen"].chip_id
         if chip_id in (0x8122, 0x6030, 0x6031, 0x6032, 0x6034):
-            image = macho.prepare_image(load_hook_m3)
-        elif chip_id in (0x8132, 0x8140, 0x6040, 0x6041):
-            # M4 / A18 Pro class: T8132, T8140, T6040 (M4 Pro), T6041 (M4 Max)
-            image = macho.prepare_image(load_hook_m4)
+            image = macho.prepare_image(load_hook_m3, verbose=self.verbose)
+        elif not self.u.cpu_features.apple_sysregs_unlocked:
+            image = macho.prepare_image(load_hook_m4, verbose=self.verbose)
         else:
-            image = macho.prepare_image()
+            image = macho.prepare_image(verbose=self.verbose)
         self.load_raw(image, entryoffset=(macho.entry - macho.vmin), use_xnu_symbols=self.xnu_mode and symfile is not None, vmin=macho.vmin)
 
     def update_pac_mask(self):
@@ -2053,11 +2245,14 @@ class HV(Reloadable):
         exec(code, self.shell_locals)
 
     def start(self):
-        print("Disabling other iodevs...")
-        for iodev in IODEV:
-            if iodev != self.iodev:
-                print(f" - {iodev!s}")
-                self.p.iodev_set_usage(iodev, 0)
+        other_iodevs = [iodev for iodev in IODEV if iodev != self.iodev]
+        if self.verbose:
+            print("Disabling other iodevs...")
+        else:
+            print(f"Disabling {len(other_iodevs)} other iodevs...")
+        for iodev in other_iodevs:
+            self.verbose_print(f" - {iodev!s}")
+            self.p.iodev_set_usage(iodev, 0)
 
         print("Doing essential MMIO remaps...")
         self.map_essential()
@@ -2069,6 +2264,11 @@ class HV(Reloadable):
         print(f"Uploading ADT (0x{len(adt_blob):x} bytes)...")
         assert len(adt_blob) <= align(self.u.ba.devtree_size)
         self.iface.writemem(self.adt_base, adt_blob)
+
+        if self.sptm_symbols is not None:
+            self.sptm_panic_state_pa = self.p.hv_sptm_init(
+                self.adt_base, *self.sptm_symbols
+            )
 
         print("Improving logo...")
         self.p.fb_improve_logo()

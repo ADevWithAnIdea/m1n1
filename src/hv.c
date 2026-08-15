@@ -5,6 +5,7 @@
 #include "cpu_regs.h"
 #include "display.h"
 #include "gxf.h"
+#include "hv_sptm.h"
 #include "memory.h"
 #include "pcie.h"
 #include "smp.h"
@@ -103,6 +104,7 @@ static void hv_config_sme(bool verbose)
 
     reg_mask(SYS_CPTR_EL2, CPTR_EL2_SMEN | CPTR_EL2_FPEN | CPTR_EL2_ZEN,
              CPTR_EL2_SMEN_NONE | CPTR_EL2_FPEN_NONE | CPTR_EL2_ZEN_NONE);
+    reg_set(SYS_SMCR_EL2, SMCR_EL2_EZT0 | SMCR_EL2_LEN);
 
     if (FIELD_GET(ID_AA64MMFR0_FGT, mrs(ID_AA64MMFR0_EL1))) {
         reg_set(SYS_HFGRTR_EL2, HFGxTR_EL2_nTPIDR2_EL0 | HFGxTR_EL2_nSMPRI_EL1);
@@ -121,6 +123,8 @@ void hv_init(void)
     // Make sure we wake up DCP if we put it to sleep, just quiesce it to match ADT
     if (display_is_external && display_start_dcp() >= 0)
         display_shutdown(DCP_QUIESCED);
+    // preserve the hypervisor control link, reset guest-owned USB
+    usb_iodev_handoff();
     // reenable hpm interrupts for the guest for unused iodevs
     usb_hpm_restore_irqs(0);
     smp_start_secondaries();
@@ -138,13 +142,6 @@ void hv_init(void)
               HCR_AMO | // Trap SError exceptions
               HCR_VM;   // Enable stage 2 translation
 
-    /*
-     * On guarded (M4-class) SoCs the Apple impdef sysregs are GL2-only and fault
-     * when executed from EL2, so trap the guest's EL1 accesses to us and soft-
-     * model/shadow them. Do NOT set TIDCP on unlocked SoCs: there the guest
-     * accesses these registers directly at EL1 and trapping them would regress
-     * existing (M1-M3) virtualization.
-     */
     if (!cpu_features->apple_sysregs_unlocked)
         hcr |= HCR_TIDCP;
 
@@ -189,6 +186,8 @@ static void hv_set_gxf_vbar(void)
 
 void hv_start(void *entry, u64 regs[4])
 {
+    sptm_boot_prepare_start(&entry, regs, false);
+
     if (boot_cpu_idx == -1) {
         printf("Boot CPU has not been found, can't start hypervisor\n");
         return;
@@ -199,8 +198,8 @@ void hv_start(void *entry, u64 regs[4])
 
     hv_started_cpus[boot_cpu_idx] = true;
 
-    // Install the T8140 CPU/ACC/CPM write guard before the guest runs (no-op on
-    // other SoCs). Must be after the guest's device mappings are established.
+    // Install CPU/CPM power-state guards after guest device mappings exist.
+    hv_t8132_map_cpu_power_regs();
     hv_t8140_map_accumulators();
 
     msr(VBAR_EL1, _hv_vectors_start);
@@ -342,22 +341,17 @@ static void hv_enter_secondary(void *entry, u64 regs[4])
 
 void hv_start_secondary(int cpu, void *entry, u64 regs[4])
 {
-    printf("HV: Initializing secondary %d\n", cpu);
-    iodev_console_flush();
+    sptm_boot_prepare_start(&entry, regs, true);
 
     if (!cpu_features->apple_sysregs_unlocked)
         hv_capture_guest_el12_state(&hv_secondary_info);
+
     mmu_init_secondary(cpu);
-    iodev_console_flush();
     smp_call4(cpu, hv_init_secondary, (u64)&hv_secondary_info, 0, 0, 0);
     smp_wait(cpu);
-    iodev_console_flush();
 
-    printf("HV: Entering guest secondary %d at %p\n", cpu, entry);
     hv_started_cpus[cpu] = true;
     __atomic_or_fetch(&hv_cpus_in_guest, BIT(cpu), __ATOMIC_ACQUIRE);
-
-    iodev_console_flush();
     smp_call4(cpu, hv_enter_secondary, (u64)entry, (u64)regs, 0, 0);
 }
 
@@ -481,6 +475,7 @@ void hv_arm_tick(bool secondary)
     else
         msr(CNTP_TVAL_EL0, hv_tick_interval);
     msr(CNTP_CTL_EL0, CNTx_CTL_ENABLE);
+    hv_rearm_soft_timer();
 }
 
 void hv_maybe_exit(void)

@@ -27,7 +27,7 @@ class HistoryConsole(code.InteractiveConsole):
                 readline.read_history_file(histfile)
             except FileNotFoundError:
                 pass
-            except PermissionError as e:
+            except OSError as e:
                 print(f"Failed reading history from {histfile}: {e}", file=sys.stderr)
                 if sys.platform == "darwin":
                     print(f"  On macOS this may be caused by extended attributes. "

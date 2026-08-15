@@ -44,6 +44,18 @@ struct usb_drd_regs {
 static tps6598x_irq_state_t tps6598x_irq_state[USB_IODEV_COUNT];
 static bool usb_is_initialized = false;
 
+static bool usb_device_mode_disabled(u32 idx)
+{
+    char path[sizeof(FMT_DRD_PATH)];
+
+    snprintf(path, sizeof(path), FMT_DRD_PATH, idx);
+    int node = adt_path_offset(adt, path);
+    if (node < 0)
+        return false;
+
+    return adt_get_property(adt, node, "usb-device-disable") != NULL;
+}
+
 #define PIPEHANDLER_MUX_CTRL             0x0c
 #define PIPEHANDLER_MUX_CTRL_USB3        0x08
 #define PIPEHANDLER_MUX_CTRL_USB4_TUNNEL 0x11
@@ -130,6 +142,10 @@ int usb_phy_bringup(u32 idx)
     if (idx >= USB_IODEV_COUNT)
         return -1;
 
+    // The J773 front-port hub prohibits device mode.
+    if (usb_device_mode_disabled(idx))
+        return -1;
+
     struct usb_drd_regs usb_regs;
     if (usb_drd_get_regs(idx, &usb_regs) < 0)
         return -1;
@@ -161,6 +177,9 @@ int usb_phy_bringup(u32 idx)
 
 dwc3_dev_t *usb_iodev_bringup(u32 idx)
 {
+    if (usb_device_mode_disabled(idx))
+        return NULL;
+
     dart_dev_t *usb_dart = usb_dart_init(idx);
     if (!usb_dart)
         return NULL;
@@ -447,17 +466,28 @@ void usb_iodev_init(void)
     }
 }
 
+static void usb_iodev_shutdown_one(int i)
+{
+    struct iodev *usb_iodev = iodev_unregister_device(IODEV_USB0 + i);
+    if (!usb_iodev)
+        return;
+
+    printf("USB%d: shutdown\n", i);
+    usb_dwc3_shutdown(usb_iodev->opaque);
+    free(usb_iodev);
+}
+
+void usb_iodev_handoff(void)
+{
+    for (int i = FIRST_USB_IODEV; i < USB_IODEV_COUNT; i++)
+        if (!iodev_get_usage(IODEV_USB0 + i))
+            usb_iodev_shutdown_one(i);
+}
+
 void usb_iodev_shutdown(void)
 {
-    for (int i = FIRST_USB_IODEV; i < USB_IODEV_COUNT; i++) {
-        struct iodev *usb_iodev = iodev_unregister_device(IODEV_USB0 + i);
-        if (!usb_iodev)
-            continue;
-
-        printf("USB%d: shutdown\n", i);
-        usb_dwc3_shutdown(usb_iodev->opaque);
-        free(usb_iodev);
-    }
+    for (int i = FIRST_USB_IODEV; i < USB_IODEV_COUNT; i++)
+        usb_iodev_shutdown_one(i);
 }
 
 void usb_iodev_vuart_setup(iodev_id_t iodev)
