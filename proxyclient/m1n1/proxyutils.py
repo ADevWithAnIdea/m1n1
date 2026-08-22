@@ -67,7 +67,12 @@ class ProxyUtils(Reloadable):
         # OK).
         self.heap_size = heap_size
         try:
-            self.heap_base = p.heapblock_alloc(0)
+            # Most one-shot scripts deliberately reuse this range.  A process
+            # that leaves live target objects behind can reserve it so the next
+            # proxy process receives a disjoint physical heap.
+            reserve = (128 * 1024 * 1024 + heap_size
+                       if os.environ.get("M1N1HEAP_RESERVE") else 0)
+            self.heap_base = p.heapblock_alloc(reserve)
         except ProxyRemoteError:
             # Compat with versions that don't have heapblock yet
             self.heap_base = (self.base + ((self.ba.top_of_kernel_data + 0xffff) & ~0xffff) -
@@ -589,5 +594,13 @@ def bootstrap_port(iface, proxy):
             # May fail even if the setting did get applied; checked by the .nop next
             iface.dev.baudrate = 1500000
 
-    iface.nop()
+    retries = int(os.environ.get("M1N1_BOOTSTRAP_NOP_RETRIES", "0"), 0)
+    for attempt in range(retries + 1):
+        try:
+            iface.nop()
+            break
+        except UartTimeout:
+            if attempt == retries:
+                raise
+            time.sleep(0.1)
     iface.dev.timeout = to

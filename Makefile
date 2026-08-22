@@ -144,7 +144,7 @@ OBJECTS := \
 	firmware.o \
 	gxf.o gxf_asm.o \
 	heapblock.o \
-	hv.o hv_vm.o hv_exc.o hv_vuart.o hv_wdt.o hv_asm.o hv_aic.o hv_t8140.o hv_virtio.o \
+	hv.o hv_vm.o hv_exc.o hv_g17p.o hv_vuart.o hv_wdt.o hv_asm.o hv_aic.o hv_t8140.o hv_virtio.o \
 	i2c.o \
 	iodev.o \
 	iova.o \
@@ -159,6 +159,7 @@ OBJECTS := \
 	payload.o \
 	pcie.o \
 	pmgr.o \
+	pmu.o \
 	proxy.o \
 	ringbuffer.o \
 	rtkit.o \

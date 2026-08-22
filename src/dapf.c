@@ -181,11 +181,14 @@ struct entry {
 };
 
 struct entry dapf_entries[] = {
-    {"/arm-io/dart-aop", 1},     {"/arm-io/dart-mtp", 1},
-    {"/arm-io/dart-pmp", 1},     {"/arm-io/dart-dcp", 1},
-    {"/arm-io/dart-dcpext0", 1}, {"/arm-io/dart-isp", 5},
-    {"/arm-io/dart-isp0", 5},    {"/arm-io/dart-ane", 3},
-    {"/arm-io/dart-ave", 3},     {NULL, -1},
+    /*
+     * On Mac17,5, programming the dart-aop and dart-isp DAPFs causes an
+     * asynchronous SError. dart-mtp and dart-pmp are sufficient for Linux
+     * bring-up and dockchannel HID.
+     */
+    {"/arm-io/dart-mtp", 1},
+    {"/arm-io/dart-pmp", 1},
+    {NULL, -1},
 };
 
 int dapf_init_all(void)

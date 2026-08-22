@@ -288,6 +288,11 @@ class UAT(Reloadable):
         # The alternative would be to map self.sgx_dev.gfx_shared_l2_region_base into a new TTBR1.
         self.ttbr1_base = self.sgx_dev.gfx_shared_region_base
         self.handoff = GFXHandoff(self.u)
+        # Experiments that reproduce an older firmware/host lifecycle may
+        # override how many firmware-owned entries init() retains.  Normal
+        # users leave this unset and get the architecture-specific policy in
+        # clear_stale_kernel_roots().
+        self.kernel_root_preserve_count = None
 
         self.VA_MASK = 0
         for (off, size, _) in self.LEVELS:
@@ -296,6 +301,7 @@ class UAT(Reloadable):
 
 
     def set_l0(self, ctx, off, base, asid=0):
+        self._root_walk_cache = {}
         ttbr = TTBR(BADDR = base >> 1, ASID = asid, VALID=(base != 0))
         print(f"[UAT] Set L0 ctx={ctx} off={off:#x} base={base:#x} asid={asid} ({ttbr})")
         self.write_pte(self.gpu_region + ctx * 16, off, 2, ttbr)
@@ -347,6 +353,8 @@ class UAT(Reloadable):
         return iova
 
     def iomap_at(self, ctx, iova, addr, size, **flags):
+        # Any mapping change makes remembered walks wrong.
+        self._root_walk_cache = {}
         if size == 0:
             return
 
@@ -389,6 +397,144 @@ class UAT(Reloadable):
         self.dirty_ranges.setdefault(ctx, []).append((start_page, end_page - start_page))
         #self.flush_dirty()
 
+    def iounmap(self, ctx, iova, size):
+        """Invalidate page mappings in one context.
+
+        Like :meth:`iomap_at`, this only edits the cached page tables.  The
+        caller must publish the edits with :meth:`flush_dirty`, invalidate the
+        software walk cache, and issue the completion barrier required before
+        reusing the virtual range.
+        """
+        self._root_walk_cache = {}
+        if size == 0:
+            return 0
+        if iova & (self.PAGE_SIZE - 1):
+            raise Exception(f"Unaligned IOVA {iova:#x}")
+
+        self.init()
+        start_page = iova
+        end_page = align_up(iova + size, self.PAGE_SIZE)
+        unmapped = 0
+
+        for page in range(start_page, end_page, self.PAGE_SIZE):
+            table_addr = self.gpu_region + ctx * 16
+            for (offset, level_size, ptecls) in self.LEVELS:
+                pte = self.fetch_pte(
+                    table_addr, page >> offset, level_size, ptecls)
+                if not pte.valid():
+                    break
+                if ptecls is Page_PTE:
+                    self.write_pte(
+                        table_addr, page >> offset, level_size, Page_PTE())
+                    unmapped += self.PAGE_SIZE
+                    break
+                if ptecls is not TTBR and pte.block():
+                    raise RuntimeError(
+                        f"Refusing to partially unmap block PTE for {page:#x}")
+                table_addr = pte.offset()
+
+        if unmapped:
+            self.dirty_ranges.setdefault(ctx, []).append(
+                (start_page, end_page - start_page))
+        return unmapped
+
+    def iomap_at_root(self, root, iova, addr, size, ctx=None, **flags):
+        """Map pages below an explicit translation-table root.
+
+        Firmware high-half addresses are not necessarily selected as TTBR1 by
+        the hardware context table's L0 index.  Callers that adopted a root
+        directly must therefore edit that root directly as well.
+        """
+        self._root_walk_cache = {}
+        if size == 0:
+            return
+
+        if addr & (self.PAGE_SIZE - 1):
+            raise Exception(f"Unaligned PA {addr:#x}")
+
+        if iova & (self.PAGE_SIZE - 1):
+            raise Exception(f"Unaligned IOVA {iova:#x}")
+
+        map_flags = {
+            'OS': 1,
+            'AttrIndex': MemoryAttr.Normal,
+            'VALID': 1,
+            'TYPE': 1,
+            'AP': 1,
+            'AF': 1,
+            'UXN': 1,
+        }
+        map_flags.update(flags)
+
+        start_page = align_down(iova, self.PAGE_SIZE)
+        end_page = align_up(iova + size, self.PAGE_SIZE)
+
+        for page in range(start_page, end_page, self.PAGE_SIZE):
+            table_addr = root
+            for (offset, level_size, ptecls) in self.LEVELS[1:]:
+                index = (page >> offset) & (level_size - 1)
+                if ptecls is Page_PTE:
+                    pte = Page_PTE(**map_flags)
+                    pte.set_offset(addr)
+                    self.write_pte(table_addr, index, level_size, pte)
+                    addr += self.PAGE_SIZE
+                    continue
+
+                pte = self.fetch_pte(table_addr, index, level_size, ptecls)
+                if not pte.valid():
+                    table = self.u.memalign(self.PAGE_SIZE, self.PAGE_SIZE)
+                    self.p.memset32(table, 0, self.PAGE_SIZE)
+                    pte.set_offset(table)
+                    pte.VALID = 1
+                    pte.TYPE = 1
+                    self.write_pte(table_addr, index, level_size, pte)
+                table_addr = pte.offset()
+
+        if ctx is not None:
+            self.dirty_ranges.setdefault(ctx, []).append(
+                (start_page, end_page - start_page))
+
+    def iounmap_root(self, root, iova, size, ctx=None):
+        """Invalidate page mappings below an explicit translation-table root.
+
+        This is the direct-root counterpart to :meth:`iounmap`.  It is needed
+        for firmware-owned upper roots that are supplied in initdata instead of
+        being selected through a hardware context-table entry.  The caller must
+        publish the table edits with :meth:`flush_dirty` before reusing either
+        the virtual address or its former physical backing.
+        """
+        self._root_walk_cache = {}
+        if size == 0:
+            return 0
+        if iova & (self.PAGE_SIZE - 1):
+            raise Exception(f"Unaligned IOVA {iova:#x}")
+
+        start_page = iova
+        end_page = align_up(iova + size, self.PAGE_SIZE)
+        unmapped = 0
+
+        for page in range(start_page, end_page, self.PAGE_SIZE):
+            table_addr = root
+            for (offset, level_size, ptecls) in self.LEVELS[1:]:
+                index = (page >> offset) & (level_size - 1)
+                pte = self.fetch_pte(table_addr, index, level_size, ptecls)
+                if not pte.valid():
+                    break
+                if ptecls is Page_PTE:
+                    self.write_pte(
+                        table_addr, index, level_size, Page_PTE())
+                    unmapped += self.PAGE_SIZE
+                    break
+                if pte.block():
+                    raise RuntimeError(
+                        f"Refusing to partially unmap block PTE for {page:#x}")
+                table_addr = pte.offset()
+
+        if unmapped and ctx is not None:
+            self.dirty_ranges.setdefault(ctx, []).append(
+                (start_page, end_page - start_page))
+        return unmapped
+
 
     def fetch_pte(self, offset, idx, size, ptecls):
         idx = idx & (size - 1)
@@ -409,6 +555,102 @@ class UAT(Reloadable):
 
         table[idx] = pte.value
         self.dirty.add(offset)
+
+    _root_walk_cache = {}
+
+    def invalidate_root_walk_cache(self):
+        """Forget remembered root walks. Any mapping change must call this."""
+        self._root_walk_cache = {}
+
+    def iotranslate_root(self, root, start, size):
+        """Translate through a root table directly, without going by way of a context.
+
+        The ordinary walk starts at the hardware context table and its first level picks one of the
+        two roots that entry holds. A root that is not in that table cannot be reached that way, and
+        firmware's own is deliberately not in it: firmware takes its root from the descriptor it is
+        handed. This starts at the given root and walks the remaining levels.
+        """
+        if size == 0:
+            return []
+
+        start = start & self.VA_MASK
+        start_page = align_down(start, self.PAGE_SIZE)
+        end = start + size
+        end_page = align_up(end, self.PAGE_SIZE)
+
+        # Walking the tables costs a proxy read per level per page, so a caller writing many pages
+        # pays three round trips for each. The tables do not change under a reader, and a writer
+        # that edits them clears this, so the walk is done once per page and remembered.
+        cache = self._root_walk_cache.setdefault(root, {})
+
+        pages = []
+        for page in range(start_page, end_page, self.PAGE_SIZE):
+            cached = cache.get(page)
+            if cached is not None:
+                pages.append(cached)
+                continue
+            table_addr = root
+            pte = None
+            for (offset, level_size, ptecls) in self.LEVELS[1:]:
+                # Mask the index to the level's own width. An unmasked shift indexes past the end
+                # of the table for a high address, which is why the ordinary walk cannot reach
+                # firmware's own addresses.
+                index = (page >> offset) & (level_size - 1)
+                pte = self.fetch_pte(table_addr, index, level_size, ptecls)
+                if not pte.valid():
+                    break
+                table_addr = pte.offset()
+            resolved = pte.offset() if pte is not None and pte.valid() else None
+            cache[page] = resolved
+            pages.append(resolved)
+
+        ranges = []
+        for page in pages:
+            if not ranges:
+                ranges.append((page, self.PAGE_SIZE))
+                continue
+            last, count = ranges[-1]
+            if last is not None and page == last + count:
+                ranges[-1] = (last, count + self.PAGE_SIZE)
+            else:
+                ranges.append((page, self.PAGE_SIZE))
+
+        if not ranges:
+            return []
+
+        first, count = ranges[0]
+        offset = start - start_page
+        if first is not None:
+            first += offset
+        ranges[0] = (first, count - offset)
+        return ranges
+
+    def ioread_root(self, root, base, size):
+        """Read through a root table directly. See ``iotranslate_root``."""
+        if size == 0:
+            return b""
+        data = []
+        for addr, length in self.iotranslate_root(root, base, size):
+            if addr is None:
+                raise Exception("Unmapped page at %#x under root %#x" % (base, root))
+            data.append(self.iface.readmem(addr, length))
+        # The walk works in whole pages, so the last range overshoots a request that does not end
+        # on a page boundary. Give back exactly what was asked for.
+        return b"".join(data)[:size]
+
+    def iowrite_root(self, root, base, data):
+        """Write through a root table directly. See ``iotranslate_root``."""
+        if not data:
+            return
+        written = 0
+        for addr, length in self.iotranslate_root(root, base, len(data)):
+            if addr is None:
+                raise Exception("Unmapped page at %#x under root %#x" % (base, root))
+            take = min(length, len(data) - written)
+            self.iface.writemem(addr, data[written:written + take])
+            written += take
+            if written >= len(data):
+                break
 
     def iotranslate(self, ctx, start, size):
         if size == 0:
@@ -488,7 +730,9 @@ class UAT(Reloadable):
         assert addr in self.pt_cache
         table = self.pt_cache[addr]
         self.iface.writemem(addr, struct.pack(f"<{len(table)}Q", *table))
-        #self.p.dc_civac(addr, 0x4000)
+        # The proxy memory write is cached.  A later process can otherwise read
+        # stale table contents from DRAM and publish those over the live UAT.
+        self.p.dc_civac(addr, len(table) * 8)
 
     def flush_dirty(self):
         inval = False
@@ -498,6 +742,9 @@ class UAT(Reloadable):
             inval = True
 
         self.dirty.clear()
+
+        if inval:
+            self.u.inst("dsb sy")
 
         for ctx, ranges in self.dirty_ranges.items():
             asid = ctx << 48
@@ -551,9 +798,7 @@ class UAT(Reloadable):
         #print(f"[UAT] TTBAT @ 0x{self.gpu_region:016x}")
         #print(f"[UAT] ASC carveout region @ 0x{self.shared_region:016x}")
 
-        # Clear out any stale kernel page tables
-        # (The third entry is the TTBR1 shared L2 table, which is fine to keep.)
-        self.p.memset64(self.ttbr1_base + 0x10, 0, 0x3ff0)
+        self.clear_stale_kernel_roots()
         self.u.inst("tlbi vmalle1os")
 
         self.handoff.initialize()
@@ -569,6 +814,26 @@ class UAT(Reloadable):
         print("[UAT] Init complete")
 
         self.initialized = True
+
+    def clear_stale_kernel_roots(self):
+        """Clear host upper roots without removing firmware-owned entries."""
+        # G15+ adds a third firmware-owned entry for the shared L2 table;
+        # clearing it leaves later mappings attached to an orphaned child
+        # table. Invalidate both software caches after the direct write so a
+        # following iomap cannot reuse any entry that was just cleared.
+        preserved_entries = self.kernel_root_preserve_count
+        if preserved_entries is None:
+            preserved_entries = 3 if Ver.check("G >= G15") else 2
+        if not 0 <= preserved_entries <= self.LEVELS[1][1]:
+            raise ValueError(
+                "invalid kernel root preserve count: %r" %
+                (preserved_entries,))
+        clear_offset = preserved_entries * 8
+        self.p.memset64(
+            self.ttbr1_base + clear_offset, 0,
+            self.PAGE_SIZE - clear_offset)
+        self.invalidate_cache()
+        self.invalidate_root_walk_cache()
 
     def bind_context(self, ctx, ttbr0_base):
         assert ctx != 0

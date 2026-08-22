@@ -49,6 +49,7 @@ typedef enum _hv_entry_type {
     HV_CPU_SWITCH,
     HV_VIRTIO,
     HV_PANIC,
+    HV_VUART_MARKER,
 } hv_entry_type;
 
 /* VM */
@@ -78,6 +79,8 @@ bool hv_trace_irq(u32 type, u32 num, u32 count, u32 flags);
 /* Virtual peripherals */
 void hv_vuart_poll(void);
 void hv_map_vuart(u64 base, int irq, iodev_id_t iodev);
+ssize_t hv_vuart_inject(const void *buf, size_t length);
+ssize_t hv_vuart_inject_at_prompt(const void *buf, size_t length);
 struct virtio_conf;
 void hv_map_virtio(u64 base, struct virtio_conf *conf);
 void virtio_put_buffer(u64 base, int qu, u32 id, u32 len);

@@ -3,7 +3,7 @@
 import sys, pathlib
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 
-import argparse, pathlib, time
+import argparse, os, pathlib, time
 
 parser = argparse.ArgumentParser(description='Mach-O loader for m1n1')
 parser.add_argument('-q', '--quiet', action="store_true", help="Disable framebuffer")
@@ -15,6 +15,11 @@ parser.add_argument('-x', '--xnu', action="store_true", help="Set up for chainlo
 parser.add_argument('payload', type=pathlib.Path)
 parser.add_argument('boot_args', default=[], nargs="*")
 args = parser.parse_args()
+
+# The debug-USB proxy can transiently return no bytes while the target is
+# settling into proxy mode. Scope bootstrap retries to chainload rather than
+# changing the connection policy of every proxyclient tool.
+os.environ.setdefault("M1N1_BOOTSTRAP_NOP_RETRIES", "10")
 
 from m1n1.setup import *
 from m1n1.tgtypes import BootArgs_r1, BootArgs_r2, BootArgs_r3
@@ -185,5 +190,5 @@ else:
     print(f"Reloading into stub at 0x{stub.addr:x}")
     p.reload(stub.addr, new_base + bootargs_off, image_addr, new_base, image_size)
 
-iface.nop()
+bootstrap_port(iface, p)
 print("Proxy is alive again")

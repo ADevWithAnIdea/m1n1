@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-import sys, pathlib, traceback
+import struct, sys, pathlib, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 
 import argparse, pathlib
@@ -29,6 +29,65 @@ def sptm_hv_boot_args(extra=()):
             words.append(arg)
     return " ".join(words)
 
+
+def load_ramdisk(hv, path, *, min_offset=0, chunk_size=32 * 1024 * 1024):
+    """Stage a raw XNU RAMDisk and publish its physical range in the guest ADT."""
+    size = path.stat().st_size
+    if not size:
+        raise ValueError(f"RAMDisk is empty: {path}")
+
+    page_size = 0x4000
+    base = align(max(hv.tba.top_of_kernel_data,
+                     hv.guest_base + min_offset), page_size)
+    end = base + size
+    mem_top = hv.u.ba.phys_base + hv.u.ba.mem_size
+    if end > mem_top:
+        raise ValueError(
+            f"RAMDisk does not fit in guest RAM: 0x{base:x}..0x{end:x} "
+            f"> 0x{mem_top:x}")
+
+    print(
+        f"Loading RAMDisk (0x{size:x} bytes) at 0x{base:x} "
+        f"in 0x{chunk_size:x}-byte chunks...")
+    offset = 0
+    with path.open("rb") as fd:
+        while True:
+            chunk = fd.read(chunk_size)
+            if not chunk:
+                break
+            print(
+                f"  RAMDisk chunk 0x{offset:x}.."
+                f"0x{offset + len(chunk):x}")
+            hv.u.compressed_writemem(base + offset, chunk, True)
+            offset += len(chunk)
+    if offset != size:
+        raise RuntimeError(
+            f"short RAMDisk upload: 0x{offset:x} != 0x{size:x}")
+
+    hv.p.dc_civac(base, size)
+
+    probe_size = min(size, 64)
+    with path.open("rb") as fd:
+        first = fd.read(probe_size)
+        fd.seek(size - probe_size)
+        last = fd.read(probe_size)
+    if hv.iface.readmem(base, probe_size) != first:
+        raise RuntimeError("RAMDisk leading-edge readback mismatch")
+    if hv.iface.readmem(end - probe_size, probe_size) != last:
+        raise RuntimeError("RAMDisk trailing-edge readback mismatch")
+
+    mmap = hv.adt["chosen"]["memory-map"]
+    mmap._types.pop("RAMDisk", None)
+    mmap._properties["RAMDisk"] = struct.pack("<QQ", base, size)
+    hv.tba.top_of_kernel_data = align(end, page_size)
+    hv.ramdisk_base = base
+    hv.ramdisk_size = size
+    hv.ramdisk_path = path
+    print(
+        f"RAMDisk staged and verified: /chosen/memory-map/RAMDisk="
+        f"(0x{base:x}, 0x{size:x}), top_of_kernel_data="
+        f"0x{hv.tba.top_of_kernel_data:x}")
+
 parser = argparse.ArgumentParser(description='Run a Mach-O payload under the hypervisor')
 parser.add_argument('-s', '--symbols', type=pathlib.Path)
 parser.add_argument('-m', '--script', type=pathlib.Path, action='append', default=[])
@@ -37,12 +96,18 @@ parser.add_argument('-S', '--shell', action="store_true")
 parser.add_argument('-e', '--hook-exceptions', action="store_true")
 parser.add_argument('-d', '--debug-xnu', action="store_true")
 parser.add_argument('-l', '--logfile', type=pathlib.Path)
+parser.add_argument(
+    '--headless-guest', action='store_true',
+    help='Remove the internal display pipeline from a T8140 macOS guest',
+)
 parser.add_argument('-C', '--cpus', default=None)
 parser.add_argument('--strip-node', action="append", default=[], metavar='SUBSTR',
                     help='Remove every ADT node whose name contains SUBSTR.')
 parser.add_argument('-r', '--raw', action="store_true")
 parser.add_argument('-E', '--entry-point', action="store", type=int, help="Entry point for the raw image", default=0x800)
 parser.add_argument('-a', '--append-payload', type=pathlib.Path, action="append", default=[])
+parser.add_argument('--ramdisk', type=pathlib.Path,
+                    help='Stage a raw ramdisk and add /chosen/memory-map/RAMDisk')
 parser.add_argument('-v', '--volume', type=volumespec, action='append',
                     help='Attach a 9P virtio device for file export to the guest. The argument is a host path to the '
                          'exported tree, joined by colon (\':\') with a tag under which the tree will be advertised '
@@ -123,6 +188,36 @@ if not args.raw and u.adt["/chosen"].chip_id in (0x8132, 0x8140, 0x6040, 0x6041)
     except KeyError:
         pass
 
+if args.headless_guest:
+    if args.raw:
+        parser.error('--headless-guest requires a Mach-O macOS guest')
+    if u.adt["/chosen"].chip_id != 0x8140:
+        parser.error('--headless-guest is currently scoped to T8140')
+
+    # Experiment-only: leave AGX and its UAT intact while preventing the
+    # internal display stack from creating render traffic.
+    headless_nodes = (
+        "/arm-io/displaymanager",
+        "/arm-io/display-crossbar0",
+        "/arm-io/disp0",
+        "/arm-io/dcp0-expert",
+        "/arm-io/dcp",
+        "/arm-io/dart-dcp",
+        "/arm-io/dart-disp0",
+        "/arm-io/dart-dispgrt",
+        "/arm-io/dcp-sac-controller",
+        "/arm-io/admac-disp0",
+        "/arm-io/admac-disp0-ced-ssw",
+    )
+    removed = []
+    for path in headless_nodes:
+        try:
+            del hv.adt[path]
+            removed.append(path)
+        except KeyError:
+            pass
+    print("T8140 headless guest ADT: removed " + ", ".join(removed))
+
 if args.volume:
     for path, tag in args.volume:
         hv.attach_virtio(Virtio9PTransport(root=path, tag=tag))
@@ -155,6 +250,14 @@ if args.raw:
     hv.load_raw(payload.read(), args.entry_point)
 else:
     hv.load_macho(payload, symfile=symfile)
+
+if args.ramdisk:
+    # The M4/A18 guest layout reserves fixed page-table and auxiliary regions
+    # below guest_base + 256 MiB. Keep the RAMDisk above those ranges.
+    ramdisk_min_offset = 0
+    if not args.raw and u.adt["/chosen"].chip_id in (0x8132, 0x8140, 0x6040, 0x6041):
+        ramdisk_min_offset = 0x10000000
+    load_ramdisk(hv, args.ramdisk, min_offset=ramdisk_min_offset)
 
 PMU(u).reset_panic_counter()
 

@@ -543,6 +543,13 @@ int proxy_process(ProxyRequest *request, ProxyReply *reply)
         case P_HV_ADD_TIME:
             hv_add_time(request->args[0]);
             break;
+        case P_HV_VUART_INJECT:
+            reply->retval = hv_vuart_inject((const void *)request->args[0], request->args[1]);
+            break;
+        case P_HV_VUART_INJECT_AT_PROMPT:
+            reply->retval =
+                hv_vuart_inject_at_prompt((const void *)request->args[0], request->args[1]);
+            break;
 
         case P_FB_INIT:
             fb_init(request->args[0]);

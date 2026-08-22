@@ -112,5 +112,65 @@ class drm_asahi_cmdbuf_t(ConstructClass):
         "attachment_count" / Int32ul,
     )
 
+
+# Unstable UAPI version 3, used by the last Mesa prototype that still emitted
+# the macOS-style userspace command buffer consumed by this shim. Keep this
+# beside the compact predecessor because their ioctl envelopes and BO ABI are
+# otherwise compatible, while their command-buffer bodies are not.
+class drm_asahi_cmdbuf_v3_t(ConstructClass):
+    subcon = Struct(
+        "flags" / Int64ul,
+        "encoder_ptr" / Int64ul,
+
+        "depth_buffer_1" / Int64ul,
+        "depth_buffer_2" / Int64ul,
+        "depth_buffer_3" / Int64ul,
+        "depth_meta_buffer_1" / Int64ul,
+        "depth_meta_buffer_2" / Int64ul,
+        "depth_meta_buffer_3" / Int64ul,
+
+        "stencil_buffer_1" / Int64ul,
+        "stencil_buffer_2" / Int64ul,
+        "stencil_buffer_3" / Int64ul,
+        "stencil_meta_buffer_1" / Int64ul,
+        "stencil_meta_buffer_2" / Int64ul,
+        "stencil_meta_buffer_3" / Int64ul,
+
+        "scissor_array" / Int64ul,
+        "depth_bias_array" / Int64ul,
+        "visibility_result_buffer" / Int64ul,
+        "zls_ctrl" / Int64ul,
+        "ppp_multisamplectl" / Int64ul,
+        "ppp_ctrl" / Int32ul,
+        "fb_width" / Int32ul,
+        "fb_height" / Int32ul,
+        "utile_width" / Int32ul,
+        "utile_height" / Int32ul,
+        "samples" / Int32ul,
+        "layers" / Int32ul,
+        "encoder_id" / Int32ul,
+        "cmd_ta_id" / Int32ul,
+        "cmd_3d_id" / Int32ul,
+        "iogpu_unk_49" / Int32ul,
+        "iogpu_unk_212" / Int32ul,
+        "iogpu_unk_214" / Int32ul,
+        "merge_upper_x" / Int32ul,
+        "merge_upper_y" / Int32ul,
+        "load_pipeline" / Int32ul,
+        "load_pipeline_bind" / Int32ul,
+        "store_pipeline" / Int32ul,
+        "store_pipeline_bind" / Int32ul,
+        "partial_reload_pipeline" / Int32ul,
+        "partial_reload_pipeline_bind" / Int32ul,
+        "partial_store_pipeline" / Int32ul,
+        "partial_store_pipeline_bind" / Int32ul,
+        "depth_dimensions" / Int32ul,
+        "isp_bgobjdepth" / Int32ul,
+        "isp_bgobjvals" / Int32ul,
+        "attachments" / Array(ASAHI_MAX_ATTACHMENTS, drm_asahi_attachment_t),
+        "attachment_count" / Int32ul,
+        Padding(4),
+    )
+
 __all__.extend(k for k, v in globals().items()
                if ((callable(v) or isinstance(v, type)) and v.__module__ == __name__) or isinstance(v, int))

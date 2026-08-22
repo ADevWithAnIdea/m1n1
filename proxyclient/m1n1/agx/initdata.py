@@ -336,6 +336,73 @@ CHIP_INFO = {
         rc_unk_54 = 0xffff,
         tiling_control = 0xa041,
     ),
+    # T8140 / G17. Partially populated: entries below are either read from the
+    # T8140 boot ADT or confirmed against captured live firmware memory. The
+    # remaining fields are deliberately None rather than guessed, because they
+    # are power, thermal and scheduler tables that this workflow has not yet
+    # recovered from hardware. build_initdata therefore fails fast on this chip
+    # instead of programming firmware with invented values.
+    #
+    # Also unresolved: the captured firmware perf-state tables are two
+    # interleaved 11-entry frequency ladders that share their low six entries,
+    # while the ADT presents one 16-entry table and this builder assumes a
+    # single ladder. See docs/t8140-g17p-firmware-abi-spec.md.
+    0x8140: Container(
+        chip_id = 0x8140,
+        # ADT /arm-io/sgx perf-states-sram, minimum of the voltage column.
+        min_sram_volt = 765,
+        # No GPU SRAM region is described by the T8140 ADT, matching the other
+        # single-die entries above. Keeps the iomap in build_initdata disabled.
+        sram_base = 0,
+        sram_size = 0,
+        # Power and thermal tables: not present in the ADT. These come from a
+        # host-side hardware database on other platforms and must be recovered
+        # from captured live initdata before they can be filled in.
+        max_power = None,
+        rel_max_powers = None,
+        unk_87c = None,
+        unk_8cc = None,
+        unk_924 = None,
+        unk_e24 = None,
+        unk_e48 = None,
+        unk_3cf4 = None,
+        unk_3d14 = None,
+        unk_3d34_0 = None,
+        unk_118ec = None,
+        unk_hws2_0 = None,
+        unk_hws2_4 = None,
+        unk_hws2_24 = None,
+        # Thermal sensor masks: unresolved for this SoC.
+        gpu_fast_die0_sensor_mask64 = None,
+        gpu_fast_die1_sensor_mask64 = None,
+        gpu_fast_die0_sensor_mask64_alt = None,
+        gpu_fast_die1_sensor_mask64_alt = None,
+        gpu_fast_die0_sensor_present = None,
+        # Shared-region tables consumed by the initdata builders.
+        shared1_tab = None,
+        shared1_a4 = None,
+        shared2_tab = None,
+        shared2_unk_508 = None,
+        shared2_t1_coef = None,
+        shared2_t2 = None,
+        shared2_t3_coefs = None,
+        shared2_t3_scales = None,
+        shared3_unk = None,
+        shared3_tab = None,
+        # Core topology and revision: absent from the ADT, and not yet read
+        # from a hardware identification register.
+        num_cores = None,
+        gpu_core = None,
+        gpu_rev = None,
+        # Host hardware-database scalars: unresolved.
+        hwdb_4e0 = None,
+        hwdb_534 = None,
+        hwdb_ab8 = None,
+        hwdb_abc = None,
+        hwdb_b30 = None,
+        rc_unk_54 = None,
+        tiling_control = None,
+    ),
     0x6021: Container(
         chip_id = 0x6021,
         min_sram_volt = 790,

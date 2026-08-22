@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>io.asahi.g17ppartial</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/System/Volumes/Data/Users/Shared/g17ppartial</string>
+        <string>128</string>
+        <string>128</string>
+        <string>accumulate</string>
+        <string>48217</string>
+        <string>20</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>G17P_ENQUEUE_ALL</key>
+        <string>1</string>
+        <key>G17P_CAPTURE_AFTER</key>
+        <string>2</string>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/System/Volumes/Data/Users/Shared/g17ppartial.log</string>
+    <key>StandardErrorPath</key>
+    <string>/System/Volumes/Data/Users/Shared/g17ppartial.log</string>
+    <key>ProcessType</key>
+    <string>Interactive</string>
+</dict>
+</plist>

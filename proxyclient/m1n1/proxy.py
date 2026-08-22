@@ -144,14 +144,16 @@ class UartInterface(Reloadable):
             device = os.environ.get("M1N1DEVICE", self.DEFAULT_UART_DEV)
         if isinstance(device, str):
             baud = self.DEFAULT_BAUD_RATE
-            if ":" in device:
+            is_url = "://" in device
+            if not is_url and ":" in device:
                 device, baud = device.rsplit(":", 1)
                 baud = int(baud)
             self.devpath = device
             self.baudrate = baud
 
             # wait for it to come back
-            if os.environ.get("M1N1WAIT", 0) and not os.path.exists(self.devpath):
+            if (not is_url and os.environ.get("M1N1WAIT", 0)
+                    and not os.path.exists(self.devpath)):
                 print("Waiting for %s to appear.." % self.devpath)
                 for n in range(100): # 10s
                     time.sleep(0.1)
@@ -159,7 +161,10 @@ class UartInterface(Reloadable):
                         break
                 time.sleep(0.1) # wait for udev to settle (avoid permissions issues)
 
-            device = Serial(self.devpath, baud)
+            if is_url:
+                device = serial.serial_for_url(self.devpath, baudrate=baud)
+            else:
+                device = Serial(self.devpath, baud)
 
         self.dev = device
         self.dev.timeout = 0
@@ -661,6 +666,8 @@ class M1N1Proxy(Reloadable):
     P_VIRTIO_PUT_BUFFER = 0xc0e
     P_HV_EXIT_CPU = 0xc0f
     P_HV_ADD_TIME = 0xc10
+    P_HV_VUART_INJECT = 0xc11
+    P_HV_VUART_INJECT_AT_PROMPT = 0xc12
 
     P_FB_INIT = 0xd00
     P_FB_SHUTDOWN = 0xd01
@@ -1098,6 +1105,10 @@ class M1N1Proxy(Reloadable):
         return IODEV(self.request(self.P_IODEV_WHOAMI))
     def usb_iodev_vuart_setup(self, iodev):
         return self.request(self.P_USB_IODEV_VUART_SETUP, iodev)
+    def hv_vuart_inject(self, buf, size=None):
+        return self.request(self.P_HV_VUART_INJECT, buf, size)
+    def hv_vuart_inject_at_prompt(self, buf, size=None):
+        return self.request(self.P_HV_VUART_INJECT_AT_PROMPT, buf, size)
 
     def tunables_apply_global(self, path, prop):
         return self.request(self.P_TUNABLES_APPLY_GLOBAL, path, prop)

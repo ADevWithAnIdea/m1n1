@@ -7,7 +7,7 @@ from ..tgtypes import *
 from ..proxy import IODEV, START, EVENT, EXC, EXC_RET, ExcInfo
 from ..utils import *
 from ..sysreg import *
-from ..macho import MachO
+from ..macho import MachO, MachOLoadCmdType
 from ..adt import load_adt
 from .. import xnutools, shell
 
@@ -91,6 +91,7 @@ class HV(Reloadable):
         self.symbols = []
         self.symbol_dict = {}
         self.sysreg = {}
+        self.sysreg_read_overrides = {}
         self.novm = False
         self._in_handler = False
         self._sigint_pending = False
@@ -684,6 +685,11 @@ class HV(Reloadable):
                 self.log("Guest is shutting down CPU")
                 self.p.hv_exit_cpu()
                 del self.started_cpus[self.ctx.cpu_id]
+        elif iss.DIR == MSR_DIR.READ and enc in self.sysreg_read_overrides:
+            value = self.sysreg_read_overrides[enc]
+            self.log(f"Virtual: mrs x{iss.Rt}, {name} = {value:x}")
+            if iss.Rt != 31:
+                ctx.regs[iss.Rt] = value
         elif enc in shadow:
             if iss.DIR == MSR_DIR.READ:
                 value = self.sysreg[self.ctx.cpu_id].setdefault(enc, 0)
@@ -979,6 +985,12 @@ class HV(Reloadable):
                 elif code == HV_EVENT.USER_INTERRUPT:
                     handled = True
                     user_interrupt = True
+                elif code == HV_EVENT.VUART_MARKER:
+                    marker_handler = getattr(
+                        self, "_vuart_marker_handler", None)
+                    handled = True
+                    if callable(marker_handler):
+                        marker_handler()
         except Exception as e:
             self.log(f"Python exception while handling guest exception:")
             traceback.print_exc()
@@ -1392,6 +1404,7 @@ class HV(Reloadable):
         self.iface.set_handler(START.HV, HV_EVENT.CPU_SWITCH, self.handle_exception)
         self.iface.set_handler(START.HV, HV_EVENT.VIRTIO, self.handle_virtio)
         self.iface.set_handler(START.HV, HV_EVENT.PANIC, self.handle_bark)
+        self.iface.set_handler(START.HV, HV_EVENT.VUART_MARKER, self.handle_exception)
         self.iface.set_event_handler(EVENT.MMIOTRACE, self.handle_mmiotrace)
         self.iface.set_event_handler(EVENT.IRQTRACE, self.handle_irqtrace)
 
@@ -1961,29 +1974,32 @@ class HV(Reloadable):
             # commpage: force XNU to publish VM-safe userspace feature policy
             # bytes. The Apple timebase path and HW-TPRO/SPRR path use
             # userspace-inaccessible Apple registers under this EL1 guest.
-            #
-            # hard coded kernelcache addresses is a hack we should find a way
-            # to avoid
-            off = 0xfffffe000b5a3330 - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x52800068:
-                    raise RuntimeError("_COMM_PAGE_USER_TIMEBASE patch target mismatch")
-                a[off // 4] = 0x52800008
-                print(f"  0xfffffe000b5a3330: _COMM_PAGE_USER_TIMEBASE=0")
-
-            off = 0xfffffe000b5a3388 - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x52800028:
-                    raise RuntimeError("_COMM_PAGE_CONT_HWCLOCK patch target mismatch")
-                a[off // 4] = 0x52800008
-                print(f"  0xfffffe000b5a3388: _COMM_PAGE_CONT_HWCLOCK=0")
-
-            off = 0xfffffe000b5a358c - seg_vmaddr
-            if 0 <= off < size:
-                if a[off // 4] != 0x39043128:
-                    raise RuntimeError("_COMM_PAGE_HW_TPRO patch target mismatch")
-                a[off // 4] = 0x3904313f
-                print(f"  0xfffffe000b5a358c: _COMM_PAGE_HW_TPRO=0")
+            # Locate the three guarded writes as one block. Their instruction
+            # words and relative offsets are stable across 26.6 beta 4/final,
+            # while the function's absolute address is not.
+            if segname == "__TEXT_EXEC":
+                cont_delta = 0x58 // 4
+                tpro_delta = 0x25c // 4
+                matches = [
+                    index for index in range(len(a) - tpro_delta)
+                    if a[index] == 0x52800068
+                    and a[index + cont_delta] == 0x52800028
+                    and a[index + tpro_delta] == 0x39043128
+                ]
+                if len(matches) != 1:
+                    raise RuntimeError(
+                        "commpage patch expected one guarded block, found "
+                        f"{len(matches)}")
+                index = matches[0]
+                for name, delta, replacement in (
+                    ("_COMM_PAGE_USER_TIMEBASE", 0, 0x52800008),
+                    ("_COMM_PAGE_CONT_HWCLOCK", cont_delta, 0x52800008),
+                    ("_COMM_PAGE_HW_TPRO", tpro_delta, 0x3904313f),
+                ):
+                    a[index + delta] = replacement
+                    print(
+                        f"  0x{seg_vmaddr + 4 * (index + delta):x}: "
+                        f"{name}=0")
 
             print("Done.")
             return a.tobytes()
@@ -1997,6 +2013,25 @@ class HV(Reloadable):
         else:
             image = macho.prepare_image()
         self.load_raw(image, entryoffset=(macho.entry - macho.vmin), use_xnu_symbols=self.xnu_mode and symfile is not None, vmin=macho.vmin)
+
+        if chip_id in (0x8132, 0x8140, 0x6040, 0x6041):
+            data_segments = [
+                cmd for cmd in macho.get_cmds(MachOLoadCmdType.SEGMENT_64)
+                if cmd.args.segname == "__DATA"
+            ]
+            if len(data_segments) != 1:
+                raise RuntimeError(
+                    f"expected one __DATA segment, found {len(data_segments)}")
+            ro_start = self.guest_base
+            ro_end = self.guest_base + data_segments[0].args.vmaddr - macho.vmin
+            if ro_end <= ro_start or ro_end & 0xfff:
+                raise RuntimeError(
+                    f"invalid guest AMCC RO range 0x{ro_start:x}..0x{ro_end:x}")
+            self.sysreg_read_overrides[(3, 0, 11, 1, 2)] = ro_start
+            self.sysreg_read_overrides[(3, 0, 11, 1, 3)] = ro_end - 0x1000
+            print(
+                f"Guest AMCC RO range: 0x{ro_start:x}..0x{ro_end:x} "
+                "(virtualized S3_0_C11_C1_2/3)")
 
     def update_pac_mask(self):
         tcr = TCR(self.u.mrs(TCR_EL12))

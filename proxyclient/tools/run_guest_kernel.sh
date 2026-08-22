@@ -73,7 +73,7 @@ else
 fi
 
 if [ -n "$initramfs" ]; then
-    initramfs_size=$(stat --printf='%s' "$initramfs")
+    initramfs_size=$(wc -c <"$initramfs")
     python3 - << EOF >>"$TMPDIR/m1n1-linux.bin"
 import os, sys
 
