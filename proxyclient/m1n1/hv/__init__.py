@@ -7,7 +7,7 @@ from ..tgtypes import *
 from ..proxy import IODEV, START, EVENT, EXC, EXC_RET, ExcInfo
 from ..utils import *
 from ..sysreg import *
-from ..macho import MachO
+from ..macho import MachO, MachOLoadCmdType
 from ..adt import load_adt
 from .. import xnutools, shell
 
@@ -20,6 +20,10 @@ __all__ = ["HV"]
 
 class HV(Reloadable):
     PAC_MASK = 0xfffff00000000000
+
+    # Apple AMCC read-only region bounds, encoded as trapped sysreg tuples.
+    AMCC_RORGN_BEGIN = (3, 0, 11, 1, 2)
+    AMCC_RORGN_END = (3, 0, 11, 1, 3)
 
     PTE_VALID               = 1 << 0
 
@@ -91,6 +95,7 @@ class HV(Reloadable):
         self.symbols = []
         self.symbol_dict = {}
         self.sysreg = {}
+        self.sysreg_ro_overrides = {}
         self.novm = False
         self._in_handler = False
         self._sigint_pending = False
@@ -684,6 +689,16 @@ class HV(Reloadable):
                 self.log("Guest is shutting down CPU")
                 self.p.hv_exit_cpu()
                 del self.started_cpus[self.ctx.cpu_id]
+        elif enc in self.sysreg_ro_overrides:
+            value = self.sysreg_ro_overrides[enc]
+            if iss.DIR == MSR_DIR.READ:
+                self.log(f"Virtual: mrs x{iss.Rt}, {name} = {value:x}")
+                if iss.Rt != 31:
+                    ctx.regs[iss.Rt] = value
+            else:
+                if iss.Rt != 31:
+                    value = ctx.regs[iss.Rt]
+                self.log(f"Skip: msr {name}, x{iss.Rt} = {value:x}")
         elif enc in shadow:
             if iss.DIR == MSR_DIR.READ:
                 value = self.sysreg[self.ctx.cpu_id].setdefault(enc, 0)
@@ -1997,6 +2012,32 @@ class HV(Reloadable):
         else:
             image = macho.prepare_image()
         self.load_raw(image, entryoffset=(macho.entry - macho.vmin), use_xnu_symbols=self.xnu_mode and symfile is not None, vmin=macho.vmin)
+
+        if not self.u.cpu_features.apple_sysregs_unlocked:
+            writable_segments = [
+                cmd.args for cmd in macho.get_cmds(MachOLoadCmdType.SEGMENT_64)
+                if cmd.args.initprot.PROT_WRITE
+            ]
+            if not writable_segments:
+                raise RuntimeError("Mach-O has no writable segment after its protected prefix")
+
+            writable_start = min(seg.vmaddr for seg in writable_segments)
+            ro_start = self.guest_base
+            ro_end = self.guest_base + writable_start - macho.vmin
+            if ro_end <= ro_start or (ro_start & 0xfff) or (ro_end & 0xfff):
+                raise RuntimeError(
+                    f"Guest AMCC read-only range is not page-aligned: "
+                    f"0x{ro_start:x}..0x{ro_end:x}"
+                )
+
+            self.sysreg_ro_overrides.update({
+                self.AMCC_RORGN_BEGIN: ro_start,
+                self.AMCC_RORGN_END: ro_end - 0x1000,
+            })
+            print(
+                f"Guest AMCC read-only range: 0x{ro_start:x}..0x{ro_end:x} "
+                "(virtualized)"
+            )
 
     def update_pac_mask(self):
         tcr = TCR(self.u.mrs(TCR_EL12))
