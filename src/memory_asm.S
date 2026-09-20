@@ -123,6 +123,22 @@ dcsw_loop_table:
 func dcsw_op_all
 	dcsw_op #LOC_SHIFT, #CLIDR_FIELD_WIDTH, #LEVEL_SHIFT
 
+/* Enable the MMU on the reset stack, then move to the pristine WB stack. */
+func mmu_secondary_setup
+	stp	x19, x21, [sp, #-32]!
+	str	x30, [sp, #16]
+	bl	smp_secondary_stack_top
+	mov	x21, x0
+	bl	mmu_secondary_prepare
+	mov	x17, x0
+	mov	x18, x21
+	ldr	x30, [sp, #16]
+	ldp	x19, x21, [sp], #32
+	msr	sctlr_el1, x17
+	isb
+	mov	sp, x18
+	ret
+
 	/* ---------------------------------------------------------------
 	 *  Helper macro for data cache operations by set/way for the
 	 *  level specified
