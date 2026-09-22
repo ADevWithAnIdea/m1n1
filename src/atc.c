@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string.h>
 
 #include "atc.h"
 #include "adt.h"
@@ -121,4 +122,82 @@ int atc_get_tunables(int adt_node, const struct atc_tunable_info *info,
 
     *tunables = table;
     return count;
+}
+
+static int atc_apply_common_tunables(int adt_node, uintptr_t core,
+                                     const struct atc_tunable_info *info, size_t count)
+{
+    for (size_t i = 0; i < count; i++) {
+        if (strcmp(info[i].fdt_name, "apple,tunable-common-b"))
+            continue;
+
+        const struct atc_tunable *tunables;
+        int n = atc_get_tunables(adt_node, &info[i], &tunables);
+        /* PHY startup requires every common table to be present and nonempty. */
+        if (n <= 0)
+            return -1;
+        for (int j = 0; j < n; j++)
+            mask32(core + info[i].reg_offset + tunables[j].offset, tunables[j].mask,
+                   tunables[j].value);
+    }
+    return 0;
+}
+
+int atc_usb3_init_t8122(int adt_node, uintptr_t core)
+{
+    /* T8122-generation ATC power and lane sequence, as in Linux phy-apple-atc. */
+    set32(core + ATCPHY_MISC, ATCPHY_MISC_RESET_N);
+    set32(core + ATCPHY_POWER_CTRL, ATCPHY_POWER_SLEEP_SMALL);
+    if (poll32(core + ATCPHY_POWER_STAT, ATCPHY_POWER_SLEEP_SMALL, ATCPHY_POWER_SLEEP_SMALL,
+               100000))
+        return -1;
+    set32(core + ATCPHY_POWER_CTRL, ATCPHY_POWER_SLEEP_BIG);
+    if (poll32(core + ATCPHY_POWER_STAT, ATCPHY_POWER_SLEEP_BIG, ATCPHY_POWER_SLEEP_BIG, 100000))
+        return -1;
+    clear32(core + ATCPHY_POWER_CTRL, ATCPHY_POWER_CLAMP_EN);
+    set32(core + ATCPHY_POWER_CTRL, ATCPHY_POWER_APB_RESET_N);
+
+    bool swapped = read32(core + ATCPHY_MISC) & ATCPHY_MISC_LANE_SWAP;
+    if (atc_apply_common_tunables(adt_node, core, atc_tunables_t8122, atc_tunables_t8122_count) <
+        0) {
+        printf("ATC: tunables failed\n");
+        return -1;
+    }
+
+    set32(core + ACIOPHY_CFG0, ACIOPHY_CFG0_COMMON_SMALL);
+    udelay(10);
+    set32(core + ACIOPHY_CFG0, ACIOPHY_CFG0_COMMON_SMALL_OV);
+    udelay(10);
+    set32(core + ACIOPHY_CFG0, ACIOPHY_CFG0_COMMON_BIG);
+    udelay(10);
+    set32(core + ACIOPHY_CFG0, ACIOPHY_CFG0_COMMON_BIG_OV);
+    udelay(10);
+    clear32(core + ACIOPHY_CFG0, ACIOPHY_CFG0_COMMON_CLAMP);
+    udelay(10);
+    set32(core + ACIOPHY_CFG0, ACIOPHY_CFG0_COMMON_CLAMP_OV);
+    udelay(10);
+    set32(core + AUS_COMMON_SHIM_BIAS, AUS_COMMON_SHIM_BGBIAS_OV);
+    udelay(10);
+
+    u32 lane0 = swapped ? ACIOPHY_LANE_DP : ACIOPHY_LANE_USB3;
+    u32 lane1 = swapped ? ACIOPHY_LANE_USB3 : ACIOPHY_LANE_DP;
+    mask32(core + ACIOPHY_LANE_MODE_T8122,
+           ACIOPHY_LANE_MODE_RX0 | ACIOPHY_LANE_MODE_TX0 | ACIOPHY_LANE_MODE_RX1 |
+               ACIOPHY_LANE_MODE_TX1,
+           FIELD_PREP(ACIOPHY_LANE_MODE_RX0, lane0) | FIELD_PREP(ACIOPHY_LANE_MODE_TX0, lane0) |
+               FIELD_PREP(ACIOPHY_LANE_MODE_RX1, lane1) | FIELD_PREP(ACIOPHY_LANE_MODE_TX1, lane1));
+    mask32(core + ACIOPHY_CROSSBAR_T8122,
+           ACIOPHY_CROSSBAR_PROTOCOL | ACIOPHY_CROSSBAR_SINGLE_PMA | ACIOPHY_CROSSBAR_BOTH_PMA,
+           FIELD_PREP(ACIOPHY_CROSSBAR_PROTOCOL,
+                      swapped ? ACIOPHY_CROSSBAR_USB3_DP_SWAP : ACIOPHY_CROSSBAR_USB3_DP) |
+               FIELD_PREP(ACIOPHY_CROSSBAR_SINGLE_PMA, ACIOPHY_CROSSBAR_SINGLE_008));
+
+    set32(core + ATCPHY_POWER_CTRL, ATCPHY_POWER_PHY_RESET_N);
+    if (poll32(core + AUS_COMMON_DIG_RCAL1, AUS_COMMON_DIG_RCAL_DONE, AUS_COMMON_DIG_RCAL_DONE,
+               100000)) {
+        printf("ATC: RCAL timed out\n");
+        return -1;
+    }
+
+    return 0;
 }
