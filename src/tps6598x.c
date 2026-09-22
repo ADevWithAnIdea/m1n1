@@ -5,6 +5,7 @@
 #include "i2c.h"
 #include "iodev.h"
 #include "malloc.h"
+#include "spmi.h"
 #include "string.h"
 #include "types.h"
 #include "utils.h"
@@ -18,6 +19,11 @@
 #define TPS_REG_POWER_STATE 0x20
 #define TPS_CMD_INVALID     0x444d4321 // !CMD as LE u32
 #define TPS_MODE_DBMA       ((u32)'D' | ((u32)'B' << 8) | ((u32)'M' << 16) | ((u32)'a' << 24))
+
+/* SPMI bridge register selection and data window. */
+#define TPS_SPMI_REG_SELECT  0x00
+#define TPS_SPMI_REG_DATA    0x20
+#define TPS_SPMI_SELECT_BUSY BIT(7)
 
 struct tps6598x_dev {
     i2c_dev_t *i2c;
@@ -51,6 +57,30 @@ tps6598x_dev_t *tps6598x_init(const char *adt_node, i2c_dev_t *i2c)
 void tps6598x_shutdown(tps6598x_dev_t *dev)
 {
     free(dev);
+}
+
+int tps6598x_spmi_reset(spmi_dev_t *spmi, u8 addr)
+{
+    if (spmi_send_wakeup(spmi, addr) < 0)
+        return -1;
+    mdelay(10);
+    if (spmi_reg0_write(spmi, addr, TPS_REG_CMD1) < 0)
+        return -1;
+    for (int i = 0; i < 1000; i++) {
+        u8 reg;
+        if (spmi_ext_read(spmi, addr, TPS_SPMI_REG_SELECT, &reg, 1) < 0)
+            return -1;
+        if (reg == TPS_REG_CMD1) {
+            int ret = spmi_ext_write(spmi, addr, TPS_SPMI_REG_DATA, (const u8 *)"Gaid", 4);
+            if (ret >= 0)
+                mdelay(1000);
+            return ret;
+        }
+        if (reg != (TPS_REG_CMD1 | TPS_SPMI_SELECT_BUSY))
+            return -1;
+        mdelay(1);
+    }
+    return -1;
 }
 
 int tps6598x_command(tps6598x_dev_t *dev, const char *cmd, const u8 *data_in, size_t len_in,
