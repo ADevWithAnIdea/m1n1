@@ -2,6 +2,7 @@
 
 #include "usb.h"
 #include "adt.h"
+#include "atc.h"
 #include "dart.h"
 #include "i2c.h"
 #include "iodev.h"
@@ -19,6 +20,8 @@ struct usb_drd_regs {
     uintptr_t drd_regs;
     uintptr_t drd_regs_unk3;
     uintptr_t atc;
+    uintptr_t atc_core;
+    int atc_node;
 };
 
 #if USB_IODEV_COUNT > 100
@@ -116,11 +119,14 @@ static int usb_drd_get_regs(u32 idx, struct usb_drd_regs *regs)
         printf("usb: Error getting phy node %s\n", phy_path);
         return -1;
     }
+    regs->atc_node = adt_phy_offset;
 
     if (adt_get_reg(adt, adt_phy_path, "reg", 0, &regs->atc, NULL) < 0) {
         printf("usb: Error getting reg with index 0 for %s.\n", phy_path);
         return -1;
     }
+    if (chip_id == T8140 && adt_get_reg(adt, adt_phy_path, "reg", 4, &regs->atc_core, NULL) < 0)
+        return -1;
     if (adt_get_reg(adt, adt_drd_path, "reg", 0, &regs->drd_regs, NULL) < 0) {
         printf("usb: Error getting reg with index 0 for %s.\n", drd_path);
         return -1;
@@ -162,7 +168,7 @@ int usb_phy_bringup(u32 idx)
 
     write32(usb_regs.atc + 0x08, 0x01c1000f);
     write32(usb_regs.atc + 0x04, 0x00000003);
-    write32(usb_regs.atc + 0x04, 0x00000000);
+    write32(usb_regs.atc + 0x04, chip_id == T8140 ? BIT(2) : 0); /* APB_RESET_N */
     write32(usb_regs.atc + 0x1c, 0x008c0813);
     write32(usb_regs.atc + 0x00, 0x00000002);
 
@@ -170,6 +176,8 @@ int usb_phy_bringup(u32 idx)
     write32(usb_regs.drd_regs_unk3 + PIPEHANDLER_AON_GEN, PIPEHANDLER_AON_GEN_DWC3_RESET_N);
     write32(usb_regs.drd_regs_unk3 + PIPEHANDLER_NONSELECTED_OVERRIDE, 0x9332);
 
+    if (chip_id == T8140)
+        return atc_usb3_init_t8122(usb_regs.atc_node, usb_regs.atc_core);
     return 0;
 }
 
