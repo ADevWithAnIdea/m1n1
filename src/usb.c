@@ -169,7 +169,7 @@ dwc3_dev_t *usb_iodev_bringup(u32 idx)
     if (usb_drd_get_regs(idx, &usb_reg) < 0)
         return NULL;
 
-    return usb_dwc3_init(usb_reg.drd_regs, usb_dart);
+    return usb_dwc3_init(usb_reg.drd_regs, usb_dart, false);
 }
 
 #define USB_IODEV_WRAPPER(name, pipe)                                                              \
