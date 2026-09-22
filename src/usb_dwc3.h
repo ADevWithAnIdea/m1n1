@@ -14,7 +14,8 @@ typedef enum _cdc_acm_pipe_id_t {
     CDC_ACM_PIPE_MAX
 } cdc_acm_pipe_id_t;
 
-dwc3_dev_t *usb_dwc3_init(uintptr_t regs, dart_dev_t *dart);
+/* Select fixed SuperSpeed (true) or the existing High-Speed gadget (false). */
+dwc3_dev_t *usb_dwc3_init(uintptr_t regs, dart_dev_t *dart, bool superspeed);
 void usb_dwc3_shutdown(dwc3_dev_t *dev);
 
 void usb_dwc3_handle_events(dwc3_dev_t *dev);
