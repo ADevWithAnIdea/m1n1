@@ -524,6 +524,10 @@ static int usb_dwc3_ep0_start_data_recv_phase(dwc3_dev_t *dev)
 
 static void usb_dwc3_ep_set_stall(dwc3_dev_t *dev, u8 ep, u8 stall)
 {
+    /* T8140 EP0 clears its stall on SETUP; CLEARSTALL breaks enumeration. */
+    if (chip_id == T8140 && !stall && ep <= USB_LEP_CTRL_IN)
+        return;
+
     if (stall)
         usb_dwc3_ep_command(dev, ep, DWC3_DEPCMD_SETSTALL, 0, 0, 0);
     else
