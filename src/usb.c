@@ -64,10 +64,14 @@ static bool usb_is_initialized = false;
 
 static dart_dev_t *usb_dart_init(u32 idx)
 {
+    if (chip_id == T8140 && idx)
+        return NULL;
     int mapper_offset;
     char path[sizeof(FMT_DART_MAPPER_PATH)];
 
     snprintf(path, sizeof(path), FMT_DART_MAPPER_PATH, idx, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/dart-usb/mapper-usb");
     mapper_offset = adt_path_offset(adt, path);
     if (mapper_offset < 0) {
         // Device not present
@@ -81,11 +85,15 @@ static dart_dev_t *usb_dart_init(u32 idx)
     }
 
     snprintf(path, sizeof(path), FMT_DART_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/dart-usb");
     return dart_init_adt(path, 1, dart_idx, false);
 }
 
 static int usb_drd_get_regs(u32 idx, struct usb_drd_regs *regs)
 {
+    if (chip_id == T8140 && idx)
+        return -1;
     int adt_drd_path[8];
     int adt_drd_offset;
     int adt_phy_path[8];
@@ -94,6 +102,8 @@ static int usb_drd_get_regs(u32 idx, struct usb_drd_regs *regs)
     char drd_path[sizeof(FMT_DRD_PATH)];
 
     snprintf(drd_path, sizeof(drd_path), FMT_DRD_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(drd_path, "/arm-io/usb-drd");
     adt_drd_offset = adt_path_offset_trace(adt, drd_path, adt_drd_path);
     if (adt_drd_offset < 0) {
         // Nonexistent device
@@ -139,10 +149,14 @@ int usb_phy_bringup(u32 idx)
         return -1;
 
     snprintf(path, sizeof(path), FMT_DART_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/dart-usb");
     if (pmgr_adt_power_enable(path) < 0)
         return -1;
 
     snprintf(path, sizeof(path), FMT_DRD_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/usb-drd");
     if (pmgr_adt_power_enable(path) < 0)
         return -1;
 
