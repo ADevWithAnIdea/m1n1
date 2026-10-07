@@ -478,13 +478,23 @@
 #define SYS_IMP_APL_S3_6_C15_C0_5   sys_reg(3, 6, 15, 0, 5)
 #define SYS_IMP_APL_S3_4_C15_C12_0  sys_reg(3, 4, 15, 12, 0)
 
-/* T8140 CLPC sampler controls/counters. Live EL2 access faults in the SPTM path. */
+// CLPC sampler controls/counters
 #define SYS_IMP_APL_CLPC_CORE_PERF0        sys_reg(3, 7, 15, 0, 3)
 #define SYS_IMP_APL_CLPC_CORE_PERF1        sys_reg(3, 7, 15, 2, 3)
 #define SYS_IMP_APL_CLPC_CORE_PERF2        sys_reg(3, 7, 15, 4, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF3        sys_reg(3, 7, 15, 6, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF4        sys_reg(3, 7, 15, 8, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF5        sys_reg(3, 7, 15, 10, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF6        sys_reg(3, 7, 15, 12, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF7        sys_reg(3, 7, 15, 14, 3)
 #define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE0 sys_reg(3, 7, 15, 1, 3)
 #define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE1 sys_reg(3, 7, 15, 3, 3)
 #define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE2 sys_reg(3, 7, 15, 5, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE3 sys_reg(3, 7, 15, 7, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE4 sys_reg(3, 7, 15, 9, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE5 sys_reg(3, 7, 15, 11, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE6 sys_reg(3, 7, 15, 13, 3)
+#define SYS_IMP_APL_CLPC_CORE_PERF_ENABLE7 sys_reg(3, 7, 15, 15, 3)
 #define SYS_IMP_APL_CLPC_CORE_PERF_CTRL2   sys_reg(3, 7, 15, 5, 0)
 #define SYS_IMP_APL_CLPC_CORE_ACC0         sys_reg(3, 1, 15, 8, 3)
 #define SYS_IMP_APL_CLPC_CORE_ACC1         sys_reg(3, 1, 15, 9, 3)
@@ -742,6 +752,7 @@
 
 #define SYS_IMP_APL_GXF_ABORT_EL12 sys_reg(3, 6, 15, 15, 3)
 #define SYS_IMP_APL_GXF_ENTER_EL12 sys_reg(3, 6, 15, 15, 2)
+#define SYS_IMP_APL_GXF_CONFIG_EL12 sys_reg(3, 6, 15, 15, 1)
 
 #define SYS_IMP_APL_SPRR_PERM_EL0  sys_reg(3, 6, 15, 1, 5)
 #define SYS_IMP_APL_SPRR_PERM_EL1  sys_reg(3, 6, 15, 1, 6)
@@ -757,16 +768,17 @@
 #define SYS_IMP_APL_ELR_GL1   sys_reg(3, 6, 15, 10, 6)
 #define SYS_IMP_APL_FAR_GL1   sys_reg(3, 6, 15, 10, 7)
 
+#define SYS_IMP_APL_AFSR1_GL12 sys_reg(3, 6, 15, 0, 3)
 #define SYS_IMP_APL_VBAR_GL12  sys_reg(3, 6, 15, 9, 2)
 #define SYS_IMP_APL_SPSR_GL12  sys_reg(3, 6, 15, 9, 3)
 #define SYS_IMP_APL_ASPSR_GL12 sys_reg(3, 6, 15, 9, 4)
 #define SYS_IMP_APL_ESR_GL12   sys_reg(3, 6, 15, 9, 5)
 #define SYS_IMP_APL_ELR_GL12   sys_reg(3, 6, 15, 9, 6)
+#define SYS_IMP_APL_FAR_GL12   sys_reg(3, 6, 15, 9, 7)
 #define SYS_IMP_APL_SP_GL12    sys_reg(3, 6, 15, 10, 0)
 
 #define SYS_IMP_APL_AFSR1_GL1 sys_reg(3, 6, 15, 0, 1)
 
-/* PAuth registers */
 #define SYS_IMP_APL_APVMKEYLO_EL2 sys_reg(3, 6, 15, 14, 4)
 #define SYS_IMP_APL_APVMKEYHI_EL2 sys_reg(3, 6, 15, 14, 5)
 #define SYS_IMP_APL_APSTS_EL12    sys_reg(3, 6, 15, 14, 7)

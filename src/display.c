@@ -256,6 +256,12 @@ const display_config_t *display_get_config(void)
     else
         conf = &display_config_m1;
 
+    // remove this once M4 DCP is supported
+    if (chip_id == T8132) {
+        has_dcp = false;
+        return NULL;
+    }
+
     has_dcp = adt_path_offset(adt, conf->dcp) > 0;
     if (!has_dcp) {
         return NULL;

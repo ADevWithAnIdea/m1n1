@@ -1,10 +1,12 @@
 /* SPDX-License-Identifier: MIT */
 
 #include "hv.h"
+#include "hv_sptm.h"
 #include "assert.h"
 #include "cpu_regs.h"
 #include "exception.h"
 #include "smp.h"
+#include "soc.h"
 #include "string.h"
 #include "uart.h"
 #include "uartproxy.h"
@@ -44,13 +46,31 @@ struct hv_pcpu_data {
     u64 amx_ctx_el1;
     u64 amx_ctl_el1;
     u64 amx_state_t;
+    u64 gxf_config_el1;
+    u64 gxf_entry_el1;
+    u64 gxf_pabentry_el1;
+    u64 gxf_config_el12;
+    u64 gxf_entry_el12;
+    u64 gxf_pabentry_el12;
+    u64 gxf_tpidr_gl1;
+    u64 gxf_afsr1_gl12;
+    u64 gxf_vbar_gl12;
+    u64 gxf_spsr_gl12;
+    u64 gxf_aspsr_gl12;
+    u64 gxf_esr_gl12;
+    u64 gxf_elr_gl12;
+    u64 gxf_far_gl12;
+    u64 gxf_sp_gl12;
 } ALIGNED(64);
 
 struct hv_pcpu_data pcpu[MAX_CPUS];
 
 static u64 hv_clpc_core_perf_ctrl2[MAX_CPUS];
+static u64 hv_clpc_core_perf_enable[MAX_CPUS][8];
 static u64 hv_clpc_mem_stall_cfg[MAX_CPUS][3];
-static s64 hv_clpc_counter_bias[MAX_CPUS][16];
+static s64 hv_clpc_counter_bias[MAX_CPUS][8];
+
+#define HV_PMCR0_READ_HVC 0x3c0
 
 /*
  * SPRR permission-remap table, soft-cached on M4+ SoCs where the real register
@@ -60,6 +80,8 @@ static u64 hv_sprr_perm_el0 = 0x2010002030100000;
 static u64 hv_sprr_perm_el1 = 0x2020a506f020f0e0;
 static u64 hv_sprr_umprr_el1;
 
+#define APPLE_CNTV_FREQ 24000000ULL
+
 /*
  * Track EL2/proxy time hidden from the guest. The architectural counter and
  * Apple CNTVCT alias run in different clock domains, so each needs its own
@@ -68,26 +90,41 @@ static u64 hv_sprr_umprr_el1;
 static u64 stolen_time = 0;
 static u64 stolen_time_kernel_cntv = 0;
 
-/*
- * M4-class SoCs schedule based off an Apple impdef timer that is locked in raw
- * boot mode.  We soft-model it: keep the deadline in a per-CPU shadow, read
- * "now" from a counter (KERNEL_CNTVCTSS == CNTVCT_ALIAS, readable and
- * already passed through), and deliver the timer as a virtual FIQ from
- * hv_update_fiq() once the soft deadline elapses.
- */
 static inline u64 hv_kernel_cntv_now(void)
 {
-    /*
-     * CNTVOFF_EL2 only offsets the architectural virtual counter. XNU's Apple
-     * kernel deadline timer reads CNTVCT_ALIAS instead, so track stolen time for
-     * that timer separately in CNTVCT_ALIAS units and subtract it here.
-     */
     return mrs(SYS_IMP_APL_CNTVCT_ALIAS_EL0) - stolen_time_kernel_cntv;
 }
 
 static inline s64 hv_kernel_cntv_delta(void)
 {
     return (s64)(PERCPU(kernel_cntv_cval) - hv_kernel_cntv_now());
+}
+
+void hv_rearm_soft_timer(void)
+{
+    if (cpu_features->apple_sysregs_unlocked || !PERCPU(kernel_cntv_valid))
+        return;
+
+    u64 ctl = PERCPU(kernel_cntv_ctl) & (CNTx_CTL_ENABLE | CNTx_CTL_IMASK);
+    if (ctl != CNTx_CTL_ENABLE)
+        return;
+
+    s64 apple_delta = hv_kernel_cntv_delta();
+    if (apple_delta <= 0)
+        return;
+
+    u64 frequency = mrs(CNTFRQ_EL0);
+    u64 arch_delta = (u64)(((__uint128_t)(u64)apple_delta * frequency +
+                            APPLE_CNTV_FREQ - 1) /
+                           APPLE_CNTV_FREQ);
+    u64 deadline = mrs(CNTPCT_EL0) + arch_delta;
+    u64 host_ctl = mrs(CNTP_CTL_EL0);
+
+    if (!(host_ctl & CNTx_CTL_ENABLE) ||
+        (s64)(deadline - mrs(CNTP_CVAL_EL0)) < 0) {
+        msr(CNTP_CVAL_EL0, deadline);
+        msr(CNTP_CTL_EL0, CNTx_CTL_ENABLE);
+    }
 }
 
 static void hv_kernel_cntv_init(void)
@@ -101,6 +138,7 @@ static void hv_kernel_cntv_init(void)
         mrs(SYS_IMP_APL_KERNEL_CNTV_CTL_EL0) & (CNTx_CTL_ENABLE | CNTx_CTL_IMASK);
     PERCPU(kernel_cntv_cval) = hv_kernel_cntv_now() + (s64)(s32)tval;
     PERCPU(kernel_cntv_valid) = true;
+    hv_rearm_soft_timer();
 }
 
 static u64 hv_kernel_cntv_read_ctl(void)
@@ -123,12 +161,14 @@ static void hv_kernel_cntv_write_ctl(u64 val)
 {
     hv_kernel_cntv_init();
     PERCPU(kernel_cntv_ctl) = val & (CNTx_CTL_ENABLE | CNTx_CTL_IMASK);
+    hv_rearm_soft_timer();
 }
 
 static void hv_kernel_cntv_write_tval(u64 val)
 {
     hv_kernel_cntv_init();
     PERCPU(kernel_cntv_cval) = hv_kernel_cntv_now() + (s64)(s32)(u32)val;
+    hv_rearm_soft_timer();
 }
 
 static bool hv_kernel_cntv_pending(void)
@@ -141,7 +181,7 @@ static bool hv_kernel_cntv_pending(void)
            (CNTx_CTL_ISTATUS | CNTx_CTL_ENABLE);
 }
 
-#define KERNEL_CNTKCTL_CNTHCTL_MASK                                                               \
+#define KERNEL_CNTKCTL_MASK                                                                       \
     (CNTHCTL_EL0PCTEN | CNTHCTL_EL0VCTEN | CNTHCTL_EVNTI | CNTHCTL_EVNTDIR | CNTHCTL_EVNTEN)
 
 static bool hv_handle_kernel_cntkctl(struct exc_info *ctx, u64 rt, bool is_read)
@@ -155,16 +195,56 @@ static bool hv_handle_kernel_cntkctl(struct exc_info *ctx, u64 rt, bool is_read)
     u64 val = rt < 31 ? ctx->regs[rt] : 0;
     PERCPU(kernel_cntkctl_el1) = val;
 
-    /*
-     * XNU programs WFE timeout events and EL0 timebase access through this
-     * Apple alias. On guarded SoCs, direct EL2 writes to the Apple register can
-     * fault, so mirror only the architectural CNTHCTL_EL2 bits that correspond
-     * to the guest-visible Apple control state.
-     */
-    msr(SYS_CNTHCTL_EL2, (mrs(SYS_CNTHCTL_EL2) & ~KERNEL_CNTKCTL_CNTHCTL_MASK) |
-                             (val & KERNEL_CNTKCTL_CNTHCTL_MASK));
+    // Rescale the event bit from XNU's 24 MHz counter to CNTFRQ_EL0.
+    u64 cntkctl = val & KERNEL_CNTKCTL_MASK;
+    if (val & CNTHCTL_EVNTEN) {
+        u32 apple_index = FIELD_GET(CNTHCTL_EVNTI, val);
+        u64 apple_period = 1ULL << (apple_index + 1);
+        u64 arch_period =
+            (apple_period * mrs(CNTFRQ_EL0) + APPLE_CNTV_FREQ / 2) / APPLE_CNTV_FREQ;
+        u32 arch_index = 0;
+        u64 candidate_period = 2;
+
+        while (arch_index < 15 && candidate_period < arch_period) {
+            candidate_period <<= 1;
+            arch_index++;
+        }
+        if (arch_index && candidate_period >= arch_period &&
+            arch_period - (candidate_period >> 1) < candidate_period - arch_period)
+            arch_index--;
+
+        cntkctl &= ~CNTHCTL_EVNTI;
+        cntkctl |= FIELD_PREP(CNTHCTL_EVNTI, arch_index);
+    }
+
+    msr(SYS_CNTKCTL_EL12, (mrs(SYS_CNTKCTL_EL12) & ~KERNEL_CNTKCTL_MASK) | cntkctl);
     sysop("isb");
     return true;
+}
+
+static bool hv_handle_pmcr0(struct exc_info *ctx, u32 rt, bool is_read)
+{
+    u64 value = rt < 31 ? ctx->regs[rt] : 0;
+
+    if (is_read) {
+        value = (mrs(SYS_IMP_APL_PMCR0) & ~PMCR0_IMODE_MASK) |
+                PERCPU(pmc_irq_mode);
+        if (PERCPU(pmc_pending))
+            value |= PMCR0_IACT;
+        if (rt < 31)
+            ctx->regs[rt] = value;
+    } else {
+        PERCPU(pmc_pending) = !!(value & PMCR0_IACT);
+        PERCPU(pmc_irq_mode) = value & PMCR0_IMODE_MASK;
+        msr(SYS_IMP_APL_PMCR0, value);
+    }
+
+    return true;
+}
+
+bool hv_handle_pmc_hvc(struct exc_info *ctx, u32 immediate)
+{
+    return hv_handle_pmcr0(ctx, immediate & 0x1f, immediate >= HV_PMCR0_READ_HVC);
 }
 
 void hv_exit_guest(void) __attribute__((noreturn));
@@ -289,18 +369,24 @@ void hv_set_time_stealing(bool enabled, bool reset)
 void hv_apply_time_stealing_offset(void)
 {
     msr(CNTVOFF_EL2, stolen_time);
+    if (!cpu_features->apple_sysregs_unlocked)
+        hv_rearm_soft_timer();
 }
 
 void hv_add_time(s64 time)
 {
     u64 ticks = time < 0 ? (u64)-time : (u64)time;
-    u64 kernel_ticks = (u64)((__uint128_t)ticks * 24000000ULL / mrs(CNTFRQ_EL0));
+    u64 kernel_ticks =
+        (u64)((__uint128_t)ticks * APPLE_CNTV_FREQ / mrs(CNTFRQ_EL0));
 
     stolen_time -= (u64)time;
     if (time < 0)
         stolen_time_kernel_cntv += kernel_ticks;
     else
         stolen_time_kernel_cntv -= kernel_ticks;
+
+    if (!cpu_features->apple_sysregs_unlocked)
+        hv_rearm_soft_timer();
 }
 
 static void hv_update_fiq(void)
@@ -332,6 +418,7 @@ static void hv_update_fiq(void)
     } else if (!(hcr & HCR_VF) && fiq_pending) {
         hv_write_hcr(hcr | HCR_VF);
     }
+
 }
 
 #define SYSREG_MAP(sr, to)                                                                         \
@@ -372,9 +459,6 @@ static bool hv_handle_clpc_counter(struct exc_info *ctx, u64 rt, bool is_read, u
      * is unsafe in the current T8140/SPTM context, so provide coherent
      * monotonic guest-visible counters.
      */
-    if (counter >= 16)
-        return false;
-
     u64 cpu = mrs(TPIDR_EL2);
     u64 base = mrs(CNTPCT_EL0) + (counter * 0x1000000ULL);
 
@@ -397,9 +481,6 @@ static bool hv_handle_clpc_mem_stall_config(struct exc_info *ctx, u64 rt, bool i
      * read/modify/write. Keep readback coherent, but do not touch live EL2
      * hardware registers.
      */
-    if (regno >= 3)
-        return false;
-
     u64 cpu = mrs(TPIDR_EL2);
     u64 *cache = &hv_clpc_mem_stall_cfg[cpu][regno];
 
@@ -431,6 +512,144 @@ static bool hv_handle_clpc_core_perf_ctrl2(struct exc_info *ctx, u64 rt, bool is
     return true;
 }
 
+static bool hv_handle_clpc_core_perf_enable(struct exc_info *ctx, u64 rt, bool is_read,
+                                            unsigned int channel)
+{
+    u64 cpu = mrs(TPIDR_EL2);
+    u64 *cache = &hv_clpc_core_perf_enable[cpu][channel];
+
+    if (is_read) {
+        if (rt < 31)
+            ctx->regs[rt] = *cache;
+    } else {
+        *cache = rt < 31 ? ctx->regs[rt] : 0;
+    }
+
+    return true;
+}
+
+static bool hv_handle_gxf_shadow(struct exc_info *ctx, u64 reg, u64 rt, bool is_read)
+{
+    u64 *value;
+
+    switch (reg) {
+        case SYSREG_ISS(SYS_IMP_APL_GXF_STATUS_EL1):
+            if (is_read && rt < 31)
+                ctx->regs[rt] = 0;
+            return is_read;
+        case SYSREG_ISS(SYS_IMP_APL_GXF_CONFIG_EL1):
+            value = &PERCPU(gxf_config_el1);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_GXF_ENTER_EL1):
+            value = &PERCPU(gxf_entry_el1);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_GXF_ABORT_EL1):
+            value = &PERCPU(gxf_pabentry_el1);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_GXF_CONFIG_EL12):
+            value = &PERCPU(gxf_config_el12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_GXF_ENTER_EL12):
+            value = &PERCPU(gxf_entry_el12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_GXF_ABORT_EL12):
+            value = &PERCPU(gxf_pabentry_el12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_TPIDR_GL1):
+            value = &PERCPU(gxf_tpidr_gl1);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_AFSR1_GL1):
+        case SYSREG_ISS(SYS_IMP_APL_AFSR1_GL12):
+            value = &PERCPU(gxf_afsr1_gl12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_VBAR_GL1):
+        case SYSREG_ISS(SYS_IMP_APL_VBAR_GL12):
+            value = &PERCPU(gxf_vbar_gl12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_SPSR_GL1):
+        case SYSREG_ISS(SYS_IMP_APL_SPSR_GL12):
+            value = &PERCPU(gxf_spsr_gl12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_ASPSR_GL1):
+        case SYSREG_ISS(SYS_IMP_APL_ASPSR_GL12):
+            value = &PERCPU(gxf_aspsr_gl12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_ESR_GL1):
+        case SYSREG_ISS(SYS_IMP_APL_ESR_GL12):
+            value = &PERCPU(gxf_esr_gl12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_ELR_GL1):
+        case SYSREG_ISS(SYS_IMP_APL_ELR_GL12):
+            value = &PERCPU(gxf_elr_gl12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_FAR_GL1):
+        case SYSREG_ISS(SYS_IMP_APL_FAR_GL12):
+            value = &PERCPU(gxf_far_gl12);
+            break;
+        case SYSREG_ISS(SYS_IMP_APL_SP_GL12):
+            value = &PERCPU(gxf_sp_gl12);
+            break;
+        default:
+            return false;
+    }
+
+    if (is_read) {
+        if (rt < 31)
+            ctx->regs[rt] = *value;
+    } else {
+        *value = rt < 31 ? ctx->regs[rt] : 0;
+    }
+    return true;
+}
+
+bool hv_handle_clpc_hvc(struct exc_info *ctx, u32 immediate)
+{
+    u32 operation = (immediate - 0x400) >> 5;
+    u32 rt = immediate & 0x1f;
+    bool is_read = operation & 1;
+    u32 reg = operation >> 1;
+
+    if (reg < 16) {
+        if (reg & 1)
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, reg >> 1);
+        return hv_handle_clpc_counter(ctx, rt, is_read, reg >> 1);
+    }
+
+    switch (reg) {
+        case 16:
+            return hv_handle_clpc_core_perf_ctrl2(ctx, rt, is_read);
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+        case 21:
+            return hv_handle_clpc_counter(ctx, rt, is_read, reg - 17);
+        case 22:
+        case 23:
+        case 24:
+            return hv_handle_clpc_mem_stall_config(ctx, rt, is_read, reg - 22);
+        default:
+            __builtin_unreachable();
+    }
+}
+
+bool hv_handle_objc_bp_hvc(struct exc_info *ctx, u32 immediate)
+{
+    u32 operation = (immediate - 0xa40) >> 5;
+    u32 rt = immediate & 0x1f;
+    bool is_read = operation & 1;
+    u64 *value = operation < 2 ? &PERCPU(impdef_c15_c0_4) : &PERCPU(impdef_c15_c0_5);
+
+    if (is_read) {
+        if (rt < 31)
+            ctx->regs[rt] = *value;
+    } else {
+        *value = rt < 31 ? ctx->regs[rt] : 0;
+    }
+
+    return true;
+}
+
 static bool hv_handle_msr_unlocked(struct exc_info *ctx, u64 iss)
 {
     u64 reg = iss & (ESR_ISS_MSR_OP0 | ESR_ISS_MSR_OP2 | ESR_ISS_MSR_OP1 | ESR_ISS_MSR_CRn |
@@ -439,8 +658,11 @@ static bool hv_handle_msr_unlocked(struct exc_info *ctx, u64 iss)
     bool is_read = iss & ESR_ISS_MSR_DIR;
 
     u64 *regs = ctx->regs;
-
     regs[31] = 0;
+
+    if (!cpu_features->apple_sysregs_unlocked &&
+        hv_handle_gxf_shadow(ctx, reg, rt, is_read))
+        return true;
 
     switch (reg) {
         SYSREG_PASS(SYS_IMP_APL_CORE_NRG_ACC_DAT);
@@ -452,8 +674,7 @@ static bool hv_handle_msr_unlocked(struct exc_info *ctx, u64 iss)
         SYSREG_MAP(SYS_CNTP_CTL_EL0, SYS_CNTP_CTL_EL02)
         SYSREG_MAP(SYS_CNTP_CVAL_EL0, SYS_CNTP_CVAL_EL02)
         SYSREG_MAP(SYS_CNTP_TVAL_EL0, SYS_CNTP_TVAL_EL02)
-        /* Apple kernel deadline timer that we shadow soft-modeled, CTL/TVAL
-         * are write-locked at EL2; the counters read through. */
+        /* Software-model the write-locked Apple deadline timer. */
         case SYSREG_ISS(SYS_IMP_APL_KERNEL_CNTV_CTL_EL0):
             if (is_read)
                 regs[rt] = hv_kernel_cntv_read_ctl();
@@ -537,6 +758,16 @@ static bool hv_handle_msr_unlocked(struct exc_info *ctx, u64 iss)
             return hv_handle_clpc_counter(ctx, rt, is_read, 1);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF2):
             return hv_handle_clpc_counter(ctx, rt, is_read, 2);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF3):
+            return hv_handle_clpc_counter(ctx, rt, is_read, 3);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF4):
+            return hv_handle_clpc_counter(ctx, rt, is_read, 4);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF5):
+            return hv_handle_clpc_counter(ctx, rt, is_read, 5);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF6):
+            return hv_handle_clpc_counter(ctx, rt, is_read, 6);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF7):
+            return hv_handle_clpc_counter(ctx, rt, is_read, 7);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_ACC0):
             return hv_handle_clpc_counter(ctx, rt, is_read, 0);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_ACC1):
@@ -548,11 +779,21 @@ static bool hv_handle_msr_unlocked(struct exc_info *ctx, u64 iss)
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_ACC4):
             return hv_handle_clpc_counter(ctx, rt, is_read, 4);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE0):
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 0);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE1):
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 1);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE2):
-            if (is_read)
-                regs[rt] = 0;
-            return true;
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 2);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE3):
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 3);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE4):
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 4);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE5):
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 5);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE6):
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 6);
+        case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_ENABLE7):
+            return hv_handle_clpc_core_perf_enable(ctx, rt, is_read, 7);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_CORE_PERF_CTRL2):
             return hv_handle_clpc_core_perf_ctrl2(ctx, rt, is_read);
         case SYSREG_ISS(SYS_IMP_APL_CLPC_MEM_STALL_CFG0):
@@ -562,14 +803,8 @@ static bool hv_handle_msr_unlocked(struct exc_info *ctx, u64 iss)
         case SYSREG_ISS(SYS_IMP_APL_CLPC_MEM_STALL_CFG2):
             return hv_handle_clpc_mem_stall_config(ctx, rt, is_read, 2);
         SYSREG_MAP(SYS_IMP_APL_APCTL_EL1, SYS_IMP_APL_APCTL_EL12)
-        /*
-         * AMX. On M4 userspace uses SME, so AMX is inert, but XNU's per-CPU
-         * init and context switch still touch these regs, which fault at EL2 on
-         * guarded SoCs. Advertise a valid version (AMXIDR/AIDR2, else boot
-         * panics) and soft-cache the control/state on guarded SoCs so XNU's
-         * read-after-write is coherent; the real AMX unit is never used. Unlocked
-         * SoCs keep the original map/pass behavior.
-         */
+         // Raw boot locks us out of AMX, fake it enough to boot XNU
+         // We'll tell userspace we don't have it once booted
         case SYSREG_ISS(SYS_IMP_APL_AMXIDR_EL1):
             if (!is_read)
                 return false;
@@ -653,15 +888,7 @@ static bool hv_handle_msr_unlocked(struct exc_info *ctx, u64 iss)
 
         /* shadow the interrupt mode and state flag */
         case SYSREG_ISS(SYS_IMP_APL_PMCR0):
-            if (is_read) {
-                u64 val = (mrs(SYS_IMP_APL_PMCR0) & ~PMCR0_IMODE_MASK) | PERCPU(pmc_irq_mode);
-                regs[rt] = val | (PERCPU(pmc_pending) ? PMCR0_IACT : 0);
-            } else {
-                PERCPU(pmc_pending) = !!(regs[rt] & PMCR0_IACT);
-                PERCPU(pmc_irq_mode) = regs[rt] & PMCR0_IMODE_MASK;
-                msr(SYS_IMP_APL_PMCR0, regs[rt]);
-            }
-            return true;
+            return hv_handle_pmcr0(ctx, rt, is_read);
 
         /*
          * Handle this one here because m1n1/Linux (will) use it for explicit cpuidle.
@@ -797,6 +1024,8 @@ void hv_exc_sync(struct exc_info *ctx)
     bool handled = false;
     u32 ec = FIELD_GET(ESR_EC, ctx->esr);
 
+    bool advance = true;
+
     switch (ec) {
         case ESR_EC_MSR:
             hv_wdt_breadcrumb('m');
@@ -840,11 +1069,17 @@ void hv_exc_sync(struct exc_info *ctx)
                     break;
             }
             break;
+        case ESR_EC_HVC:
+            hv_wdt_breadcrumb('H');
+            handled = hv_sptm_handle_hvc(ctx, FIELD_GET(ESR_ISS, ctx->esr) & 0xffff);
+            advance = false;
+            break;
     }
 
     if (handled) {
         hv_wdt_breadcrumb('+');
-        ctx->elr += 4;
+        if (advance)
+            ctx->elr += 4;
     } else {
         hv_wdt_breadcrumb('-');
         // VM code can forward a nested SError exception here

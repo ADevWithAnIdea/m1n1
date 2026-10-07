@@ -514,6 +514,8 @@ CPUFeatures = Struct(
     "actlr_el2" / bool_,
     "counter_redirect" / bool_,
     "sme_enabled" / bool_,
+    "sapt" / bool_,
+    Padding(3),
 )
 
 # Uses UartInterface.proxyreq() to send requests to M1N1 and process
@@ -661,6 +663,7 @@ class M1N1Proxy(Reloadable):
     P_VIRTIO_PUT_BUFFER = 0xc0e
     P_HV_EXIT_CPU = 0xc0f
     P_HV_ADD_TIME = 0xc10
+    P_HV_SPTM_INIT = 0xc11
 
     P_FB_INIT = 0xd00
     P_FB_SHUTDOWN = 0xd01
@@ -1151,7 +1154,17 @@ class M1N1Proxy(Reloadable):
         return self.request(self.P_HV_EXIT_CPU, cpu)
     def hv_add_time(self, time):
         return self.request(self.P_HV_ADD_TIME, time)
-
+    def hv_sptm_init(self, guest_adt, cons_ops, page_shift_const, xnu_text,
+                     amx_version, cpu_capabilities):
+        return self.request(
+            self.P_HV_SPTM_INIT,
+            guest_adt,
+            cons_ops,
+            page_shift_const,
+            xnu_text,
+            amx_version,
+            cpu_capabilities,
+        )
     def fb_init(self):
         return self.request(self.P_FB_INIT)
     def fb_shutdown(self, restore_logo=True):

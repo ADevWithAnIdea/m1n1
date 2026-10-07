@@ -146,16 +146,26 @@ class MachO:
             elif cmd.cmd == MachOLoadCmdType.UNIXTHREAD:
                 self.entry = cmd.args[0].data.pc
 
-    def prepare_image(self, load_hook=None):
+    def prepare_image(self, load_hook=None, *, verbose=False):
         memory_size = self.vmax - self.vmin
+        verbose_print = print if verbose else lambda *args, **kwargs: None
 
         image = bytearray(memory_size)
+        segment_count = 0
+        loaded_size = 0
+        zeroed_size = 0
+        skipped_size = 0
 
         for cmd in self.get_cmds(MachOLoadCmdType.SEGMENT_64):
+            segment_count += 1
             dest = cmd.args.vmaddr - self.vmin
             end = min(self.size, cmd.args.fileoff + cmd.args.filesize)
             size = end - cmd.args.fileoff
-            print(f"LOAD: {cmd.args.segname} {size} bytes from {cmd.args.fileoff:x} to {dest:x}")
+            loaded_size += size
+            verbose_print(
+                f"LOAD: {cmd.args.segname} {size} bytes from "
+                f"{cmd.args.fileoff:x} to {dest:x}"
+            )
             self.io.seek(self.off + cmd.args.fileoff)
             data = self.io.read(size)
             if load_hook is not None:
@@ -164,12 +174,29 @@ class MachO:
             if cmd.args.vmsize > size:
                 clearsize = cmd.args.vmsize - size
                 if cmd.args.segname == "PYLD":
-                    print("SKIP: %d bytes from 0x%x to 0x%x" % (clearsize, dest + size, dest + size + clearsize))
+                    skipped_size += clearsize
+                    verbose_print(
+                        "SKIP: %d bytes from 0x%x to 0x%x" %
+                        (clearsize, dest + size, dest + size + clearsize)
+                    )
                     memory_size -= clearsize - 4 # leave a payload end marker
                     image = image[:memory_size]
                 else:
-                    print("ZERO: %d bytes from 0x%x to 0x%x" % (clearsize, dest + size, dest + size + clearsize))
+                    zeroed_size += clearsize
+                    verbose_print(
+                        "ZERO: %d bytes from 0x%x to 0x%x" %
+                        (clearsize, dest + size, dest + size + clearsize)
+                    )
                     image[dest + size:dest + cmd.args.vmsize] = bytes(clearsize)
+
+        summary = (
+            f"Prepared Mach-O image: {segment_count} segments, "
+            f"0x{len(image):x} bytes (0x{loaded_size:x} loaded, "
+            f"0x{zeroed_size:x} zero-filled"
+        )
+        if skipped_size:
+            summary += f", 0x{skipped_size:x} skipped"
+        print(summary + ")")
 
         return image
 
@@ -223,14 +250,26 @@ class MachO:
                 sname = f"{filename}:{sym}"
                 self.symbols[sname] = addr - sym_seg.args.vmaddr + seg.args.vmaddr
 
-    def load_symbols(self, demangle=False):
+    def add_fileset_symbols(self, filename, demangle=False):
+        subfile = self.subfiles[filename]
+        if not list(subfile.get_cmds(MachOLoadCmdType.SYMTAB)):
+            return
+
+        subfile.load_symbols(demangle=demangle, file_base=self.off)
+        for name, addr in subfile.symbols.items():
+            self.symbols[f"{filename}:{name}"] = addr
+
+    def load_symbols(self, demangle=False, file_base=None):
         self.symbols = {}
+
+        if file_base is None:
+            file_base = self.off
 
         cmd = self.get_cmd(MachOLoadCmdType.SYMTAB)
 
         nsyms = cmd.args.nsyms
         length = NList.sizeof() * nsyms
-        self.io.seek(self.off + cmd.args.symoff)
+        self.io.seek(file_base + cmd.args.symoff)
         symdata = self.io.read(length)
 
         symbols = Array(nsyms, NList).parse(symdata)
@@ -238,7 +277,7 @@ class MachO:
         symbols_dict = {}
         for i in symbols:
             off = cmd.args.stroff + i.n_strx
-            self.io.seek(self.off + off)
+            self.io.seek(file_base + off)
             name = self.io.read(1024).split(b"\x00")[0].decode("ascii")
             symbols_dict[name] = i.n_value
 

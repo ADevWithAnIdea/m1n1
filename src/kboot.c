@@ -376,7 +376,7 @@ static int dt_set_memory(void)
 
     // iBoot makes this CTRR range writable only from the boot CPU. Keep Linux from assigning its
     // pages to secondary CPUs.
-    if (chip_id == T8132 || chip_id == T8140) {
+    if (!cpu_features->apple_sysregs_unlocked) {
         u64 ctrr_start = ALIGN_DOWN(mrs(SYS_IMP_APL_CTRR_LOWER_EL1), get_page_size());
         u64 ctrr_end = ALIGN_UP(mrs(SYS_IMP_APL_CTRR_UPPER_EL1) + SZ_4K, get_page_size());
 
@@ -596,6 +596,10 @@ static int dt_set_cpus(void)
         } else {
             printf("FDT: Reserving stack for CPU %d 0x%lx\n", cpu, (uint64_t)secondary_stacks[cpu]);
             fdt_add_mem_rsv(dt, (uint64_t)secondary_stacks[cpu], SECONDARY_STACK_SIZE);
+            printf("FDT: Reserving reset stack for CPU %d 0x%lx\n", cpu,
+                   (uint64_t)secondary_reset_stacks[cpu]);
+            fdt_add_mem_rsv(dt, (uint64_t)secondary_reset_stacks[cpu],
+                            SECONDARY_RESET_STACK_SIZE);
             if (has_el3()) {
                 printf("FDT: Reserving EL3 stack for CPU %d 0x%lx\n", cpu,
                        (uint64_t)secondary_stacks_el3[cpu]);
