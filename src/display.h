@@ -15,6 +15,7 @@ typedef enum _dcp_shutdown_mode {
 extern bool display_is_external;
 
 int display_init(void);
+int display_get_vram(u64 *paddr, u64 *size);
 int display_start_dcp(void);
 int display_configure(const char *config);
 void display_shutdown(dcp_shutdown_mode mode);

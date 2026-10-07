@@ -2,6 +2,7 @@
 
 #include "fb.h"
 #include "assert.h"
+#include "display.h"
 #include "iodev.h"
 #include "malloc.h"
 #include "memory.h"
@@ -414,8 +415,12 @@ void fb_init(bool clear)
     fb.size = cur_boot_args.video.stride * cur_boot_args.video.height;
     printf("fb init: %dx%d (%d) [s=%d] @%p\n", fb.width, fb.height, fb.depth, fb.stride, fb.hwptr);
 
-    mmu_add_mapping(cur_boot_args.video.base, cur_boot_args.video.base, ALIGN_UP(fb.size, 0x4000),
-                    MAIR_IDX_NORMAL_NC, PERM_RW);
+    u64 vram_base, vram_size;
+    if (display_get_vram(&vram_base, &vram_size))
+        vram_size = fb.size;
+
+    mmu_add_mapping(cur_boot_args.video.base, cur_boot_args.video.base,
+                    ALIGN_UP(max(fb.size, vram_size), 0x4000), MAIR_IDX_NORMAL_NC, PERM_RW);
 
     fb.ptr = malloc(fb.size);
     memcpy(fb.ptr, fb.hwptr, fb.size);
