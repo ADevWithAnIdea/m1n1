@@ -97,6 +97,9 @@ union usb_setup_packet {
 #define USB_ENDPOINT_DESCRIPTOR                  0x05
 #define USB_DEVICE_QUALIFIER_DESCRIPTOR          0x06
 #define USB_OTHER_SPEED_CONFIGURATION_DESCRIPTOR 0x07
+#define USB_BOS_DESCRIPTOR                       0x0f
+#define USB_DEVICE_CAPABILITY_DESCRIPTOR         0x10
+#define USB_SS_ENDPOINT_COMPANION_DESCRIPTOR     0x30
 
 #define USB_CDC_INTERFACE_FUNCTIONAL_DESCRIPTOR 0x24
 #define USB_CDC_UNION_SUBTYPE                   0x06
@@ -161,6 +164,39 @@ struct usb_endpoint_descriptor {
     u8 bmAttributes;
     u16 wMaxPacketSize;
     u8 bInterval;
+} PACKED;
+
+struct usb_ss_endpoint_companion_descriptor {
+    u8 bLength;
+    u8 bDescriptorType;
+    u8 bMaxBurst;
+    u8 bmAttributes;
+    u16 wBytesPerInterval;
+} PACKED;
+
+struct usb_bos_descriptor {
+    u8 bLength;
+    u8 bDescriptorType;
+    u16 wTotalLength;
+    u8 bNumDeviceCaps;
+} PACKED;
+
+struct usb_ext_cap_descriptor {
+    u8 bLength;
+    u8 bDescriptorType;
+    u8 bDevCapabilityType;
+    u32 bmAttributes;
+} PACKED;
+
+struct usb_ss_cap_descriptor {
+    u8 bLength;
+    u8 bDescriptorType;
+    u8 bDevCapabilityType;
+    u8 bmAttributes;
+    u16 wSpeedSupported;
+    u8 bFunctionalitySupport;
+    u8 bU1devExitLat;
+    u16 bU2DevExitLat;
 } PACKED;
 
 struct usb_string_descriptor {

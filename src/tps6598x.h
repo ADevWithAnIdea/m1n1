@@ -4,6 +4,7 @@
 #define TPS6598X_H
 
 #include "i2c.h"
+#include "spmi.h"
 #include "types.h"
 
 typedef struct tps6598x_dev tps6598x_dev_t;
@@ -14,6 +15,9 @@ void tps6598x_shutdown(tps6598x_dev_t *dev);
 int tps6598x_command(tps6598x_dev_t *dev, const char *cmd, const u8 *data_in, size_t len_in,
                      u8 *data_out, size_t len_out);
 int tps6598x_powerup(tps6598x_dev_t *dev);
+
+/* Wait for HPM restart; the caller retains ownership of the SPMI bus. */
+int tps6598x_spmi_reset(spmi_dev_t *spmi, u8 addr);
 
 int tps6598x_enter_kis(tps6598x_dev_t *dev);
 int tps6598x_enable_debugusb(void);

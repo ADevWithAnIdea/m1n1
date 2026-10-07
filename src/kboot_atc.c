@@ -1,8 +1,8 @@
-#include <assert.h>
 #include <string.h>
 
 #include "kboot_atc.h"
 #include "adt.h"
+#include "atc.h"
 #include "devicetree.h"
 #include "malloc.h"
 #include "pmgr.h"
@@ -11,47 +11,6 @@
 #include "libfdt/libfdt.h"
 
 #define MAX_ATC_DEVS 8
-
-#define CIO3PLL_DCO_NCTRL            0x2a38
-#define CIO3PLL_DCO_COARSEBIN_EFUSE0 GENMASK(6, 0)
-#define CIO3PLL_DCO_COARSEBIN_EFUSE1 GENMASK(23, 17)
-
-#define CIO3PLL_FRACN_CAN             0x2aa4
-#define CIO3PLL_DLL_CAL_START_CAPCODE GENMASK(18, 17)
-
-#define CIO3PLL_DTC_VREG        0x2a20
-#define CIO3PLL_DTC_VREG_ADJUST GENMASK(16, 14)
-
-#define AUS_COMMON_SHIM_BLK_VREG 0x0a04
-#define AUS_VREG_TRIM            GENMASK(6, 2)
-
-#define AUSPLL_DCO_EFUSE_SPARE         0x222c
-#define AUSPLL_RODCO_ENCAP_EFUSE       GENMASK(10, 9)
-#define AUSPLL_RODCO_BIAS_ADJUST_EFUSE GENMASK(14, 12)
-
-#define AUSPLL_FRACN_CAN         0x22a4
-#define AUSPLL_DLL_START_CAPCODE GENMASK(18, 17)
-
-#define AUSPLL_CLKOUT_DTC_VREG 0x2220
-#define AUSPLL_DTC_VREG_ADJUST GENMASK(16, 14)
-#define AUSPLL_DTC_VREG_BYPASS BIT(7)
-
-struct atc_tunable {
-    u32 offset : 24;
-    u32 size : 8;
-    u32 mask;
-    u32 value;
-} PACKED;
-static_assert(sizeof(struct atc_tunable) == 12, "Invalid atc_tunable size");
-
-struct adt_tunable_info {
-    const char *adt_name;
-    const char *fdt_name;
-    size_t reg_offset;
-    size_t reg_size;
-    bool required;
-    const char *adt_fallback;
-};
 
 struct atc_fuse_info {
     u64 fuse_addr;
@@ -66,82 +25,6 @@ struct atc_fuse_hw {
     s32 port; /* -1 for don't care */
     const struct atc_fuse_info *fuses;
     size_t n_fuses;
-};
-
-static const struct adt_tunable_info atc_tunables[] = {
-    /* global tunables applied after power on or reset */
-    {"tunable_ATC0AXI2AF", "apple,tunable-axi2af", 0x0, 0x4000, true},
-    {"tunable_ATC_FABRIC", "apple,tunable-common-b", 0x45000, 0x4000, true},
-    {"tunable_USB_ACIOPHY_TOP", "apple,tunable-common-b", 0x0, 0x4000, true},
-    {"tunable_AUS_CMN_SHM", "apple,tunable-common-b", 0xa00, 0x4000, true},
-    {"tunable_AUS_CMN_TOP", "apple,tunable-common-b", 0x800, 0x4000, true},
-    {"tunable_AUSPLL_CORE", "apple,tunable-common-b", 0x2200, 0x4000, true},
-    {"tunable_AUSPLL_TOP", "apple,tunable-common-b", 0x2000, 0x4000, true},
-    {"tunable_CIO3PLL_CORE", "apple,tunable-common-b", 0x2a00, 0x4000, true},
-    {"tunable_CIO3PLL_TOP", "apple,tunable-common-b", 0x2800, 0x4000, true},
-    {"tunable_CIO_CIO3PLL_TOP", "apple,tunable-common-b", 0x2800, 0x4000, false},
-    /* lane-specific tunables applied after a cable is connected */
-    {"tunable_DP_LN0_AUSPMA_TX_TOP", "apple,tunable-lane0-dp", 0xc000, 0x1000, true},
-    {"tunable_DP_LN1_AUSPMA_TX_TOP", "apple,tunable-lane1-dp", 0x13000, 0x1000, true},
-    {"tunable_USB_LN0_AUSPMA_TX_TOP", "apple,tunable-lane0-usb", 0xc000, 0x1000, true},
-    {"tunable_USB_LN0_AUSPMA_RX_TOP", "apple,tunable-lane0-usb", 0x9000, 0x1000, true},
-    {"tunable_USB_LN0_AUSPMA_RX_SHM", "apple,tunable-lane0-usb", 0xb000, 0x1000, true},
-    {"tunable_USB_LN0_AUSPMA_RX_EQ", "apple,tunable-lane0-usb", 0xa000, 0x1000, true},
-    {"tunable_USB_LN1_AUSPMA_TX_TOP", "apple,tunable-lane1-usb", 0x13000, 0x1000, true},
-    {"tunable_USB_LN1_AUSPMA_RX_TOP", "apple,tunable-lane1-usb", 0x10000, 0x1000, true},
-    {"tunable_USB_LN1_AUSPMA_RX_SHM", "apple,tunable-lane1-usb", 0x12000, 0x1000, true},
-    {"tunable_USB_LN1_AUSPMA_RX_EQ", "apple,tunable-lane1-usb", 0x11000, 0x1000, true},
-    {"tunable_CIO_LN0_AUSPMA_TX_TOP", "apple,tunable-lane0-cio", 0xc000, 0x1000, true},
-    {"tunable_CIO_LN0_AUSPMA_RX_TOP", "apple,tunable-lane0-cio", 0x9000, 0x1000, true},
-    {"tunable_CIO_LN0_AUSPMA_RX_SHM", "apple,tunable-lane0-cio", 0xb000, 0x1000, true},
-    {"tunable_CIO_LN0_AUSPMA_RX_EQ", "apple,tunable-lane0-cio", 0xa000, 0x1000, true},
-    {"tunable_CIO_LN1_AUSPMA_TX_TOP", "apple,tunable-lane1-cio", 0x13000, 0x1000, true},
-    {"tunable_CIO_LN1_AUSPMA_RX_TOP", "apple,tunable-lane1-cio", 0x10000, 0x1000, true},
-    {"tunable_CIO_LN1_AUSPMA_RX_SHM", "apple,tunable-lane1-cio", 0x12000, 0x1000, true},
-    {"tunable_CIO_LN1_AUSPMA_RX_EQ", "apple,tunable-lane1-cio", 0x11000, 0x1000, true},
-};
-
-static const struct adt_tunable_info atc_tunables_t8122[] = {
-    {"tunable_ATC0AXI2AF", "apple,tunable-axi2af", 0x0, 0x8000, true,
-     "tunable_ATCAXI2AF"},
-    {"tunable_ATC_FABRIC", "apple,tunable-common-b", 0x44000, 0x4000, true},
-
-    {"tunable_CIO3PLL_CORE", "apple,tunable-common-b", 0x2a00, 0x200, true},
-    {"tunable_CIO3PLL_TOP", "apple,tunable-common-b", 0x2800, 0x200, true},
-    {"tunable_ACIOPHY_LANE_USBC0", "apple,tunable-common-b", 0x5000, 0x1000, true},
-    {"tunable_ACIOPHY_PLL_TOP", "apple,tunable-common-b", 0x1000, 0x4000, true},
-    {"tunable_ACIOPHY_TOP", "apple,tunable-common-b", 0x0, 0x4000, true},
-
-    {"tunable_AUSCMN_DIG", "apple,tunable-common-b", 0x800, 0x200, true},
-    {"tunable_AUSPLL_CORE", "apple,tunable-common-b", 0x2200, 0x4000, true},
-    //{"tunable_AUX_SHM", "apple,tunable-common-b", 0x0, 0x0, true}, // TODO: offset?
-    {"tunable_AUX_TOP", "apple,tunable-common-b", 0x16000, 0x4000, true},
-    {"tunable_AUSCMN_SHM", "apple,tunable-common-b", 0xa00, 0x200, true},
-    {"tunable_CLKMON_CFG", "apple,tunable-common-b", 0x2600, 0x100, false},
-
-    {"tunable_LN0_RX_TOP_USB_DFLT", "apple,tunable-lane0-usb", 0x9000, 0x1000, true},
-    {"tunable_LN0_RX_TOP_USB_EQA", "apple,tunable-lane0-usb", 0x9000, 0x1000, false},
-    {"tunable_LN0_RX_EQ_USB_EQA", "apple,tunable-lane0-usb", 0xa000, 0x1000, true},
-    {"tunable_LN0_RX_SHM_USB_DFLT", "apple,tunable-lane0-usb", 0xb000, 0x1000, true},
-    {"tunable_LN0_TX_TOP_USB_DFLT", "apple,tunable-lane0-usb", 0xc000, 0x1000, true},
-    {"tunable_LN0_TX_SHM_USB_DFLT", "apple,tunable-lane0-usb", 0xd000, 0x1000, true},
-    {"tunable_LN0_RX_TOP_CIO_DFLT", "apple,tunable-lane0-cio", 0x9000, 0x1000, true},
-    {"tunable_LN0_RX_EQ_CIO_EQA", "apple,tunable-lane0-cio", 0xa000, 0x1000, true},
-    {"tunable_LN0_RX_SHM_CIO_DFLT", "apple,tunable-lane0-cio", 0xb000, 0x1000, true},
-    {"tunable_LN0_TX_TOP_CIO_DFLT", "apple,tunable-lane0-cio", 0xc000, 0x1000, true},
-    {"tunable_LN0_TX_SHM_CIO_DFLT", "apple,tunable-lane0-cio", 0xd000, 0x1000, true},
-
-    {"tunable_LN1_RX_TOP_USB_DFLT", "apple,tunable-lane1-usb", 0x10000, 0x1000, true},
-    {"tunable_LN1_RX_TOP_USB_EQA", "apple,tunable-lane1-usb", 0x10000, 0x1000, false},
-    {"tunable_LN1_RX_EQ_USB_EQA", "apple,tunable-lane1-usb", 0x11000, 0x1000, true},
-    {"tunable_LN1_RX_SHM_USB_DFLT", "apple,tunable-lane1-usb", 0x12000, 0x1000, true},
-    {"tunable_LN1_TX_TOP_USB_DFLT", "apple,tunable-lane1-usb", 0x13000, 0x1000, true},
-    {"tunable_LN1_TX_SHM_USB_DFLT", "apple,tunable-lane1-usb", 0x14000, 0x1000, true},
-    {"tunable_LN1_RX_TOP_CIO_DFLT", "apple,tunable-lane1-cio", 0x10000, 0x1000, true},
-    {"tunable_LN1_RX_EQ_CIO_EQA", "apple,tunable-lane1-cio", 0x11000, 0x1000, true},
-    {"tunable_LN1_RX_SHM_CIO_DFLT", "apple,tunable-lane1-cio", 0x12000, 0x1000, true},
-    {"tunable_LN1_TX_TOP_CIO_DFLT", "apple,tunable-lane1-cio", 0x13000, 0x1000, true},
-    {"tunable_LN1_TX_SHM_CIO_DFLT", "apple,tunable-lane1-cio", 0x14000, 0x1000, true},
 };
 
 static const struct atc_fuse_info atc_fuses_t8103_port0[] = {
@@ -366,49 +249,15 @@ static int dt_append_fuses(void *dt, int adt_node, int fdt_node, int port)
 }
 
 static int dt_append_atc_tunable(void *dt, int adt_node, int fdt_node,
-                                 const struct adt_tunable_info *tunable_info)
+                                 const struct atc_tunable_info *tunable_info)
 {
-    u32 tunables_len;
-    const struct atc_tunable *tunable_adt =
-        adt_getprop(adt, adt_node, tunable_info->adt_name, &tunables_len);
-
-    if (!tunable_adt && tunable_info->adt_fallback) {
-        tunable_adt =
-            adt_getprop(adt, adt_node, tunable_info->adt_fallback, &tunables_len);
-    }
-
-    if (!tunable_adt) {
-        printf("ADT: tunable %s not found\n", tunable_info->adt_name);
-
-        if (tunable_info->required)
-            return -1;
-        else
-            return 0;
-    }
-
-    if (tunables_len % sizeof(*tunable_adt)) {
-        printf("ADT: tunable %s with invalid length %d\n", tunable_info->adt_name, tunables_len);
+    const struct atc_tunable *tunable_adt;
+    int count = atc_get_tunables(adt_node, tunable_info, &tunable_adt);
+    if (count < 0)
         return -1;
-    }
 
-    u32 n_tunables = tunables_len / sizeof(*tunable_adt);
-    for (size_t j = 0; j < n_tunables; j++) {
+    for (int j = 0; j < count; j++) {
         const struct atc_tunable *tunable = &tunable_adt[j];
-
-        if (tunable->size != 32) {
-            printf("kboot: ATC tunable has invalid size %d\n", tunable->size);
-            return -1;
-        }
-
-        if (tunable->offset % (tunable->size / 8)) {
-            printf("kboot: ATC tunable has unaligned offset %x\n", tunable->offset);
-            return -1;
-        }
-
-        if (tunable->offset + (tunable->size / 8) > tunable_info->reg_size) {
-            printf("kboot: ATC tunable has invalid offset %x\n", tunable->offset);
-            return -1;
-        }
 
         if (fdt_appendprop_u32(dt, fdt_node, tunable_info->fdt_name,
                                tunable->offset + tunable_info->reg_offset) < 0)
@@ -425,7 +274,7 @@ static int dt_append_atc_tunable(void *dt, int adt_node, int fdt_node,
 static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_alias, int port)
 {
     int ret;
-    const struct adt_tunable_info *tunables;
+    const struct atc_tunable_info *tunables;
     size_t tunable_count;
 
     int adt_node = adt_path_offset(adt, adt_path);
@@ -454,10 +303,10 @@ static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_
     if (adt_is_compatible_at(adt, adt_node, "atc-phy,t8132", 0) ||
         adt_is_compatible_at(adt, adt_node, "atc-phy,t8122", 0)) {
         tunables = &atc_tunables_t8122[0];
-        tunable_count = sizeof(atc_tunables_t8122) / sizeof(*atc_tunables_t8122);
+        tunable_count = atc_tunables_t8122_count;
     } else {
-        tunables = &atc_tunables[0];
-        tunable_count = sizeof(atc_tunables) / sizeof(*atc_tunables);
+        tunables = &atc_tunables_t8103[0];
+        tunable_count = atc_tunables_t8103_count;
     }
 
     for (size_t i = 0; i < tunable_count; ++i) {
@@ -503,8 +352,8 @@ cleanup:
      * sure we don't leave half-filled properties around so that we can at least
      * try to boot with USB2 support only.
      */
-    for (size_t i = 0; i < sizeof(atc_tunables) / sizeof(*atc_tunables); ++i)
-        fdt_delprop(dt, fdt_node, atc_tunables[i].fdt_name);
+    for (size_t i = 0; i < atc_tunables_t8103_count; ++i)
+        fdt_delprop(dt, fdt_node, atc_tunables_t8103[i].fdt_name);
     fdt_delprop(dt, fdt_node, "apple,tunable-common-a");
     fdt_delprop(dt, fdt_node, "apple,tunable-common");
 

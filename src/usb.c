@@ -2,11 +2,13 @@
 
 #include "usb.h"
 #include "adt.h"
+#include "atc.h"
 #include "dart.h"
 #include "i2c.h"
 #include "iodev.h"
 #include "malloc.h"
 #include "pmgr.h"
+#include "spmi.h"
 #include "string.h"
 #include "tps6598x.h"
 #include "types.h"
@@ -19,6 +21,8 @@ struct usb_drd_regs {
     uintptr_t drd_regs;
     uintptr_t drd_regs_unk3;
     uintptr_t atc;
+    uintptr_t atc_core;
+    int atc_node;
 };
 
 #if USB_IODEV_COUNT > 100
@@ -76,10 +80,14 @@ static bool usb_device_mode_disabled(u32 idx)
 
 static dart_dev_t *usb_dart_init(u32 idx)
 {
+    if (chip_id == T8140 && idx)
+        return NULL;
     int mapper_offset;
     char path[sizeof(FMT_DART_MAPPER_PATH)];
 
     snprintf(path, sizeof(path), FMT_DART_MAPPER_PATH, idx, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/dart-usb/mapper-usb");
     mapper_offset = adt_path_offset(adt, path);
     if (mapper_offset < 0) {
         // Device not present
@@ -93,11 +101,15 @@ static dart_dev_t *usb_dart_init(u32 idx)
     }
 
     snprintf(path, sizeof(path), FMT_DART_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/dart-usb");
     return dart_init_adt(path, 1, dart_idx, false);
 }
 
 static int usb_drd_get_regs(u32 idx, struct usb_drd_regs *regs)
 {
+    if (chip_id == T8140 && idx)
+        return -1;
     int adt_drd_path[8];
     int adt_drd_offset;
     int adt_phy_path[8];
@@ -106,6 +118,8 @@ static int usb_drd_get_regs(u32 idx, struct usb_drd_regs *regs)
     char drd_path[sizeof(FMT_DRD_PATH)];
 
     snprintf(drd_path, sizeof(drd_path), FMT_DRD_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(drd_path, "/arm-io/usb-drd");
     adt_drd_offset = adt_path_offset_trace(adt, drd_path, adt_drd_path);
     if (adt_drd_offset < 0) {
         // Nonexistent device
@@ -118,11 +132,14 @@ static int usb_drd_get_regs(u32 idx, struct usb_drd_regs *regs)
         printf("usb: Error getting phy node %s\n", phy_path);
         return -1;
     }
+    regs->atc_node = adt_phy_offset;
 
     if (adt_get_reg(adt, adt_phy_path, "reg", 0, &regs->atc, NULL) < 0) {
         printf("usb: Error getting reg with index 0 for %s.\n", phy_path);
         return -1;
     }
+    if (chip_id == T8140 && adt_get_reg(adt, adt_phy_path, "reg", 4, &regs->atc_core, NULL) < 0)
+        return -1;
     if (adt_get_reg(adt, adt_drd_path, "reg", 0, &regs->drd_regs, NULL) < 0) {
         printf("usb: Error getting reg with index 0 for %s.\n", drd_path);
         return -1;
@@ -155,16 +172,20 @@ int usb_phy_bringup(u32 idx)
         return -1;
 
     snprintf(path, sizeof(path), FMT_DART_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/dart-usb");
     if (pmgr_adt_power_enable(path) < 0)
         return -1;
 
     snprintf(path, sizeof(path), FMT_DRD_PATH, idx);
+    if (chip_id == T8140)
+        strcpy(path, "/arm-io/usb-drd");
     if (pmgr_adt_power_enable(path) < 0)
         return -1;
 
     write32(usb_regs.atc + 0x08, 0x01c1000f);
     write32(usb_regs.atc + 0x04, 0x00000003);
-    write32(usb_regs.atc + 0x04, 0x00000000);
+    write32(usb_regs.atc + 0x04, chip_id == T8140 ? BIT(2) : 0); /* APB_RESET_N */
     write32(usb_regs.atc + 0x1c, 0x008c0813);
     write32(usb_regs.atc + 0x00, 0x00000002);
 
@@ -172,6 +193,8 @@ int usb_phy_bringup(u32 idx)
     write32(usb_regs.drd_regs_unk3 + PIPEHANDLER_AON_GEN, PIPEHANDLER_AON_GEN_DWC3_RESET_N);
     write32(usb_regs.drd_regs_unk3 + PIPEHANDLER_NONSELECTED_OVERRIDE, 0x9332);
 
+    if (chip_id == T8140)
+        return atc_usb3_init_t8122(usb_regs.atc_node, usb_regs.atc_core);
     return 0;
 }
 
@@ -180,6 +203,8 @@ dwc3_dev_t *usb_iodev_bringup(u32 idx)
     if (usb_device_mode_disabled(idx))
         return NULL;
 
+    if (chip_id == T8140 && !usb_is_initialized)
+        return NULL;
     dart_dev_t *usb_dart = usb_dart_init(idx);
     if (!usb_dart)
         return NULL;
@@ -188,7 +213,19 @@ dwc3_dev_t *usb_iodev_bringup(u32 idx)
     if (usb_drd_get_regs(idx, &usb_reg) < 0)
         return NULL;
 
-    return usb_dwc3_init(usb_reg.drd_regs, usb_dart);
+    dwc3_dev_t *dev = usb_dwc3_init(usb_reg.drd_regs, usb_dart, chip_id == T8140);
+    if (chip_id == T8140 && dev) {
+        /* Connect the device controller to the native SuperSpeed PHY. */
+        uintptr_t pipe = usb_reg.drd_regs_unk3;
+        mask32(pipe + PIPEHANDLER_MUX_CTRL, GENMASK(5, 3), 0);
+        udelay(10);
+        mask32(pipe + PIPEHANDLER_MUX_CTRL, GENMASK(2, 0), 0);
+        udelay(10);
+        mask32(pipe + PIPEHANDLER_MUX_CTRL, GENMASK(5, 3), PIPEHANDLER_MUX_CTRL_USB3);
+        udelay(10);
+        clear32(pipe, BIT(0) | BIT(2)); /* RXVALID / RXDETECT overrides */
+    }
+    return dev;
 }
 
 #define USB_IODEV_WRAPPER(name, pipe)                                                              \
@@ -273,8 +310,31 @@ static tps6598x_dev_t *hpm_init(i2c_dev_t *i2c, const char *hpm_path)
     return tps;
 }
 
+static int usb_t8140_reset_hpm(void)
+{
+    int node = adt_path_offset(adt, "/arm-io/nub-spmi-a0/hpm0");
+    const u8 *addr = node < 0 ? NULL : adt_getprop(adt, node, "reg", NULL);
+    if (!addr)
+        return -1;
+    spmi_dev_t *spmi = spmi_init("/arm-io/nub-spmi-a0");
+    if (!spmi)
+        return -1;
+
+    int ret = tps6598x_spmi_reset(spmi, *addr);
+    spmi_shutdown(spmi); /* Free the host object; do not send a shutdown to the HPM. */
+    return ret;
+}
+
 void usb_spmi_init(void)
 {
+    if (chip_id == T8140 && usb_t8140_reset_hpm() < 0) {
+        printf("usb: T8140 HPM reset failed\n");
+        return;
+    }
+    if (chip_id == T8140) {
+        usb_is_initialized = usb_phy_bringup(0) == 0;
+        return;
+    }
     for (int idx = 0; idx < USB_IODEV_COUNT; ++idx)
         usb_phy_bringup(idx); /* Fails on missing devices, just continue */
 
