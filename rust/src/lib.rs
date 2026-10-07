@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 #![cfg_attr(not(test), no_std)]
+// Prevent LLVM from replacing loops with unavailable libc calls such as wcslen.
+#![cfg_attr(not(test), no_builtins)]
 #![deny(unsafe_op_in_unsafe_fn)]
 #![feature(cfg_version)]
 #![feature(alloc_error_handler)]
