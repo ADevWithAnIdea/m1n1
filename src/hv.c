@@ -199,8 +199,7 @@ void hv_start(void *entry, u64 regs[4])
     hv_started_cpus[boot_cpu_idx] = true;
 
     // Install CPU/CPM power-state guards after guest device mappings exist.
-    hv_t8132_map_cpu_power_regs();
-    hv_t8140_map_accumulators();
+    hv_t8140_t8132_map_cpu_power_regs();
 
     msr(VBAR_EL1, _hv_vectors_start);
 

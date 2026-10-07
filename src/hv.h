@@ -61,9 +61,8 @@ int hv_map_hw_ro(u64 from, u64 to, u64 size);
 int hv_map_sw(u64 from, u64 to, u64 size);
 int hv_map_hook(u64 from, hv_hook_t *hook, u64 size);
 
-/* SoC-specific guards for unsafe guest CPU/ACC/CPM writes. */
-int hv_t8132_map_cpu_power_regs(void);
-int hv_t8140_map_accumulators(void);
+/* SoC-specific guards for unsafe guest CPU/CPM writes. */
+int hv_t8140_t8132_map_cpu_power_regs(void);
 
 bool hv_pt_is_ram(u64 ipa);
 int hv_pt_set_writable(u64 ipa, bool writable);

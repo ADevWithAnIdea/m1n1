@@ -30,6 +30,7 @@ def sptm_hv_boot_args(extra=()):
         "-v",                    # Optional: verbose boot
         f"msgbuf={1024 * 1024}", # Optional: enlarge the kernel msgbuf
         "amfi_get_out_of_my_way=1", # Optional: allow guest tooling to run
+        "amfi_allow_only_tc_override=2",
     ]
     for arg in defaults:
         key = boot_arg_key(arg)

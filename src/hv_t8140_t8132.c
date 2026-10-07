@@ -96,9 +96,9 @@ static bool t8132_power_hook(struct exc_info *ctx, u64 ipa, u64 *value,
     return hv_pa_rw(ctx, ipa, value, false, width);
 }
 
-int hv_t8132_map_cpu_power_regs(void)
+int hv_t8140_t8132_map_cpu_power_regs(void)
 {
-    if (chip_id != T8132)
+    if (chip_id != T8132 && chip_id != T8140)
         return 0;
 
     int cpus = adt_path_offset(adt, "/cpus");
