@@ -1,0 +1,1354 @@
+{
+  "purpose": "Provenance archive of independent Neo GPU experiments; not a runnable runtime package",
+  "snapshot_commit": "8180c2631a4c9c67057f4c53157f5e3dd764bd66",
+  "snapshot_includes_working_tree_gpu_changes": true,
+  "clean_public_base": "fc564ba4e4098b79ac5e92a0e54a3c6a2980d984",
+  "audit_scope": {
+    "candidate_source_files": 500,
+    "retained_source_files": 264,
+    "excluded_source_files": 236
+  },
+  "exclusions": [
+    "All UAT/address-translation code and related experiments, including mixed files",
+    "Emulator implementations, imports, private state/root layouts and handoff seeds",
+    "Local workflow and bootloader/hypervisor core changes",
+    "Compiled caller images and binary capture artifacts"
+  ],
+  "checks": {
+    "private_emulator_or_translation_references_in_retained_code": 0,
+    "source_bytes_preserved": false,
+    "python_syntax_files": 238,
+    "shell_and_plist_syntax": "PASS",
+    "runtime_tests": "Not applicable to the deliberately incomplete provenance archive",
+    "source_content_preserved": true
+  },
+  "files": [
+    {
+      "path": "proxyclient/experiments/agx_g17p_analyze_closure.py",
+      "sha256": "b369400c19a698f2c4addb78de84a051d95678c5f3fa40df645129aa41739a03",
+      "bytes": 5906
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_analyze_first_work.py",
+      "sha256": "bb4e39f4d193c17bbc67bd0a000f8d112cbbc8500baf050be8e34116582a5a02",
+      "bytes": 8639
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_analyze_live_outer.py",
+      "sha256": "75d73007c30939d9e5c778c9383cf83a8f9e697db66b6e15e5836bca49a4055c",
+      "bytes": 5009
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_audit_compute_descriptor.py",
+      "sha256": "55259b17d9d053e3899fe33e2290fce2a97ca069f977c19b87f2fff27ce9b853",
+      "bytes": 4239
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_audit_generated_first_work.py",
+      "sha256": "a9d1111956a18209905cd5fde841a1483bb689b930cf1196a0e50dd9368fc543",
+      "bytes": 1210
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_audit_generated_legacy_first_control.py",
+      "sha256": "7b7589d18a042caddc466c8fbc41a9cb60585afbece935acb8ad2eeaeceb55cf",
+      "bytes": 1835
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_audit_generated_pre_0x84.py",
+      "sha256": "6ae92be6b9d7dc77ddfa05077f42df92a39545a47ffd68cabd5cb71fcb1bdae8",
+      "bytes": 2327
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_audit_main_config_records.py",
+      "sha256": "f0b68a8d1d262d54e181743892fac958a61b88ab2a5559ca3e5f23787ffc926c",
+      "bytes": 10367
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_bisect_native_barriers.py",
+      "sha256": "8a156e4cf937db64478330d637763f541ac6a726bb39ab0d3857464df38e1568",
+      "bytes": 6946
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_check_capture_halves.py",
+      "sha256": "37bac15ad50cece4a35a1b6c48ab4137b3b4c93022528339a555a83cccd43504",
+      "bytes": 2510
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_check_dangling.py",
+      "sha256": "8472322cbbdc3863c2489fff830cf1833daab74a3550b64efb629b65f910dfcc",
+      "bytes": 3323
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_check_gpu_wrote.py",
+      "sha256": "1a6a7d66b4ddc6618406e973e3f54c80f085ec63e7ce66ae588b07901bb142ce",
+      "bytes": 2104
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_check_pending_items.py",
+      "sha256": "f7e934fbaa71a149163e3c68ba84f3c006ba8b0f28e7d74d46c8ee24683d3783",
+      "bytes": 2844
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_check_poison.py",
+      "sha256": "720d5d326822f08389a228010fa9b164c9824207f8ff0cc5c06352eca6d2c050",
+      "bytes": 989
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_classify_firmware_transition.py",
+      "sha256": "af712e23aed41b34f4253627ee07e8deca28eea7fba98bf80f5c786e4de48fa7",
+      "bytes": 4203
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_classify_transition_graph.py",
+      "sha256": "c7888d6dc227a74edb12d7ca549a749da2df3b9bc61528a16bae29f76faf51bc",
+      "bytes": 4679
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_closure_contents.py",
+      "sha256": "81bd4f8112a4d6bafe4a37b7b4d5aad4ea3b8efa364ef9e7f8f9d58e4375fbcf",
+      "bytes": 4884
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_closure_diff.py",
+      "sha256": "bb848c73f11f5e008c9093cd9791c9aa1f5cbb05f3c53929d9a6082e04c9196f",
+      "bytes": 5520
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compact_control_only.py",
+      "sha256": "60b2efd7ea6d2af6c156cd056b9d26eb9489a53b75a7dff0f8ef7d5310d95e41",
+      "bytes": 1876
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compact_control_static_delta.py",
+      "sha256": "085f8e3aa4fa5bd8f6ffc4ec7bd0671d9402e89565f5f3b773b4e5a090910f12",
+      "bytes": 4343
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_a2_transition.py",
+      "sha256": "8934f98108c064e6f7d2e099f13c190d7a564d983b1dea96efb8ac72a1133375",
+      "bytes": 3759
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_first_work_boundaries.py",
+      "sha256": "66649afefa07765c7d241467ff2349d6c2ed716fc88323197f834374acf8822e",
+      "bytes": 6078
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_fourth_closure.py",
+      "sha256": "df9876c9d523d4e69047743a7204fe6b75da99c4e81763b6443d69481c0ce34f",
+      "bytes": 3842
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_fourth_source_native.py",
+      "sha256": "ac7eb0c6dd45b34b6ee83a72948cd7da5ed7fa83e09a40a3358d42e4bff07896",
+      "bytes": 7741
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_host_writes.py",
+      "sha256": "15d4062f06ee0f5733c33fba8d9bc4bf121b1ab1623f913327cf17dc0c92b74a",
+      "bytes": 5913
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_live_dump.py",
+      "sha256": "8b90012efa6d4be30ad1c62bdb39d7a0c54e177e1d44355de46f358831b31d84",
+      "bytes": 3772
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_partial_owners.py",
+      "sha256": "8609c17d8b8b75a9d7810e3ac6ec613041f59951fb433e0e51c7c454214cd425",
+      "bytes": 7033
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_phase_mismatches.py",
+      "sha256": "9171af577702d4c45e312e697a80fe5e1ae5d4d431afb6d746deef1595988e68",
+      "bytes": 5530
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_phase_state.py",
+      "sha256": "9047375cf2303e2a3b1300f308dbb537133aaca4dc918b3a3a108249c9669a28",
+      "bytes": 3303
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compare_render_captures.py",
+      "sha256": "eb91e9ae1ccda88f3d293d5fd9d5baaf936229a2c52ff9e4611f3f7a5d3a9589",
+      "bytes": 1913
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_control_start.py",
+      "sha256": "caae4ad283fb128646081c266341b3727feaa627982b1a6b7cc74e47bfd7f57e",
+      "bytes": 240
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_current_class2.py",
+      "sha256": "083048afe59840f5c8a189f6114278a4d7c2ed9f5a9e26e6b5fd5ad7475c0a06",
+      "bytes": 956
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_exact_lifecycle.py",
+      "sha256": "0784bb4df60c742d38cc959de3e41ed66572d4b6ba144f1129a8f91154d3e241",
+      "bytes": 898
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_exact_timeline.py",
+      "sha256": "05dd7db5cfa03202cb1afb9d89439278a844cacce1ca12f516207e2bc1098109",
+      "bytes": 1751
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_native_client.py",
+      "sha256": "4466e5708188a5db79070f3c27b764a6ea7a3cb8fa4446af3dfb2f2eb8723460",
+      "bytes": 966
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_positive_class2.py",
+      "sha256": "746d633232e707cdc33b7361b618b00e766460a90e898e121a581b1a6e0c1e31",
+      "bytes": 1074
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_positive_native_client.py",
+      "sha256": "77c76234caa6f327cb331d339a800c7377cce699f1a72ee91ea38b08fe164f0d",
+      "bytes": 610
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_positive_scheduler_page.py",
+      "sha256": "6028a39a4ba8f3d42d0ec9d8764efd02daadadcaa157d64470137bd7fcb0c3dd",
+      "bytes": 323
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_soft_fault_baseline.py",
+      "sha256": "c60e1fe8c20d02b7ba135f11486b09e91912f9a9c9b7157c0c23e8a53fd453ec",
+      "bytes": 255
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source.py",
+      "sha256": "d2f0f62f8508bc0296a9a47651cdbdce3aef44e3a4ded116f634f0e6aad47d30",
+      "bytes": 1641
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_binding_offset.py",
+      "sha256": "0227915627b9aadaf3a976c4cb6db984fa66caf2c97c0dea0650f03b31833744",
+      "bytes": 275
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_dependency.py",
+      "sha256": "6c19f46e6442e6e01d9691cd7a19cfe9e8c7a325ac4bef2cd7fd6cfe96879b4d",
+      "bytes": 466
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_inter_submit_dependency.py",
+      "sha256": "2c99d0fff6e6ffc46e9430b7403357f8eac3e349689c4e322d7b85f13cea5f7b",
+      "bytes": 436
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_argument.py",
+      "sha256": "abdbc273e9bb74c7a38b8e069c7d29ef99b676e21a1c2a5cf95532505e81e9ad",
+      "bytes": 270
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_binding_page.py",
+      "sha256": "fc4e6b30f7f07752f46cfffd08dc4ffa5938592f0147a3f44f07931e734a5d30",
+      "bytes": 280
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_binding_public_program.py",
+      "sha256": "f88ba18c77ca02e62409f120ec25e75a1ac14f6fd1dd82e58c93b6f99f8b72d1",
+      "bytes": 286
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_helper_binding.py",
+      "sha256": "a04b9a713bbae761813df29b8ed347db96b8d5dc6ae432e93364e6e8e597b8fc",
+      "bytes": 270
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_helper_constant.py",
+      "sha256": "a03c9683d0b9f1818009c7dfdc465621dfd5041130d4839b207b1281225db6f2",
+      "bytes": 273
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_helper_graph.py",
+      "sha256": "ea88103166d0267fd83e2ffcbe15912423a23180790d98cb026fe587324891b2",
+      "bytes": 274
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_helpers.py",
+      "sha256": "946d18a85cd8ffb102b346ebfe806e96cbde66bdc658cee67812d4a5691e4f00",
+      "bytes": 265
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_native_program.py",
+      "sha256": "8148bd5e7ddb66d61db9a313379299b713295ae0f70ee997996cc3e354abf92f",
+      "bytes": 268
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_public_layout.py",
+      "sha256": "65a8f473a8b64518531d2925add93b821b36d7efe4e6e9021e0748eae541a08b",
+      "bytes": 255
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_relative.py",
+      "sha256": "ed30925225ce60a9ffb95cda994aee120b730f7a0ef44fc32f1e51a63c1e76e2",
+      "bytes": 267
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_render_dependency.py",
+      "sha256": "b425da853483aad65afb42e48cb513d0919e9979975c68c52fb4b1591686ed73",
+      "bytes": 443
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_repeat2.py",
+      "sha256": "b2ea99d2097faede8200f7ee17e66de5278bde17ac2717c21c54412f043a9af1",
+      "bytes": 252
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_repeat3.py",
+      "sha256": "76199dee7f530dc580f0849dd50d1f4458dff61116b8f94bc5608d16acd21ded",
+      "bytes": 259
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_repeat64.py",
+      "sha256": "3ac2dd9f49d2effd12d4c49eb87fe0e67f4b1bfc8df37ac56ecf6db7d6a295ff",
+      "bytes": 257
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_repeat8.py",
+      "sha256": "6c0ac09ee7fec292aeb3268b8a00c18d63fd7f6b3f49893f7618c159449bc2cf",
+      "bytes": 259
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_indirect_soft_fault.py",
+      "sha256": "6237be491a7b6ece3520868a04efa8a5f02991f0ae5d602763f04c7f5ac53a85",
+      "bytes": 423
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_initial_all_empty_high.py",
+      "sha256": "a486a16c07f37a26d603096fd02bb7efc51e808b33d0e0b6178f09fd91363517",
+      "bytes": 274
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_initial_empty_high.py",
+      "sha256": "7a5d5044b98bfac28483b4d8535be10c0ba18675e06b80de60bb07cb54c1dc6d",
+      "bytes": 267
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_source_initial_graft.py",
+      "sha256": "833db0d85303c2413fe4261513f704b2061b69685013801c2135b79acca8e280",
+      "bytes": 516
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_takeover_step1.py",
+      "sha256": "0207db1019a21ecc8039a0be2c98ba3745bc711077127f62d994fc2f4516e424",
+      "bytes": 2854
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_compute_timestamps.py",
+      "sha256": "9beed04ad552b96bbc2f7380f61980258deed11b4447f239b310a2ae656e8302",
+      "bytes": 8722
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_control_entries.py",
+      "sha256": "85c6e5ee6009444239faae842173dd70bca4118b3e995b927e89965101d6647d",
+      "bytes": 3918
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_correlate_native_compute.py",
+      "sha256": "1d3d5e7b6e34c7245b4ceb4160f02c8d07ee9380ea4ac555c9aeddaa9e04e868",
+      "bytes": 6296
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_crash_summary.py",
+      "sha256": "3b4b41dce853cd5e1112a4a53b2471925a39b89ce78fc4e782149dc99e43dc68",
+      "bytes": 2862
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_decode_initdata.py",
+      "sha256": "1c4f40cfd69d71653f93c4501a257e411e577ae277e239e0c17217965c302991",
+      "bytes": 6999
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_diff_graft_pages.py",
+      "sha256": "a1be1e1fbb8ad3f9de114b4b6c03938341f8dc934cf64f7434ee80fc4a5c7425",
+      "bytes": 3157
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_diff_initdata_root.py",
+      "sha256": "7022a313d88ee65f33b867203d4c213f5532a4cb7292eabe9a79293f6b719fd6",
+      "bytes": 5008
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_diff_iotrace.py",
+      "sha256": "f96fca6abe0e19a8c7acd29017cd054a62c0721036c6e6c380eae839b884fc6b",
+      "bytes": 2214
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_diff_relocated.py",
+      "sha256": "4223937948028c946c2393b82d5373d00db1771a5a53f181c5b113ffa6108779",
+      "bytes": 4653
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_drm_shim_clean.py",
+      "sha256": "f1df7c59299bb1f0f797dfa57e83c68cb6d482755d4f1ae452ff6c57d186554b",
+      "bytes": 2705
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_drm_shim_indirect_draw.py",
+      "sha256": "c03fc5f66585aabefe97c55d12ee82cd2302921d409b2770c9e7458d7bf3404b",
+      "bytes": 621
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_dump_live_modeled_config.py",
+      "sha256": "ac138352a8f02fde9c9698018db6045f6d42b8a51e9cd7a383ef1c3bba45166e",
+      "bytes": 4202
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_dump_physical.py",
+      "sha256": "e6c5f5e01ec94bac4512224385cf842026481d31bb69a7fe2dba6b7c27e78c9e",
+      "bytes": 5158
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_dump_sequence_state.py",
+      "sha256": "92b8bd4fa5434914059aa0ae50b77249548692750d554fe46de5dd64109dd124",
+      "bytes": 2631
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_event_records.py",
+      "sha256": "1768b2d999988528e77fee85bb29ad5b125c882727bcf9d8cae3b9b15718129a",
+      "bytes": 1793
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_fault_termination.py",
+      "sha256": "a813fa379f4d49d3a3491ed00952b439b676906b6c5948f383f7465bde7bbe51",
+      "bytes": 7595
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_find_abort_region.py",
+      "sha256": "02d2bf10f077486da2a026190868bd1903d6ea39ca84c72e410a76294f8c0a3a",
+      "bytes": 1830
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_find_pb_binding.py",
+      "sha256": "44ba2c034539b08e0ca621b531558f30034f4c3d4d25dd1333e269b31f55d983",
+      "bytes": 3510
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_gates.py",
+      "sha256": "abcb2112e2434537f3bd984c6bf7c6db506b80cefa115faadbf8a9da026a5166",
+      "bytes": 5101
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_group_sizes.py",
+      "sha256": "6288ab51c7365f7dcaee99e28e644fa66ced8098292350330c8a670158f17a31",
+      "bytes": 2286
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_initdata_closure.py",
+      "sha256": "71f2ab685e40b151685881724d466243579f31287e714a8be6c3b9aebd9a888e",
+      "bytes": 4012
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_initdata_graph.py",
+      "sha256": "56460eac7634835632084d8672d2060fafa3579e369837b22bfddac6b38d0383",
+      "bytes": 6197
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_inspect_graphics_compute.py",
+      "sha256": "cb4ce57ac629ca63a194a4a218ed8c66de83f80e38b83610de2cdb2ef25135b0",
+      "bytes": 1757
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_item_render_refs.py",
+      "sha256": "357dea4745d69894b1be4fe772d35c7cdde348261ee590a213b5db57c3dc0ce9",
+      "bytes": 4417
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_job_records.py",
+      "sha256": "fb448f40d09262670b76b84e3b4f9a925eec896ad98d01ce5668c150821d87ab",
+      "bytes": 2495
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_barrier_wait.py",
+      "sha256": "51542cdc6511d89cc4fa2516520174e31809145bd2c4ea358f7a5bb3e73f0f32",
+      "bytes": 8082
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_compute_helper.py",
+      "sha256": "edf5320f3bacd2865383a774f38e2e04eb8f25284e15a249e3925e546013cf69",
+      "bytes": 244
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_compute_native_registers.py",
+      "sha256": "d2fdc38170259492ad9f829dcd7c736d81e17403d9e7a4eaca56f0e428143d4f",
+      "bytes": 394
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_compute_no_timestamps.py",
+      "sha256": "9bd1bc584245b0d76f89a6542b3ec498794145453553fafc7fc2f085b12f27f1",
+      "bytes": 247
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_compute_sampler.py",
+      "sha256": "bfcc3fda58e4cd2b1c5552f91f08c4b598e4f4afb36f52af01541449e11eaaef",
+      "bytes": 248
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_compute_source_values.py",
+      "sha256": "b90db0a1c6c5b52f9d89f2c492978587324c30b38d22c0c2566ed2b1a2eb5136",
+      "bytes": 461
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_context_cleanup.py",
+      "sha256": "b46ca746d0c3fbb2d3f3e158af8fb83d6ea6ecadd855f4eb99a40fcd1b3864f8",
+      "bytes": 8724
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_growth_owner.py",
+      "sha256": "f4d33a3cdcfbe4711ce9606297908a2807bf2ebd39a6c71f9cfb350c58b12bcd",
+      "bytes": 2919
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_pending_lifecycle.py",
+      "sha256": "a941e370fe6c4abd5fa65b9046af65712ba10cfbc0dd13d80900ee49e15a6a2f",
+      "bytes": 9217
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_modern_setup_transition_control.py",
+      "sha256": "be0d1c045889c8b8509c10417f4623faf5a38edd470626f883b7eba5672c71a0",
+      "bytes": 2618
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_operand_table.py",
+      "sha256": "86aaac7c1f4773aeac47ecbb66d85e109306ad487ef6378412a9da8ccd50a96f",
+      "bytes": 1210
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_per_submission_fields.py",
+      "sha256": "3cbfffd53e200d20a512c1e830635b41c349c092ca93f0602edfd2ffad97f73b",
+      "bytes": 2553
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_pool_advance.py",
+      "sha256": "80c494d8b8cf9441c3c97f4d1bd6135433d7a183ef87f7bc1d68040060742dc0",
+      "bytes": 2706
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_probe_sgx_reg.py",
+      "sha256": "68fae3a8e38f46bbfd64d4521312be6ec6337a762ffafc9573708ff0f2465ba9",
+      "bytes": 1807
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_queue.py",
+      "sha256": "e25f1f7f8e5f63ceea2b6d0e05b54684a4d26a2f459e96a949a998b8e454cb42",
+      "bytes": 1542
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_rebuild_initdata.py",
+      "sha256": "f600c36f8504a4c605b2b039c277a5d95feb0cc6860e4265585a0e59bcf6f86b",
+      "bytes": 6314
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_register_advance.py",
+      "sha256": "1620cd0b9b6a647413d72256ce03879754620869ba0090fac9dfad14020c9dab",
+      "bytes": 2826
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_pages.py",
+      "sha256": "743d4140ed5c9aeed603e5e75054a6e5783e2b066e6dd0b078b3a4d36adb834e",
+      "bytes": 4016
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_records.py",
+      "sha256": "de096ff9ff1d448bc29763a3fa3ca90c6fa20ae7be07ecf017d325605e5a26cb",
+      "bytes": 2200
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_takeover_step1.py",
+      "sha256": "f298b13c1e1358bf694afc6f7bb1579a51030aa2eced15845860a370c3a529e2",
+      "bytes": 2188
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_targets.py",
+      "sha256": "b4e342eb892242fa8f003e875c5039f44f69f744bf6b1a1ea37e1d8820077bd6",
+      "bytes": 3564
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_then_compute_fence.py",
+      "sha256": "e1784a4ad14104f813107ad7e36b27c24d1d284018e9698ed19cd946277a79a8",
+      "bytes": 1306
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_timestamps.py",
+      "sha256": "645da64b81bf3a98d84ad14b1cd823d53e0a83b8e5cd44dd09564772969877d3",
+      "bytes": 10184
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_uapi_direct_boot.py",
+      "sha256": "b85da0078b5c2f22f89a8df0101028e5ae065362fcf1980600b09fd93a8754e6",
+      "bytes": 322
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_uapi_fields.py",
+      "sha256": "47719ed5e5d0b7a814183ed5e062edc15af9f8f613f0d62cfd97651856a27835",
+      "bytes": 10666
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_uapi_layers_samples.py",
+      "sha256": "f1b8e5e33c3e19d44bacfb7160ca6a25c06c7ebe761925963ea77aeaa44d95aa",
+      "bytes": 8454
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_uapi_partial_source_compute.py",
+      "sha256": "4ef2f61ecd482924428a90e58ddc22a48a3ca0a9166b8244ade36403ec5a230b",
+      "bytes": 626
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_uapi_zls.py",
+      "sha256": "e187c29cdfa6fdebaa75e281507fd5fc8319c53738ff19f57ae9037c2c88209a",
+      "bytes": 6562
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_render_uapi_zls_compressed.py",
+      "sha256": "b2e98be26ae07a48643aba4a6b0c9aaf75662e484fc82cd66cd727ff1bec4128",
+      "bytes": 5997
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_combined.py",
+      "sha256": "5a70e9fd4ef88fa9d61b6a13f34efcfb1d954b36edd2fff2b7a0b11d19f2db23",
+      "bytes": 3880
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_constant_pressure.py",
+      "sha256": "ff62df0fdf6ade2f9456c77bc870b10efd4704b2ae2b1b7784e2b9c8d1a4a559",
+      "bytes": 3220
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_first_partial_generated.py",
+      "sha256": "b96778cc8d08d74f8787a243adb4355bc3a923d1394033ce64bfc1d013344e81",
+      "bytes": 3442
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_first_partial_graft.py",
+      "sha256": "5ea551f45c838d7f91fc37d1e36075a4c9851ec4aeb89238cca9081606071282",
+      "bytes": 5283
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_latest_partial.py",
+      "sha256": "477a970f7fa5fad84221067e9edd1091477495c3285a32e53e3ba857f89038f9",
+      "bytes": 6161
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_latest_partial_same_queue.py",
+      "sha256": "4abfa7193abd4874e32df63825857a1dbf3540e67cb0c37a8a4077639c2f47fb",
+      "bytes": 2264
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_latest_partial_source.py",
+      "sha256": "6a146f4268ab04e70709842adc7bd07b6d0004a8aeceaa9840d94f85b71cb255",
+      "bytes": 1724
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_native_barriers.py",
+      "sha256": "d95507c70fc0aa9d9af5e6b71be295c90185545a518ee45b8ac9c673a2bc7cdf",
+      "bytes": 11611
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_same_queue_source_third.py",
+      "sha256": "7fff074c9942c5acaf7deb52495f7699ad9eb0bb54499c86322956581100d73f",
+      "bytes": 3701
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_single_partial.py",
+      "sha256": "4393c30f69895e9f2750fc3e42b5378b11a6522b66f5302b75cef0cb494505b6",
+      "bytes": 8052
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_source_third_fresh_queue.py",
+      "sha256": "49530b4c79b8e85f6f0fe1e0295662173e9e4b7abfb6aee96b9dcbac0fff565b",
+      "bytes": 2188
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_three_encoders.py",
+      "sha256": "a96e4e594f523527ab17b2ce6fc24377e30193586d74b43c7c48900192c0294a",
+      "bytes": 2126
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_tiny_aba.py",
+      "sha256": "6a2d6896e868901cf605a0517bc47c3faac12d15718d702e990836608294c24d",
+      "bytes": 7632
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_replay_two_render_vms.py",
+      "sha256": "2a0d017dca1b0ed74560535b35f399659af3cbdfd2955506dd219ec787fe7667",
+      "bytes": 5276
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_smc_present.py",
+      "sha256": "c12f30512f8091e8033b5285b5768cf9bbc2e195853b35d082741f902d0aef89",
+      "bytes": 2683
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_snapshot_indexing.py",
+      "sha256": "ed09a56cbad8861dc923eb1ca53071d4233601b2393c077b05bfb64e586b2e46",
+      "bytes": 1827
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_snapshot_objects.py",
+      "sha256": "3ce55dc13b49543d8478dd9a6b0c9735faa3303427e91a25ebb2d5803f5cc11f",
+      "bytes": 1754
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_snapshot_pair0_reuse.py",
+      "sha256": "6eebb71b8adf1b994bf6532134fbffe2ecce3897cd9ba7f81ecf39820232fe58",
+      "bytes": 13763
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_source_lifecycle.py",
+      "sha256": "3e4209e1387fd2fe6720abc6092be844c60808958b8be2ca4bf67a116111900d",
+      "bytes": 4540
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_sparse_vector_selftest.py",
+      "sha256": "5444d17fe81691f41db1ba38b43501fe930bbbc15f021e8c9bcf3805c60b7e09",
+      "bytes": 2562
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_support_pools.py",
+      "sha256": "a710a4a2e36853ea86fe87cd0b45af0389dceb5ef61fd9a3392084183b611b4e",
+      "bytes": 2302
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_triangle_photo.py",
+      "sha256": "22e5f12159c9c21f002c2f41adb864f70c6ec0b932adc247cfed12e6cdcd85b3",
+      "bytes": 10112
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_compute.py",
+      "sha256": "e494ce1d824eee4985e9153b9631fdd3fa5fd319374103f598635688e6dd68ef",
+      "bytes": 9718
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_encoder.py",
+      "sha256": "6ee23e1a575da7567e74c149f9b90c568c2e23d17a338bbf76d7d3b731815597",
+      "bytes": 5577
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_handoff.py",
+      "sha256": "322a8e44cc599226003cf3e476ff6e2ff060cb069c56f52ff75b11f3320eaaa7",
+      "bytes": 16428
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_layout.py",
+      "sha256": "b094c714a865fa6507c027027bb5849da8329338abca2f72af1296b2b25e9ed9",
+      "bytes": 6769
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_multi_item.py",
+      "sha256": "a69a5e0d12e1eee51c844f9582adda170c0167204f75098fe5fb3cb5f7d7d0cb",
+      "bytes": 7004
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_paired_builder.py",
+      "sha256": "23222cd69c18d1d97bb588ebd25fe70e7076a9971b28d99cf4fe549abaed3916",
+      "bytes": 21607
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_queue.py",
+      "sha256": "d6705a9e8763c2fbd6039b7dbb276fa7c29ca7d8407dbe7a09ebd345c2650115",
+      "bytes": 4851
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_render_recipe.py",
+      "sha256": "6eba154cf4963a91b7c88ad2e9996a5e059f622a29d73a5654ace8948dd2296c",
+      "bytes": 6543
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_shim.py",
+      "sha256": "6a5fdca457b88e6690a4d44a0efe1b7d140bd4c747dd06483c125e03d9b94654",
+      "bytes": 13651
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_strides.py",
+      "sha256": "cccd137b6cb1b675c827149bc5dbd3eed4ad0fb964b988f8a896bc9c0b8e9f7e",
+      "bytes": 4722
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_validate_submission.py",
+      "sha256": "bd84b061734e863e48c74dfb3783858646e766667e37f345538f37dd8f1c60cc",
+      "bytes": 9147
+    },
+    {
+      "path": "proxyclient/experiments/agx_g17p_vertex_observation.py",
+      "sha256": "0adbafcf4d513e524c09340585fa8a680c793548c6b0e1adbeeefe341421ab42",
+      "bytes": 2995
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_context_cleanup.py",
+      "sha256": "7c8ade3ad05d5b4d8311263452aeced0f20572c0afef7bed51e3fef40400f310",
+      "bytes": 6619
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_modern_mixed_batch.py",
+      "sha256": "7c654f0bece0620eaaef5e4a1b6dd9171e1c7457973f1ffa7fd3707f2d299f3a",
+      "bytes": 5385
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_native_render_contexts.py",
+      "sha256": "b3658889fe752a2e3d99a0a158efd38abac453d72021306e1486b5a8315adaf4",
+      "bytes": 3722
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_native_render_vms.py",
+      "sha256": "1fd3ea2ad29e473df1af323293c5b51803a3d0224bdd97711ba4c1b2f2ffc5ab",
+      "bytes": 7119
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_pending_fault.py",
+      "sha256": "da12fe8e147ae59a7fbf7660f61571761a78c478ae68f50030e4c6a5a06609b1",
+      "bytes": 3673
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_pending_growth.py",
+      "sha256": "ba0d3701fc22ed3b9943709ec7099f9d70a98e881e2f2da7060456a755d90641",
+      "bytes": 7375
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_pending_lifecycle.py",
+      "sha256": "6ea5eb83751b952871d1177c22a32ad9b6483fe650770e7d163eb10b8d444055",
+      "bytes": 2512
+    },
+    {
+      "path": "proxyclient/experiments/audit_g17p_render_isolation.py",
+      "sha256": "4a0f3e4cfa9f6844e93f6b384aff3f27653b35902e1ee3f811c5c5e5f60928bb",
+      "bytes": 6260
+    },
+    {
+      "path": "proxyclient/experiments/build_g17p_native_barriers.sh",
+      "sha256": "1c68be77b41b6982824142d8171ad61a6e047578d48c68e2df0134e01db0e31a",
+      "bytes": 469
+    },
+    {
+      "path": "proxyclient/experiments/build_g17p_native_combined.sh",
+      "sha256": "c7fb82e01d0e737fa4ae34c52f6e26a90b749806e624bfeb597ad7f592f5b6b9",
+      "bytes": 449
+    },
+    {
+      "path": "proxyclient/experiments/build_g17p_native_compute.sh",
+      "sha256": "b7ddedeee383ffd29d1a290f0605281ce3d36900ccdf25d38367e187bb23a646",
+      "bytes": 638
+    },
+    {
+      "path": "proxyclient/experiments/build_g17p_native_partial.sh",
+      "sha256": "548008de7aa854b60d7f1bfd57c399ebad2543dc157e5476b40d73cf5b55f338",
+      "bytes": 643
+    },
+    {
+      "path": "proxyclient/experiments/build_g17p_native_render.sh",
+      "sha256": "0d42d4a1dbb2bd6fda640c8eb313a953acae007130c0ed69b5b6f6f005b34bfc",
+      "bytes": 632
+    },
+    {
+      "path": "proxyclient/experiments/build_g17p_partial_iotrace.sh",
+      "sha256": "9ccae4a2e8c161dc5e20946e3cb6da783f14dc3056129febfeeb1abc3f09ea9b",
+      "bytes": 416
+    },
+    {
+      "path": "proxyclient/experiments/g17p_barrier_bisect.py",
+      "sha256": "72593be788d55ee6769dde590620ec79841c7250c22503d019778b2f308da74e",
+      "bytes": 16312
+    },
+    {
+      "path": "proxyclient/experiments/g17p_growth_capture.py",
+      "sha256": "e2364635bcf711aafac71818d571a31c7b273ce22d950458c70a99e9dc7dfbe0",
+      "bytes": 11699
+    },
+    {
+      "path": "proxyclient/experiments/g17p_growth_postmortem.py",
+      "sha256": "467f6f0ab8e46da3880a8c9d9c95b0ee952e16d78f1617afc86c03b881addabf",
+      "bytes": 2174
+    },
+    {
+      "path": "proxyclient/experiments/g17p_growth_replay.py",
+      "sha256": "922dd6cbd7c59ab188db2a2d6176315125c2710f270ed60f360558b25f32d658",
+      "bytes": 12201
+    },
+    {
+      "path": "proxyclient/experiments/g17p_mesa_smoke.c",
+      "sha256": "11ace847bc074c795f6f695af392ee9c4bb6cc25a096e3cf1ddc711a59f8c3a2",
+      "bytes": 11181
+    },
+    {
+      "path": "proxyclient/experiments/g17p_mesa_spill_probe.cl",
+      "sha256": "6661af1f2b2c9a0325759eac53eb9aee6807fe40ec0d4ca4d9b5dbe9badb24bb",
+      "bytes": 854
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_barriers.m",
+      "sha256": "1e4ce2e27fcc17233cc58807726a102aa71967c5a9308477ce02d7734da1790e",
+      "bytes": 9811
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_barriers.metal",
+      "sha256": "71955153c5b5f6134df566d46508f29005ead170d2de003023f0f81a6c7bb81b",
+      "bytes": 1231
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_combined.m",
+      "sha256": "c0afa000c5adc63e8b40112edf2e91cef86f958c1a861f950b513254504887a1",
+      "bytes": 14261
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_compute.m",
+      "sha256": "f45a36651e35dd7a5493fa1bf0ce00238ac2474e477c8418b9533a9295a64b33",
+      "bytes": 19217
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_compute.metal",
+      "sha256": "7bee5439592c6af44d36cc8cea151d577064a2a0e3da1beda60339fc8c7d2c26",
+      "bytes": 2679
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_growth_owners.m",
+      "sha256": "518ebac7bb8cf7ff16b78290b4d0476519421bef798813c80c24dc67c4fe4208",
+      "bytes": 5346
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_memoryless.m",
+      "sha256": "6d44ba8746515122b3e74d2131f2df5c1e6bc9f4603f6d07d7c0ffb0610e3f5c",
+      "bytes": 5406
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_memoryless.metal",
+      "sha256": "873e20937a47d5f7e129a5d773e6c32e895f6f003b8fe2aa7286886a08881e29",
+      "bytes": 1462
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_partial.m",
+      "sha256": "fb7cfccff717b66e803c1fa268b9dba6d16689c77251c18338f77ea4096a8d23",
+      "bytes": 53408
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_partial.metal",
+      "sha256": "4a2b22aa6c5a6a2c4ea6702f7650be5f491288e31a426c5fae64973b4e4ef9b2",
+      "bytes": 7006
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_render.m",
+      "sha256": "ea8f88e25c620e9380378c83f8f1f9d19260ee63538f18c7a2ce5d7267b7bbfa",
+      "bytes": 6461
+    },
+    {
+      "path": "proxyclient/experiments/g17p_native_render.metal",
+      "sha256": "19a3079df193fa8846a48ccec69b39c8b0544f0099e4f71dd1586b2bd888eb21",
+      "bytes": 1234
+    },
+    {
+      "path": "proxyclient/experiments/g17p_replay_barrier_source.py",
+      "sha256": "de88ef4532bf35bcbf198fb31ab27f6597960b5c91695c6c71d484ce1db8434d",
+      "bytes": 1958
+    },
+    {
+      "path": "proxyclient/experiments/g17p_replay_descriptor_source.py",
+      "sha256": "97818c1a482df76b21fbdd7ac79067a10e06064239f4dbfee5400f6de9be0feb",
+      "bytes": 10937
+    },
+    {
+      "path": "proxyclient/experiments/g17p_select_stock_volume.sh",
+      "sha256": "c4acef6ba18afe8bfac3f6d0e627f7578329ff391d75a74cc6cb560ce7c5d79e",
+      "bytes": 2240
+    },
+    {
+      "path": "proxyclient/experiments/io.asahi.g17pcompute.plist",
+      "sha256": "9195889da4f81e0f3703a73b3479546909db8d93a5759a23825d89c755b8bce3",
+      "bytes": 801
+    },
+    {
+      "path": "proxyclient/experiments/io.asahi.g17ppartial.plist",
+      "sha256": "6c4b1c451a414e6cb177dc1ea59330cb06396b59f221c091fbb12774ac1dc5b0",
+      "bytes": 1599
+    },
+    {
+      "path": "proxyclient/experiments/io.asahi.g17prender.plist",
+      "sha256": "5337a8e19d30e1fa66cc4b87b170dac561fa5cf812d50c9276c6bf36be656f86",
+      "bytes": 709
+    },
+    {
+      "path": "proxyclient/experiments/io.asahi.g17pselectstock.plist",
+      "sha256": "a36a70296ccf65676e3d575a4c69d01b87246db8959cd47848bd5e98121a1234",
+      "bytes": 509
+    },
+    {
+      "path": "proxyclient/experiments/mesa_modern_asahi_noop_capture.c",
+      "sha256": "d8312c1ab2d8957abcafc6cd4276245626e1f05f3900f09244ed67fafb483f71",
+      "bytes": 6413
+    },
+    {
+      "path": "proxyclient/hv/capture_agx_g17p_pre_initdata.py",
+      "sha256": "d82d87b1e07f235caf788fa3b516bfb8b5138ba18576eeafe46497adba0e545b",
+      "bytes": 2183
+    },
+    {
+      "path": "proxyclient/hv/capture_agx_g17p_pre_run.py",
+      "sha256": "5c7afc34ecfc8ad1453d8626e6609cc160777e81fc28e3327eaa1efca34a4a2f",
+      "bytes": 1746
+    },
+    {
+      "path": "proxyclient/hv/capture_agx_g17p_pre_secondary_initdata.py",
+      "sha256": "9804b421c8a3d6563ee4014fcb8fcc67a92197b0950a355c8061cc1c0361c192",
+      "bytes": 2417
+    },
+    {
+      "path": "proxyclient/hv/g17p_capture_third_after_two_pending.py",
+      "sha256": "c953331721da4d215180a0d8bdec271af3a2e81dcbdfc4c0b99347221776dcc8",
+      "bytes": 12045
+    },
+    {
+      "path": "proxyclient/hv/g17p_capture_two_pending_partial.py",
+      "sha256": "2faa3ce563dbe1231698bd1149f2b43ab36af0b6c5f339b6b63a6922cf615af0",
+      "bytes": 7989
+    },
+    {
+      "path": "proxyclient/hv/g17p_copy_render_plist.py",
+      "sha256": "da2c465c894d7cf75bd6022e55ee52324903cc9c441cab698abf6b5676b946fb",
+      "bytes": 946
+    },
+    {
+      "path": "proxyclient/hv/g17p_hold_native_barrier_producers.py",
+      "sha256": "ed9a2d5cd3866b1e82cd2daf2f19b3e7939127ea5b969648b124633574e37cfc",
+      "bytes": 3737
+    },
+    {
+      "path": "proxyclient/hv/g17p_inspect_native_compute.py",
+      "sha256": "d6a6e0ece4a3f136403e391cbf053c664a77ec42262029ca5542e1ef71536a3e",
+      "bytes": 2861
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_native_compute.py",
+      "sha256": "01d0151aca777b2b1a3bc08eb866b94fcf26be847d95476732bb075d0d1bf17b",
+      "bytes": 2090
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_native_compute_early.py",
+      "sha256": "a4511da8f0745adeecd85323b6e59590f270932d0d4ed63eea74aeb213e16a00",
+      "bytes": 2417
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_native_partial_accumulate.py",
+      "sha256": "a6f2f6e90dd052202bdc63869805320fd9c618af23366cd946f7493cf4da93f6",
+      "bytes": 1854
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_native_render_direct.py",
+      "sha256": "1520b2fa3f9eee11284f70e5c02efd8511953fae31f381e8eb8cae95c0d0b595",
+      "bytes": 1573
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_partial_aba.py",
+      "sha256": "7c212450e7ce90bfbec173181bc28086a909967f717a33bb1418c29c8b554918",
+      "bytes": 5214
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_partial_sequence.py",
+      "sha256": "4336fd4c1ff0b7a3a509b9fe803599e278d51bcc868536d553880d2b68fa14c0",
+      "bytes": 5945
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_single_partial.py",
+      "sha256": "3b678ca989dd45cb0254e8576589b9fa596f63ad836f9764b424d78b23ce9678",
+      "bytes": 1994
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_third_after_two_completed.py",
+      "sha256": "6e7101e25eceec0968ef1f01e99476cc3c6a4e48c230b640aecc0b92f0aaffe0",
+      "bytes": 1771
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_third_same_queue.py",
+      "sha256": "ae695c8dff6bcd4c907e3e598e34c57294e701fe1e0eee86a8e4cbdedf05c46c",
+      "bytes": 1673
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_three_encoders_one_command.py",
+      "sha256": "aa2730785b750e0d1039d979e7efdbadc89f47fb0deee37bdafd7a7b4f0d2e2d",
+      "bytes": 1658
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_two_native_render_clients.py",
+      "sha256": "bc5f8f7831a03f9cf6e0253b13857fc3c912ffaa2180820597dec6a4dcc0dae3",
+      "bytes": 1652
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_two_pending_compact.py",
+      "sha256": "d0597974ddfac7d6b56c8bfe6c19988af0f149b408ef75e2ca288378455f1aa1",
+      "bytes": 1933
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_two_pending_partial.py",
+      "sha256": "55a990815414799c8621100ee8690ce4e642a545205a09f7e43c384e5331028a",
+      "bytes": 2305
+    },
+    {
+      "path": "proxyclient/hv/g17p_launch_two_pending_same_queue.py",
+      "sha256": "9f4ec6b35f1941832e1174c50a2c23933d0928fb75a9b3bd140a46fea5680115",
+      "bytes": 1453
+    },
+    {
+      "path": "proxyclient/hv/g17p_native_constant_pressure.py",
+      "sha256": "194f1f21855410ad6f7febff055f0682a7ab179bfbe4862ffba1abb3199cac67",
+      "bytes": 1039
+    },
+    {
+      "path": "proxyclient/hv/g17p_native_one_varying.py",
+      "sha256": "ae106104c6ddbcca70d59a0a7119e1e34e5d8b4ff11103f107c8145610d9b1fb",
+      "bytes": 9760
+    },
+    {
+      "path": "proxyclient/hv/g17p_rearm_native_compute.py",
+      "sha256": "f63246a46d001a9c5c6fa72200d676c5f6a47637d30b284738b71c2cb559cda7",
+      "bytes": 3222
+    },
+    {
+      "path": "proxyclient/hv/g17p_stage_native_barriers.py",
+      "sha256": "3e916bb475c829f4a0a026b49584dd31f0dc6981734511876ca4faf392145e8f",
+      "bytes": 4823
+    },
+    {
+      "path": "proxyclient/hv/g17p_stage_native_combined.py",
+      "sha256": "0ee96379ae3d9cbf9b3e6c3e3022b541416db96fe1957495eb1c48fcfaaf645d",
+      "bytes": 3589
+    },
+    {
+      "path": "proxyclient/hv/g17p_stage_native_fault.py",
+      "sha256": "27a303d9b223c391f86e754deb2481b36cfe305c6b4ac36c79eeee006fdae062",
+      "bytes": 4371
+    },
+    {
+      "path": "proxyclient/hv/g17p_stage_native_memoryless.py",
+      "sha256": "e641932e32e0c1ac809bb4a5f674eaba839e500d6ccf9b9d094572bbc7a6e70d",
+      "bytes": 5071
+    },
+    {
+      "path": "proxyclient/hv/g17p_stage_partial_parity.py",
+      "sha256": "7fc369f0d65769508ed867e3ec5c77044672f8d399967f5b32a0380ad4771deb",
+      "bytes": 3086
+    },
+    {
+      "path": "proxyclient/hv/probe_g17p_frozen_progress.py",
+      "sha256": "069e2e54ce6a46a62cda4942076319e32f2b468fa63758caaf7f9649e59576ee",
+      "bytes": 3425
+    },
+    {
+      "path": "proxyclient/hv/probe_g17p_paired.py",
+      "sha256": "7be92e978fb1a34c88e2a61158f29a80ccd5feb55b836286cef12e6577914c9a",
+      "bytes": 7793
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_complete_compute.py",
+      "sha256": "1f89477f007bd49d76023dd5920e44432050cd6d27d63b762880b9df86fffc84",
+      "bytes": 856
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_mailbox_window.py",
+      "sha256": "e3a8ca2a097c185c5f4e09ac65b3999a8dae58df2ced4859fcdafc40c65cdbb0",
+      "bytes": 4002
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_minimal_compute.py",
+      "sha256": "4351b4ea0d918f33204f1b87ef96d058245a9cb75a75c4b3449f3eabc0039ba7",
+      "bytes": 683
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_minimal_render.py",
+      "sha256": "954b17076906ce0064274bf1fe851612100c884888a3ff5c49446f4d828cb1f4",
+      "bytes": 1925
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_native_barriers.py",
+      "sha256": "d7cfb1598ab123def89f70645fe0e8e29bb73a1307c5c569f2dd8beebc999e58",
+      "bytes": 1085
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_native_partial_accumulate.py",
+      "sha256": "59e66a763b9be7c12ecb71db6a4320b9227e3096e44e63b3c32694e146422c89",
+      "bytes": 1543
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_native_partial_control.py",
+      "sha256": "065c2a8f34272c16e208de94503dd92dd1bdad92962eba38405702ea78bd0883",
+      "bytes": 673
+    },
+    {
+      "path": "proxyclient/hv/trace_agx_g17p_native_partial_sequence.py",
+      "sha256": "ff9ba96b9dbf9c2194351c4b9c4b0bff3b8c226960f692aef8ecf9e3281b39df",
+      "bytes": 1279
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_backend.py",
+      "sha256": "506b801accb87df656932999d621055d106fc844d2e45df3431f7f9ca9666819",
+      "bytes": 66920
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_compute.py",
+      "sha256": "f51f6b51b44adb20953590a96038141f8a8b92dd457652f3e16c340fe826e011",
+      "bytes": 46279
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_encoder.py",
+      "sha256": "c72e18a835901eaeb332b9f0dce1254399b60e5869de5aef33fec3be84d61b1c",
+      "bytes": 12047
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_payload.py",
+      "sha256": "0f64a87e73014d87b6667b175621aa280e324766aabb04830e09886927ce3aff",
+      "bytes": 1616
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_render.py",
+      "sha256": "b7e8e7fc499df869ea5786e9c854438c85ca169c290f67ba63799e13544a1c6c",
+      "bytes": 31325
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_reports.py",
+      "sha256": "726c63211f21f0dae2f51d41f30f01c05f0a7ce1fb099b84a0fd6964143e0940",
+      "bytes": 7237
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_resource_record.py",
+      "sha256": "ad283964d18cdaf34278a94e626a3e3bca8e8e58e4d723c25b020bd4e0d5a5fa",
+      "bytes": 8054
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_sparse_read.py",
+      "sha256": "73b4a49227c3935a115b4e4747375db252a58a7054ee27895965df99ce654308",
+      "bytes": 6839
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_submission.py",
+      "sha256": "43399893331df669114f47024d8c5533a3566f6f49c1877fbeb99a170efe979d",
+      "bytes": 49575
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_sync.py",
+      "sha256": "76de3be6c9a150bbd089478ea6cac1773082d3a641bb4768c728a37a6328a4c8",
+      "bytes": 15388
+    },
+    {
+      "path": "proxyclient/m1n1/agx/g17p_uapi.py",
+      "sha256": "b7bdfc79288db2a6ca9711c15623ca1ebf921edff528448860721548f17c947e",
+      "bytes": 11407
+    },
+    {
+      "path": "tests/python/test_g17p_barrier_bisect.py",
+      "sha256": "eaffa732fac6a84e3c8cbfb9c738786ead7999825bd17c573622789d358b23ac",
+      "bytes": 6872
+    },
+    {
+      "path": "tests/python/test_g17p_constant_pressure_replay.py",
+      "sha256": "07e637d141d26a409d388a2a919be0e6064bba8a58a9042914c13155439b5842",
+      "bytes": 3140
+    },
+    {
+      "path": "tests/python/test_g17p_growth_capture.py",
+      "sha256": "7f1adb4430583d689f6e584f893685c30a97c0afa7fc561fd2c5a440ac799c5a",
+      "bytes": 7119
+    },
+    {
+      "path": "tests/python/test_g17p_growth_owner_probe.py",
+      "sha256": "8da67d0ecd8898d3f38ca51343f3742714bce15e7038d4f6d39a6c4eecf38fdf",
+      "bytes": 3122
+    },
+    {
+      "path": "tests/python/test_g17p_interrupts.py",
+      "sha256": "bc9363ca1f94e89e0a20831ae41cc9835070ea9e1cafdee694bc2e240a19cf97",
+      "bytes": 3550
+    },
+    {
+      "path": "tests/python/test_g17p_modern_barrier_wait.py",
+      "sha256": "35dc48afd9d228260f8e7b534741f256c7bf29fc25f71fdf87ca7450ccf67b0f",
+      "bytes": 5148
+    },
+    {
+      "path": "tests/python/test_g17p_modern_compute_batch.py",
+      "sha256": "9d571b719e723a3e509cefd6ae9b5802e3ea7382b9bb726b01ff4f1a9a6f6b0c",
+      "bytes": 3036
+    },
+    {
+      "path": "tests/python/test_g17p_modern_compute_isolation.py",
+      "sha256": "fd0dfd9d24b28b7acb2f475610e3e57bb507bd974d40834392df8898679edad4",
+      "bytes": 1160
+    },
+    {
+      "path": "tests/python/test_g17p_modern_compute_reuse.py",
+      "sha256": "7c12f30a181c7ae90570e91e4afb3376cb84ebe442a34fec0c0333fbd8ee3916",
+      "bytes": 5660
+    },
+    {
+      "path": "tests/python/test_g17p_modern_graphics_sequence.py",
+      "sha256": "bb69608fb7cc255a813978f6f2d5dc8f8de88e28fe4b0c6e40a9daa8155301df",
+      "bytes": 3026
+    },
+    {
+      "path": "tests/python/test_g17p_modern_mixed_batch.py",
+      "sha256": "64eb63135e9ce0670355f42274c9a7dcadbe55475db2d1cf2b85ae406c466c18",
+      "bytes": 28929
+    },
+    {
+      "path": "tests/python/test_g17p_native_barrier_replay.py",
+      "sha256": "b48899fe99fc8e3517ab576adb96aade3c6936cd4bd6be775018ebbbe21218e5",
+      "bytes": 1463
+    },
+    {
+      "path": "tests/python/test_g17p_native_one_varying.py",
+      "sha256": "399e0043543cfaa5e584fbd8e0a1a34b99aefe2131200c5f1615dd62d206da4e",
+      "bytes": 9393
+    },
+    {
+      "path": "tests/python/test_g17p_native_sequence.py",
+      "sha256": "9da6e995496f58532d33f0915e054bf095eb6cbb0279fbd2632c44c5620dba4c",
+      "bytes": 3486
+    },
+    {
+      "path": "tests/python/test_g17p_payload.py",
+      "sha256": "3d4633370ad8625c74dc126b5e8d0bfa730e72f5a6d7e0e2041ffd84b6ce0f07",
+      "bytes": 1169
+    },
+    {
+      "path": "tests/python/test_g17p_reports.py",
+      "sha256": "2b2a6e486d0e64a883bf3dd8ae8b3460a0ebb54caae54dfeda2ba73fd0033b64",
+      "bytes": 6716
+    },
+    {
+      "path": "tests/python/test_g17p_sparse_read.py",
+      "sha256": "8e84ed1d877d8f8cb82c3d4296655d7c244a11bd5533352f7f4cb8bcaa0979f9",
+      "bytes": 4641
+    },
+    {
+      "path": "tests/python/test_g17p_sync.py",
+      "sha256": "bee44197c2f1b778b25e544a6312b766175bff4d3a137e102a826dfc2f9911f8",
+      "bytes": 9976
+    },
+    {
+      "path": "tests/python/test_g17p_two_render_vms_replay.py",
+      "sha256": "69359ab1027ed3fc790c99a433db6e282bb7f965a380825ab7149df297cf0a91",
+      "bytes": 2531
+    },
+    {
+      "path": "tests/python/test_g17p_uapi.py",
+      "sha256": "a99771fb79d8cb9b205d03f81381a582110d64192089a4fadaaf31991fc4b31e",
+      "bytes": 3525
+    },
+    {
+      "path": "tests/python/test_g17p_varying_storage.py",
+      "sha256": "8d379a3b2d4b03de4ea35cb8375cd353fc3b5618ae521e0016254eb65252b188",
+      "bytes": 1917
+    },
+    {
+      "path": "tests/python/test_g17p_vertex_observation.py",
+      "sha256": "6da8a680ff1c68cf32283ad60cf13a9692cde28ac7742acc11832ed0fd2a3fae",
+      "bytes": 4525
+    }
+  ],
+  "formatting_changes": [
+    {
+      "path": "tests/python/test_g17p_native_sequence.py",
+      "change": "remove one extra blank line at EOF",
+      "original_sha256": "329040a20ae08704094b2c60ad54f09593ea7e60152d575ddcc4b467aa49ebb0"
+    }
+  ]
+}

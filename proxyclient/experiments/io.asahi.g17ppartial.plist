@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>io.asahi.g17ppartial</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/System/Volumes/Data/Users/Shared/g17ppartial</string>
+        <string>128</string>
+        <string>128</string>
+        <string>accumulate</string>
+        <string>48217</string>
+        <string>3</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>G17P_COMMAND_QUEUE_COUNT</key>
+        <string>2</string>
+        <key>G17P_LOAD_EXISTING</key>
+        <string>1</string>
+        <key>G17P_DUMP_EVERY_COMMIT</key>
+        <string>1</string>
+        <key>DYLD_INSERT_LIBRARIES</key>
+        <string>/System/Volumes/Data/Users/Shared/g17p_partial_iotrace.dylib</string>
+        <key>IOTRACE_LOG</key>
+        <string>/System/Volumes/Data/Users/Shared/g17p_reactivation_iotrace.log</string>
+        <key>IOTRACE_DUMP_DIR</key>
+        <string>/System/Volumes/Data/Users/Shared/g17p_reactivation_dumps</string>
+        <key>IOTRACE_MAX_MAP</key>
+        <string>16777216</string>
+        <key>IOTRACE_DUMP_PERSIG</key>
+        <string>1</string>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/System/Volumes/Data/Users/Shared/g17ppartial.log</string>
+    <key>StandardErrorPath</key>
+    <string>/System/Volumes/Data/Users/Shared/g17ppartial.log</string>
+    <key>ProcessType</key>
+    <string>Interactive</string>
+</dict>
+</plist>
