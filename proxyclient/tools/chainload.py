@@ -5,16 +5,20 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 
 import argparse, pathlib, time
 
-parser = argparse.ArgumentParser(description='Mach-O loader for m1n1')
+parser = argparse.ArgumentParser(description='Loader for a new m1n1 image')
 parser.add_argument('-q', '--quiet', action="store_true", help="Disable framebuffer")
 parser.add_argument('-n', '--no-sepfw', action="store_true", help="Do not preserve SEPFW")
 parser.add_argument('-c', '--call', action="store_true", help="Use call mode")
-parser.add_argument('-r', '--raw', action="store_true", help="Image is raw")
+parser.add_argument('-r', '--raw', action="store_true", help="Raw mode is the default (flag kept for compatibility)")
+parser.add_argument('--macho', action="store_true", help="Image is Mach-O instead of raw")
 parser.add_argument('-E', '--entry-point', action="store", type=int, help="Entry point for the raw image", default=0x800)
 parser.add_argument('-x', '--xnu', action="store_true", help="Set up for chainloading XNU")
 parser.add_argument('payload', type=pathlib.Path)
 parser.add_argument('boot_args', default=[], nargs="*")
 args = parser.parse_args()
+
+if args.raw:
+    print("Raw mode is the default; for Mach-O mode, specify --macho.")
 
 from m1n1.setup import *
 from m1n1.tgtypes import BootArgs_r1, BootArgs_r2, BootArgs_r3
@@ -23,7 +27,7 @@ from m1n1 import asm
 
 new_base = u.base
 
-if args.raw:
+if not args.macho:
     image = args.payload.read_bytes()
     image += b"\x00\x00\x00\x00"
     entry = new_base + args.entry_point
