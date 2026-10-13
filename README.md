@@ -1,73 +1,67 @@
-# m1n1: A bootloader and experimentation playground for Apple Silicon
+# Gravity Bootloader
+
+Bootloader and hypervisor for Apple Silicon.
 
 ## Building
 
-You need an `aarch64-linux-gnu-gcc` cross-compiler toolchain (or a native one, if running on ARM64).
-You will also need to install the `aarch64-unknown-none-softfloat` toolchain for rust.
+You need an `aarch64-linux-gnu-gcc` cross-compiler toolchain (or a native one,
+if running on ARM64). You will also need to install the
+`aarch64-unknown-none-softfloat` toolchain for rust.
 
 ```shell
 $ rustup target add aarch64-unknown-none-softfloat
 ```
 
 ```shell
-$ git clone --recursive https://github.com/AsahiLinux/m1n1.git
-$ cd m1n1
+$ git clone --recursive https://github.com/GravityLinux/bootloader.git
+$ cd bootloader
 $ make
 ```
 
 To build on a native ARM64 machine:
+
 * On Linux, use `make ARCH=`.
 * On macOS using Homebrew:
+
 ```shell
 $ brew install llvm lld
 $ make
 ```
+
 * On macOS using MacPorts:
+
 ```shell
 $ sudo port install llvm clang
 $ sudo port select llvm llvm-mp-<version>
 $ make
 ```
 
-The output will be in `build/m1n1.macho`.
-
-To build verbosely, use `make V=1`.
+The output will be in `build/m1n1.bin`.
 
 ### Building using the container setup
 
-If you have a container runtime installed, like Podman or Docker, you can make use of the compose setup, which contains all build dependencies.
+If you have a container runtime installed, like Podman or Docker, you can make
+use of the compose setup, which contains all build dependencies.
 
 ```shell
-$ git clone --recursive https://github.com/AsahiLinux/m1n1.git
-$ cd m1n1
+$ git clone --recursive https://github.com/GravityLinux/bootloader.git
+$ cd bootloader
 $ podman-compose run m1n1 make
 $ # or
 $ docker-compose run m1n1 make
 ```
 
-## Usage
+## Usage Guides
 
-Our [wiki](https://asahilinux.org/docs/sw/m1n1-user-guide/) has more information on how to
-use m1n1.
+First time installation: https://gravitylinux.org/docs/developers/tethered-boot/
 
-To install on an OS container based on macOS <12.1, use `m1n1.macho`:
+Hypervisor usage: https://gravitylinux.org/docs/developers/hypervisor/
 
-```shell
-kmutil configure-boot -c m1n1.macho -v <path to your OS volume>
-```
-
-To install on an OS container based on macOS >=12.1, use `m1n1.bin`:
-
-```shell
-kmutil configure-boot -c m1n1.bin --raw --entry-point 2048 --lowest-virtual-address 0 -v <path to your OS volume>
-```
-
-## Payloads
+### Payloads
 
 m1n1 supports running payloads by simple concatenation:
 
 ```shell
-$ cat build/m1n1.macho Image.gz build/dtb/apple-j274.dtb initramfs.cpio.gz > m1n1-payload.macho
 $ cat build/m1n1.bin Image.gz build/dtb/apple-j274.dtb initramfs.cpio.gz > m1n1-payload.bin
 ```
 
@@ -87,18 +81,18 @@ Supported compression formats:
 Beginning with and including commit
 [`df7656cf17d04ec19de8acb8a78d57cc9b48fda1`](https://github.com/ADevWithAnIdea/m1n1/commit/df7656cf17d04ec19de8acb8a78d57cc9b48fda1),
 fork-authored contributions on this fork's main branch are licensed under the
-[GNU General Public License, version 2 or later](LICENSE.GPL2) (`GPL-2.0-or-later`).
-The combined work distributed by this fork from that commit onward is
-distributed under the GPL version 2 or later, except for components that retain a
-separate license as described below.
+[GNU General Public License, version 2 only](LICENSE.GPL2)
+(`GPL-2.0-or-later`). The combined work distributed by this fork from that
+commit onward is distributed under the GPL version 2 only, except for
+components that retain a separate license as described below.
 
-Commits before `df7656cf17d04ec19de8acb8a78d57cc9b48fda1` retain the
-licenses that previously applied to them, including the [MIT license](LICENSE.MIT).
+Commits before `df7656cf17d04ec19de8acb8a78d57cc9b48fda1` retain the licenses
+that previously applied to them, including the [MIT license](LICENSE.MIT).
 Commits pulled from upstream m1n1, whether before or after that commit, retain
 their original licenses. This licensing change does not relicense third-party
 components or other separately licensed material.
 
-* Copyright Cody Ho
+* Copyright The Gravity Linux Contributors
 * Copyright The Asahi Linux Contributors
 
 Please see the Git history for authorship information.
