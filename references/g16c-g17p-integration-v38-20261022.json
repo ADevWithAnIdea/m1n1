@@ -1,0 +1,23 @@
+{
+  "version": 38,
+  "date": "2026-10-22",
+  "linux_commit": "179f288cf5bea5498e48bdc7fd9911641d8dee93",
+  "bootloader_parent_commit": "1665b6b4869ef53321c44c42c62e24f1dec57573",
+  "goal_status": "active",
+  "evidence": "build/m4max-gpu/g16c-native-compute-overlap-20261022",
+  "result": "build/m4max-gpu/g16c-native-compute-overlap-20261022/native-pending-compute-result.json",
+  "native_reference_proof": "build/m4max-gpu/g16c-native-compute-overlap-20261022/native-reference-proof.json",
+  "source_preservation": "build/m4max-gpu/g16c-native-compute-overlap-20261022/source-preservation.json",
+  "final_state": "build/m4max-gpu/g16c-native-compute-overlap-20261022/final-state.json",
+  "correct_native_jobs": 40,
+  "default_kernel": 106,
+  "default_compute_first": "probe-v14",
+  "default_graphics_first": "probe-v16",
+  "known_Neo_tag": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "full_goal_complete": false,
+  "audited_output_jobs": 40,
+  "compute_jobs": 28,
+  "render_jobs": 12,
+  "default_first_pending_pair": "probe-v14",
+  "graphics_first_default": "probe-v16"
+}
