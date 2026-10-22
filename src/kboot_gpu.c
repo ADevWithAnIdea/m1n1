@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 
 #include "kboot.h"
+#include "gpu_fdt.h"
 #include "adt.h"
 #include "assert.h"
 #include "firmware.h"
@@ -21,22 +22,6 @@
 #define MAX_PSTATES  16
 #define MAX_CLUSTERS 8
 #define MAX_DIES     2
-
-struct perf_state {
-    u32 freq;
-    u32 volt;
-};
-
-struct aux_perf_state {
-    u64 volt;
-    u64 freq;
-};
-
-struct aux_perf_states {
-    u64 dies;
-    u64 count;
-    struct aux_perf_state states[];
-};
 
 int32_t rust_gpu_initdata_size(uint32_t compat_maj, uint32_t compat_min, size_t *data_a,
                                size_t *data_b, size_t *globals);
@@ -630,8 +615,62 @@ static int dt_set_gpu_t8132(void *dt)
     return 0;
 }
 
+/* G16C uses typed OPP/configuration nodes populated here, as the older
+ * Asahi driver does. Never pass raw SGX ADT properties to the new driver. */
+static int dt_set_gpu_t6041(void *dt)
+{
+    int gpu = fdt_path_offset(dt, "gpu");
+    if (gpu < 0)
+        return 0;
+    int sgx = adt_path_offset(adt, "/arm-io/sgx");
+    int arm_io = adt_path_offset(adt, "/arm-io");
+    u32 count, tables, revision, clocks = 0, period = 0, no_gpc = 0;
+    if (sgx < 0 || arm_io < 0 ||
+        ADT_GETPROP(adt, sgx, "perf-state-count", &count) < 0 || count != 16 ||
+        ADT_GETPROP(adt, sgx, "perf-state-table-count", &tables) < 0 || tables != 4 ||
+        ADT_GETPROP(adt, arm_io, "chip-revision", &revision) < 0)
+        bail("ADT: GPU: unsupported G16C board properties\n");
+    if (ADT_GETPROP(adt, sgx, "gpu-pwr-sample-period-aic-clks", &clocks) < 0) {
+        if (ADT_GETPROP(adt, sgx, "gpu-power-sample-period", &period) < 0 ||
+            period > UINT32_MAX / 24000)
+            bail("ADT: GPU: invalid G16C sampling interval\n");
+        clocks = period * 24000;
+    }
+    ADT_GETPROP(adt, sgx, "no-gpc", &no_gpc);
+    u32 core_len = 0, sram_len = 0, cs_len = 0;
+    const struct perf_state *core = adt_getprop(adt, sgx, "perf-states", &core_len);
+    const struct perf_state *sram = adt_getprop(adt, sgx, "perf-states-sram", &sram_len);
+    const struct aux_perf_states *cs = adt_getprop(adt, sgx, "cs-perf-states", &cs_len);
+    struct gpu_fdt_scalar properties[64];
+    size_t nproperties = 0;
+    ADT_FOREACH_PROPERTY(adt, sgx, prop) {
+        if (strnlen(prop->name, sizeof(prop->name)) == sizeof(prop->name))
+            bail("ADT: GPU: unterminated G16C property name\n");
+        if (!gpu_fdt_power_property(prop->name))
+            continue;
+        if ((prop->size & 0x7fffffff) != sizeof(u32) ||
+            nproperties == ARRAY_SIZE(properties))
+            bail("ADT: GPU: invalid G16C power property\n");
+        properties[nproperties].name = prop->name;
+        memcpy(&properties[nproperties++].value, prop->value, sizeof(u32));
+    }
+    const struct gpu_fdt_g16c input = {
+        .core = core, .core_size = core_len, .sram = sram, .sram_size = sram_len,
+        .cs = cs, .cs_size = cs_len, .revision = revision, .sample_clocks = clocks,
+        .gpc = !no_gpc, .power = properties, .power_count = nproperties,
+    };
+    if (gpu_fdt_populate_g16c(dt, gpu, &input) ||
+        fdt_setprop_string(dt, gpu, "apple,firmware-build", os_firmware.iboot))
+        bail("FDT: GPU: failed to populate G16C configuration\n");
+    /* Native graph/memory bring-up will enable the device after its complete
+     * resource contract is installed. Configuration alone is not readiness. */
+    return 0;
+}
+
 int dt_set_gpu(void *dt)
 {
+    if (chip_id == T6041)
+        return dt_set_gpu_t6041(dt);
     if (chip_id == T8132)
         return dt_set_gpu_t8132(dt);
 
