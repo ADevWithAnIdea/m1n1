@@ -87,7 +87,9 @@ int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
         in->sram_size != in->core_size || in->cs_size < 24 ||
         in->cs->dies != 1 || !in->cs->count || in->cs->count > RAW_STATES ||
         in->cs_size != 24 + in->cs->count * sizeof(struct aux_perf_state) ||
-        in->sample_clocks < 24000 || (in->power_count && !in->power))
+        in->sample_clocks < 24000 || (in->power_count && !in->power) ||
+        in->software_interrupt < 0x4000 || in->software_interrupt >= (1ULL << 48) ||
+        !in->active_mcc_mask)
         return -FDT_ERR_BADVALUE;
     uint32_t firsts[STATES], high[STATES], low[STATES];
     unsigned groups = 0;
@@ -151,7 +153,9 @@ int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
         fdt_setprop_u32(dt, gpu, "apple,pwr-sample-period-aic-clks", in->sample_clocks) ||
         fdt_setprop_u32(dt, gpu, "apple,gpc-enabled", in->gpc) ||
         fdt_setprop_u32(dt, gpu, "apple,max-power-milliwatt", 132183) ||
-        fdt_setprop_u32(dt, gpu, "apple,csafr-min-sram-microvolt", *minimum))
+        fdt_setprop_u32(dt, gpu, "apple,csafr-min-sram-microvolt", *minimum) ||
+        fdt_setprop_u64(dt, gpu, "apple,firmware-sw-interrupt", in->software_interrupt) ||
+        fdt_setprop_u32(dt, gpu, "apple,active-mcc-mask", in->active_mcc_mask))
         return -FDT_ERR_NOSPACE;
     for (size_t i = 0; i < in->power_count; i++) {
         char name[64] = "apple,";

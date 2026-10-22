@@ -41,6 +41,8 @@ struct gpu_fdt_g16c {
     bool gpc;
     const struct gpu_fdt_scalar *power;
     size_t power_count;
+    uint64_t software_interrupt;
+    uint32_t active_mcc_mask;
 };
 
 bool gpu_fdt_power_property(const char *name);

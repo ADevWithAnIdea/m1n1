@@ -641,6 +641,13 @@ static int dt_set_gpu_t6041(void *dt)
     const struct perf_state *core = adt_getprop(adt, sgx, "perf-states", &core_len);
     const struct perf_state *sram = adt_getprop(adt, sgx, "perf-states-sram", &sram_len);
     const struct aux_perf_states *cs = adt_getprop(adt, sgx, "cs-perf-states", &cs_len);
+    u32 irq_len = 0, mcc_mask = 0;
+    const u8 *irq = adt_getprop(adt, sgx, "meta-sw-interrupt", &irq_len);
+    u64 software_interrupt;
+    if (!irq || (irq_len != 20 && irq_len != 40) ||
+        ADT_GETPROP(adt, sgx, "active-mcc-bit-vector", &mcc_mask) < 0 || !mcc_mask)
+        bail("ADT: GPU: invalid G16C interrupt/MCC configuration\n");
+    memcpy(&software_interrupt, irq + irq_len - 20, sizeof(software_interrupt));
     struct gpu_fdt_scalar properties[64];
     size_t nproperties = 0;
     ADT_FOREACH_PROPERTY(adt, sgx, prop) {
@@ -658,6 +665,7 @@ static int dt_set_gpu_t6041(void *dt)
         .core = core, .core_size = core_len, .sram = sram, .sram_size = sram_len,
         .cs = cs, .cs_size = cs_len, .revision = revision, .sample_clocks = clocks,
         .gpc = !no_gpc, .power = properties, .power_count = nproperties,
+        .software_interrupt = software_interrupt, .active_mcc_mask = mcc_mask,
     };
     if (gpu_fdt_populate_g16c(dt, gpu, &input) ||
         fdt_setprop_string(dt, gpu, "apple,firmware-build", os_firmware.iboot))
