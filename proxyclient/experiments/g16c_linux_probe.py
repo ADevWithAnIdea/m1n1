@@ -29,7 +29,10 @@ parser.add_argument('dtb', type=Path, help='16-CPU J616c test DTB compiled with 
 parser.add_argument('initramfs', type=Path)
 parser.add_argument('--evidence', type=Path, required=True)
 parser.add_argument('--enable-gpu', action='store_true')
+parser.add_argument('--bootarg', action='append', default=[], help='one opt-in asahi_neo module parameter; all16 CPU settings stay fixed')
 args = parser.parse_args()
+import re
+assert all(re.fullmatch(r"asahi_neo\.[a-z0-9_]+=(?:0x[0-9a-f]+|[0-9]+)", token) for token in args.bootarg), "Only numeric asahi_neo module parameters are accepted"
 args.evidence.mkdir(parents=True, exist_ok=False)
 sys.path.insert(0, str(root/'proxyclient'))
 sys.path.insert(0, str(root.parent/'linux-g16c-g17p/drivers/gpu/drm/asahi/tests'))
@@ -138,7 +141,7 @@ u.compressed_writemem(initrd_base,initrd,True)
 p.kboot_set_initrd(initrd_base,len(initrd))
 p.kboot_set_chosen('bootargs','earlycon console=ttySAC0,115200 keep_bootcon '
                          'ignore_loglevel log_buf_len=2M initcall_debug '
-                         'clk_ignore_unused pd_ignore_unused cpuidle.off=1 idle=yield panic=-1')
+                         'clk_ignore_unused pd_ignore_unused cpuidle.off=1 idle=yield panic=-1 '+ ' '.join(args.bootarg))
 dtbase = u.memalign(0x4000,len(dt))
 iface.writemem(dtbase,dt.raw)
 assert p.kboot_prepare_dt(dtbase) == 0
