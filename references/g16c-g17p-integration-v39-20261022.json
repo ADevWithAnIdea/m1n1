@@ -1,0 +1,21 @@
+{
+  "version": 39,
+  "date": "2026-10-22",
+  "linux_commit": "2d71a619ba2b7e7b42db3f7d373ca5c0c6768082",
+  "bootloader_parent_commit": "f90fb5b5a414ca41970a6090bdc7dd5cb5e0bad2",
+  "goal_status": "active",
+  "evidence": "build/m4max-gpu/g16c-native-private-compute-20261022",
+  "result": "native-private-and-growth-result.json",
+  "source_preservation": "source-preservation.json",
+  "final_state": "final-state.json",
+  "qualified_native_jobs": 38,
+  "compute_jobs": 30,
+  "render_jobs": 8,
+  "production_kernel": 109,
+  "explicit_growth_target": 25,
+  "default_operand_buffers": 20,
+  "automatic_growth_policy": false,
+  "forced_appended_tranche_use": false,
+  "known_Neo_tag": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "full_goal_complete": false
+}
