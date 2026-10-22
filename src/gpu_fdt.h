@@ -48,4 +48,14 @@ struct gpu_fdt_g16c {
 bool gpu_fdt_power_property(const char *name);
 int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *input);
 
+#define GPU_FDT_G16C_REGIONS 5
+struct gpu_fdt_region {
+    uint64_t base;
+    uint64_t size;
+};
+
+int gpu_fdt_populate_g16c_memory(void *dt, int gpu,
+                               const struct gpu_fdt_region regions[GPU_FDT_G16C_REGIONS],
+                               uint64_t private_base, uint64_t private_size);
+
 #endif

@@ -80,6 +80,56 @@ static int opp_table(void *dt, int gpu, const char *name, unsigned count)
     return found == count ? table : -FDT_ERR_BADVALUE;
 }
 
+int gpu_fdt_populate_g16c_memory(void *dt, int gpu,
+                               const struct gpu_fdt_region regions[GPU_FDT_G16C_REGIONS],
+                               uint64_t private_base, uint64_t private_size)
+{
+    static const char names[] = "ttbs\0pagetables\0l2\0handoff\0firmware";
+    int length;
+    const void *property = fdt_getprop(dt, gpu, "memory-region-names", &length);
+    if (!regions || !property || length != sizeof(names) || memcmp(property, names, length) ||
+        private_base != 0xfffffc0000000000ULL || private_size != 0x2000000000ULL)
+        return -FDT_ERR_BADVALUE;
+    const fdt32_t *handles = fdt_getprop(dt, gpu, "memory-region", &length);
+    if (!handles || length != GPU_FDT_G16C_REGIONS * sizeof(*handles))
+        return -FDT_ERR_BADVALUE;
+    int reserved = fdt_path_offset(dt, "/reserved-memory");
+    if (reserved < 0 || fdt_address_cells(dt, reserved) != 2 || fdt_size_cells(dt, reserved) != 2)
+        return -FDT_ERR_BADVALUE;
+    uint32_t phandles[GPU_FDT_G16C_REGIONS];
+    for (unsigned i = 0; i < GPU_FDT_G16C_REGIONS; i++) {
+        uint64_t base = regions[i].base, size = regions[i].size;
+        if (!base || !size || ((base | size) & 0x3fff) || base >= (1ULL << 42) ||
+            size > (1ULL << 42) - base)
+            return -FDT_ERR_BADVALUE;
+        phandles[i] = fdt32_to_cpu(handles[i]);
+        for (unsigned j = 0; j < i; j++) {
+            if (phandles[i] == phandles[j] ||
+                (base < regions[j].base + regions[j].size && regions[j].base < base + size))
+                return -FDT_ERR_BADVALUE;
+        }
+        int node = fdt_node_offset_by_phandle(dt, phandles[i]);
+        if (node < 0 || fdt_parent_offset(dt, node) != reserved ||
+            !fdt_getprop(dt, node, "no-map", &length) || length != 0 ||
+            !fdt_getprop(dt, node, "reg", &length) || length != 16)
+            return -FDT_ERR_BADVALUE;
+    }
+    // Inputs and the entire target shape are checked before changing the DT.
+    fdt64_t private_vm[2] = {cpu_to_fdt64(private_base), cpu_to_fdt64(private_size)};
+    int ret = fdt_setprop(dt, gpu, "apple,rtkit-private-vm-region", private_vm, sizeof(private_vm));
+    if (ret)
+        return ret;
+    for (unsigned i = 0; i < GPU_FDT_G16C_REGIONS; i++) {
+        // Status insertion may move every sibling. Phandles remain stable.
+        int node = fdt_node_offset_by_phandle(dt, phandles[i]);
+        fdt64_t reg[2] = {cpu_to_fdt64(regions[i].base), cpu_to_fdt64(regions[i].size)};
+        if (node < 0 || fdt_setprop_inplace(dt, node, "reg", reg, sizeof(reg)) ||
+            fdt_setprop_string(dt, node, "status", "okay"))
+            return -FDT_ERR_NOSPACE;
+    }
+    return 0;
+}
+
 int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
 {
     if (!in || !in->core || !in->sram || !in->cs ||

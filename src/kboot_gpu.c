@@ -667,6 +667,25 @@ static int dt_set_gpu_t6041(void *dt)
         .gpc = !no_gpc, .power = properties, .power_count = nproperties,
         .software_interrupt = software_interrupt, .active_mcc_mask = mcc_mask,
     };
+    static const char *region_names[GPU_FDT_G16C_REGIONS] = {
+        "gpu-region", "gfx-shared-region", "gfx-shared-l2-region", "gfx-handoff", "gfx-data",
+    };
+    struct gpu_fdt_region regions[GPU_FDT_G16C_REGIONS];
+    for (size_t i = 0; i < ARRAY_SIZE(regions); i++) {
+        char property[64];
+        snprintf(property, sizeof(property), "%s-base", region_names[i]);
+        if (ADT_GETPROP(adt, sgx, property, &regions[i].base) < 0)
+            bail("ADT: GPU: missing G16C %s\n", property);
+        snprintf(property, sizeof(property), "%s-size", region_names[i]);
+        if (ADT_GETPROP(adt, sgx, property, &regions[i].size) < 0)
+            bail("ADT: GPU: missing G16C %s\n", property);
+    }
+    u64 private_base, private_size;
+    if (ADT_GETPROP(adt, sgx, "rtkit-private-vm-region-base", &private_base) < 0 ||
+        ADT_GETPROP(adt, sgx, "rtkit-private-vm-region-size", &private_size) < 0 ||
+        gpu_fdt_populate_g16c_memory(dt, gpu, regions, private_base, private_size))
+        bail("FDT: GPU: failed to populate G16C memory reservations\n");
+    gpu = fdt_path_offset(dt, "gpu");
     if (gpu_fdt_populate_g16c(dt, gpu, &input) ||
         fdt_setprop_string(dt, gpu, "apple,firmware-build", os_firmware.iboot))
         bail("FDT: GPU: failed to populate G16C configuration\n");
