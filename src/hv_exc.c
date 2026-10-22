@@ -930,6 +930,13 @@ static bool hv_handle_msr(struct exc_info *ctx, u64 iss)
 
     switch (reg) {
         /* clang-format on */
+        case SYSREG_ISS(SYS_IMP_APL_UPMCR0):
+            /* Linux checks this on every FIQ. Keep the existing native read
+             * semantics without a Python round trip on every CPU tick. */
+            if (!is_read)
+                return false;
+            regs[rt] = mrs(SYS_IMP_APL_UPMCR0);
+            return true;
         case SYSREG_ISS(SYS_IMP_APL_IPI_RR_LOCAL_EL1): {
             assert(!is_read);
             u64 mpidr = (regs[rt] & 0xff) | (mrs(MPIDR_EL1) & 0xffff00);
