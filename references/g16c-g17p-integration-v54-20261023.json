@@ -1,0 +1,162 @@
+{
+  "version": 54,
+  "date": "2026-10-23",
+  "objective_status": "active; not complete",
+  "milestone": "Native hardware Chromium WebGL2 and WebGPU compute/render qualified",
+  "target": "Mac16,5/J616c/chip6041/JPWWJRX2N0",
+  "artifacts": "build/m4max-gpu/g16c-native-chromium-20261023",
+  "qualification": {
+    "kernel": 142,
+    "production_commit": "e64da3110d3079e2c396a4838c19ffcfccbc5530",
+    "all160_tested_sources_exact": true,
+    "CPUs": "0-15",
+    "all430_actual_guest_hashes_exact": true,
+    "first_native_browser_pass": "v30",
+    "repeated_native_browser_pass": "v40",
+    "chromium": {
+      "status": "PASS",
+      "pixels": 4096,
+      "hardware": true,
+      "renderer": "ANGLE (Mesa, Vulkan 1.4.359 (Apple M4 Max (G16C B1) (0x00000000)), Honeykrisp)",
+      "vendor": "Google Inc. (Mesa)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    },
+    "webgpu": {
+      "status": "PASS",
+      "workload": "Game of Life compute and instanced rendering",
+      "grid": 128,
+      "generations": 32,
+      "cellsVerified": 16384,
+      "pixelSamplesVerified": 32768,
+      "hardware": true,
+      "adapter": {
+        "vendor": "mesa",
+        "architecture": "software",
+        "device": "0x0000",
+        "description": "Apple M4 Max (G16C B1)",
+        "driver": "Honeykrisp: Mesa 26.3.0-devel (git-50cfaf889f) 26.2.99",
+        "backend": "vulkan",
+        "type": "integrated GPU",
+        "isFallbackAdapter": false
+      },
+      "adapterIdentityPolicy": "Exact Apple M4 Max G16C description, Vulkan backend, integrated/discrete GPU type, fallback=false; Dawn architecture label is a vendor/device-ID lookup",
+      "alive": 2374,
+      "changedCells": 6691,
+      "computeInvocations": 524288,
+      "renderInstances": 524288,
+      "elapsedMs": 4327.200000000001
+    },
+    "post_browser_Vulkan_memory_and_unbind_pass": true,
+    "software_fallback": false,
+    "Neo_shape_gate": {
+      "baseline": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+      "identical_Session_initializer_fields": 35,
+      "Neo_probe_body_preserved": true,
+      "GPU_execution_tested": false,
+      "Neo_CPU_scheduler_preserved_excluding_G16C_only_branches": true,
+      "Neo_GET_PARAMS_and_identity_checks_preserved": true,
+      "Neo_submit_admission_preserved_except_Max_gate": true,
+      "Neo_parameter_parser_and_sampler_limit_preserved": true,
+      "Neo_permanent_BO_retention_preserved": true,
+      "Neo_queue_create_destroy_preserved_except_Max_activity_owner": true,
+      "Neo_entire_async_worker_preserved_except_Max_only_hooks": true,
+      "source_sha256": {
+        "asahi_neo.rs": "521dc24e187639ff54703a417cdfca8b7e42e925734780497e7cd3cf8d14243f",
+        "g17p_boot.rs": "f750e2330f3ec5553977b99a5cc943bb02a48737223df503b21d68fb8b0bfc9e",
+        "g17p_drm.rs": "b725768437917da7dbbacc05f09ef8e017258e25a9fa2844ce829905f64bdc13",
+        "g17p_schedule.rs": "e177ebfc0f067c31f48cc060cc84e8b81962ca80ae1c0c22e723c9772a1ae7bc",
+        "g17p_async.rs": "37c6e4b9fcb4265efced8b79e86fcbdc682f9cefc863494c303f01918f96b484"
+      }
+    },
+    "live_Neo_tested": false,
+    "desktop_display_or_interactive_browser_tested": false,
+    "early_ASID_fairness_qualified": false,
+    "full_goal_complete": false,
+    "evidence_sha256": {
+      "native-chromium-v1.json": "58d016e815128e7c93e60f971fbd1a5e9562ab176dc687a4b59e10bacfc19975",
+      "chromium-v21.log": "e2a75764b08c0679b275dc5745a8dce246fe416e9cea8303d3ff67f4ddf0c5a4",
+      "native-chromium-v2.json": "a26b6059340c240ce609695ae334505490737d2b6c6e799ccdb7773e84e4e8aa",
+      "native-chromium-v3.json": "edbefbc5317a115998e32618720cf754340acecebf028dc7d8936f17fa67ee37",
+      "kernel-browser-v2.json": "db50a94f0f4af32887768d31942e9ff47e83cf0ef8448267404537226d3ff1fa",
+      "tested-source-browser-v2.tar.gz": "869b34ae196418c5009aed18ed44e4e9fa45bae7685f7d97f8b56e83cd6514a7",
+      "Image-browser-v2": "b73576c6f73ecdde0a3318c9c9e0436550a64f2859c585072c1fb9e89c4eb384",
+      "chromium-v40.log": "b4c571d85aa2607c753ea741a5a19c6f7a69ff4bcacea145505c5802fa276363",
+      "webgpu-v40.log": "e3aca26ac8c99474b1621611643023ae8c7d024af68e81a3df77e59bf7897d7f",
+      "probe-v40.log": "66279649b1956f9ee4273d9e100abbb388b345a9805af3f15dc2c260f092a89c",
+      "webgpu-ready-v2.json": "8e071b7a8a0156e8352fe038d69553b1fd9adbb7c25bca12a19109141b1a9c1b"
+    }
+  },
+  "first_failure": {
+    "kernel": 141,
+    "profiles": [
+      "v1",
+      "v10",
+      "v21"
+    ],
+    "primary_browser_pass": false,
+    "WebGPU_not_run": true,
+    "cause": "Repeated map of the same BO/offset/permissions was rejected as overlap; exact read-only shadow map succeeded first, then identical repeat returned EINVAL. Diagnostic v20 stopped before userspace in known all16 CPU0 PSCI issue; identical v21 retry supplied trace.",
+    "mapping": {
+      "flags": "0x2",
+      "handle": 13,
+      "offset": 0,
+      "range": "0x4000",
+      "addr": "0x3ffffc0000"
+    }
+  },
+  "kernel_fix": {
+    "commit": "e64da3110d3079e2c396a4838c19ffcfccbc5530",
+    "file": "drivers/gpu/drm/asahi/g17p_drm.rs",
+    "behavior": "Return success without changing mapping generation, snapshots or page tables when an existing binding covers the same BO/offset/permissions, including repeating single-page mappings. Different/partially conflicting maps remain EINVAL; full replacement semantics are not claimed.",
+    "native_memory_checks": 6313,
+    "all_other_production_sources_same_as_kernel141": true
+  },
+  "WebGPU_first_attempt": {
+    "profile": "v30",
+    "simulation_submitted": false,
+    "cause": "Strict hardware gate rejected privacy-limited adapter info mesa/software. Honeykrisp reports vendor0x10005/device0, which Dawn maps to architecture software. Retained as failed gate evidence.",
+    "host_transfer_note": "Original here-document/echo framing was wrong. Original host controller stopped; same live Linux monitor retained; exact-N03 writer resent/verified all3 files. No device reboot before first attempt.",
+    "normal_unbind_and_cold_recovery_pass": true
+  },
+  "WebGPU_final_attempt": {
+    "profile": "v40",
+    "kernel": 142,
+    "kernel_and_Mesa_unchanged_from_first_browser_pass": true,
+    "detailed_hardware_info_enabled": true,
+    "requires": "Exact Apple M4 Max G16C description, Vulkan backend, integrated/discrete GPU type, fallback=false. Dawn architecture lookup string alone is not a physical adapter type.",
+    "all_cells_verified": 16384,
+    "render_pixel_samples_verified": 32768,
+    "generations": 32,
+    "compute_invocations": 524288,
+    "render_instances": 524288,
+    "alive_final": 2374,
+    "changed_cells": 6691,
+    "elapsed_ms": 4327.2,
+    "all3_uploaded_app_files_guest_hash_verified": true
+  },
+  "source_files_sha256": {
+    "proxyclient/experiments/g16c_chromium_webgl.html": "3ac4d81e8e055b8431bc32a27533f36129eb5c75bc75764dfe90f907c2f46414",
+    "proxyclient/experiments/g16c_chromium_webgl.sh": "bbea99e9d9e06559fe7dcbe134d917822e1f1a054648ccc23d91f38eb2fefe95",
+    "proxyclient/experiments/g16c_chromium_webgpu.html": "a363618bac6974c2935f22cabc986685a272792fe623c96dc9b386b51fbb3304",
+    "proxyclient/experiments/g16c_chromium_webgpu_cdp.c": "da9b4ca2a6f0b8b4e27e215bed725c0a3bc1ad51918e3017358d0b7830fead1f",
+    "proxyclient/experiments/g16c_chromium_run_webgpu.sh": "d0188402985f0368f1d105cd984bb5e7aaa74f547134fe9734a899ee8653f536",
+    "proxyclient/experiments/g16c_chromium_bind_trace.c": "4102909373dd8a68d6b4e6ac9bd98a4c3ef2714f2a22e87cb981ff0a3617bf25"
+  },
+  "exact_host_command": ".venv/bin/python -u build/m4max-gpu/g16c-native-chromium-20261023/run-native-chromium-v3.py > build/m4max-gpu/g16c-native-chromium-20261023/controller-v3.log 2>&1",
+  "CDP_ARM64_build": "aarch64-linux-gnu-gcc -O2 -Wall -Wextra -Werror webgpu-cdp-v2.c -o webgpu-cdp-v2",
+  "sources": [
+    "https://dawn.googlesource.com/dawn/+/refs/heads/main/src/dawn/gpu_info.json",
+    "https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/webgpu/gpu_adapter.cc",
+    "https://chromium.googlesource.com/chromium/src/+/2ebd9a65967836b5f580e7a72c4148cecf1f59ac"
+  ],
+  "limitations": [
+    "Headless/offscreen browser only; interactive desktop/compositor/display presentation unqualified.",
+    "Early arrival of a new ASID while old accepted work remains pending is still deferred to global idle; sustained fairness remains open.",
+    "No final sustained recycling, active-file-drop, wider differing live capacity, render-compute overlap or fault qualification claimed.",
+    "Tagged Neo shape gate passes; live Neo untested; full goal remains active."
+  ],
+  "production_Mesa_unchanged": true,
+  "protected_files_unchanged": true,
+  "public_snapshot_unchanged": "12451cca1fad6f1e5747a20a90c2058b21042af3",
+  "Apple_binary_disassembly": false
+}

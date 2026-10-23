@@ -1,0 +1,31 @@
+<!doctype html><meta charset="utf-8"><title>Max GPU browser probe</title>
+<style>body{margin:0;background:#202020}canvas{width:64px;height:64px;image-rendering:pixelated}pre{font:10px monospace;color:white}</style>
+<canvas id="gpu" width="64" height="64"></canvas><pre id="result">PENDING</pre>
+<script>
+(() => {
+ const result={status:'FAIL',pixels:0,hardware:false};
+ try {
+  const gl=document.getElementById('gpu').getContext('webgl2',{antialias:false,depth:false,stencil:false,preserveDrawingBuffer:true});
+  if(!gl) throw Error('WebGL2 context unavailable');
+  const ext=gl.getExtension('WEBGL_debug_renderer_info');
+  result.renderer=gl.getParameter(ext?ext.UNMASKED_RENDERER_WEBGL:gl.RENDERER);
+  result.vendor=gl.getParameter(ext?ext.UNMASKED_VENDOR_WEBGL:gl.VENDOR);
+  result.version=gl.getParameter(gl.VERSION);
+  result.hardware=/apple|asahi|g16c/i.test(result.renderer)&&!/swiftshader|llvmpipe|softpipe|lavapipe|software/i.test(result.renderer);
+  function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
+  const p=gl.createProgram();
+  gl.attachShader(p,shader(gl.VERTEX_SHADER,'#version 300 es\nlayout(location=0) in vec2 position;void main(){gl_Position=vec4(position,0.0,1.0);}'));
+  gl.attachShader(p,shader(gl.FRAGMENT_SHADER,'#version 300 es\nprecision highp float;precision highp int;out vec4 color;void main(){int x=int(gl_FragCoord.x)&1;int y=int(gl_FragCoord.y)&1;color=vec4(float(x),float(x^y),float(y),1.0);}'));
+  gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));gl.useProgram(p);
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+  gl.viewport(0,0,64,64);gl.clearColor(1,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,3);gl.finish();
+  const data=new Uint8Array(64*64*4);gl.readPixels(0,0,64,64,gl.RGBA,gl.UNSIGNED_BYTE,data);
+  const error=gl.getError();if(error!==gl.NO_ERROR)throw Error('GL error '+error);
+  for(let y=0;y<64;y++)for(let x=0;x<64;x++){const n=(y*64+x)*4;const wanted=[(x&1)*255,((x^y)&1)*255,(y&1)*255,255];for(let c=0;c<4;c++)if(data[n+c]!==wanted[c])throw Error('pixel '+x+','+y+' channel '+c+' got '+data[n+c]+' wanted '+wanted[c]);result.pixels++;}
+  if(!result.hardware)throw Error('hardware renderer not verified');result.status='PASS';
+ }catch(error){result.error=String(error);}
+ document.getElementById('result').textContent='CHROMIUM_GPU_RESULT='+JSON.stringify(result);
+ document.title='GPU_'+result.status;
+})();
+</script>

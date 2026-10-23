@@ -1,0 +1,62 @@
+<!doctype html><meta charset="utf-8"><title>WebGPU Game of Life</title>
+<style>body{margin:0;background:black;color:white}canvas{width:512px;height:512px;image-rendering:pixelated}pre{font:10px monospace}</style>
+<canvas id="gpu" width="512" height="512"></canvas><pre id="result">PENDING</pre>
+<script>
+globalThis.gpuWorkloadDone=(async()=>{
+ const result={status:'FAIL',workload:'Game of Life compute and instanced rendering',grid:128,generations:32,cellsVerified:0,pixelSamplesVerified:0,hardware:false};
+ try{
+  if(!navigator.gpu)throw Error('WebGPU unavailable');
+  const adapter=await navigator.gpu.requestAdapter({powerPreference:'high-performance',forceFallbackAdapter:false});if(!adapter)throw Error('No WebGPU adapter');
+  const info=adapter.info||{};result.adapter={vendor:info.vendor,architecture:info.architecture,device:info.device,description:info.description,driver:info.driver,backend:info.backend,type:info.type,isFallbackAdapter:info.isFallbackAdapter??adapter.isFallbackAdapter??null};
+  const identity=[result.adapter.description,result.adapter.device].join(' ');result.hardware=/Apple M4 Max.*G16C/i.test(identity)&&!/swiftshader|llvmpipe|softpipe|lavapipe|software/i.test(identity)&&result.adapter.isFallbackAdapter===false&&/vulkan/i.test(result.adapter.backend||'')&&/integrated|discrete/i.test(result.adapter.type||'');
+  result.adapterIdentityPolicy='Exact Apple M4 Max G16C description, Vulkan backend, integrated/discrete GPU type, fallback=false; Dawn architecture label is a vendor/device-ID lookup';
+  if(!result.hardware)throw Error('Hardware adapter not verified: '+identity);
+  const device=await adapter.requestDevice();const errors=[];device.addEventListener('uncapturederror',e=>errors.push(String(e.error)));device.pushErrorScope('validation');
+  const G=128,N=G*G,STEPS=32,W=512,H=512;let random=0x193a4b51;const initial=new Uint32Array(N);
+  for(let i=0;i<N;i++){random^=random<<13;random^=random>>>17;random^=random<<5;random>>>=0;initial[i]=(random&7)<3?1:0;}
+  function step(input){const output=new Uint32Array(N);for(let y=0;y<G;y++)for(let x=0;x<G;x++){let n=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(dx||dy)n+=input[(((y+dy+G)&127)*G)+((x+dx+G)&127)];const i=y*G+x;output[i]=(n===3||(input[i]===1&&n===2))?1:0;}return output;}
+  let expected=initial;for(let i=0;i<STEPS;i++)expected=step(expected);
+  const context=document.getElementById('gpu').getContext('webgpu');if(!context)throw Error('Canvas WebGPU context unavailable');
+  context.configure({device,format:'rgba8unorm',usage:GPUTextureUsage.RENDER_ATTACHMENT|GPUTextureUsage.COPY_SRC,alphaMode:'opaque'});
+  const buffers=[0,1].map(()=>device.createBuffer({size:N*4,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST|GPUBufferUsage.COPY_SRC}));device.queue.writeBuffer(buffers[0],0,initial);
+  const layout=device.createBindGroupLayout({entries:[{binding:0,visibility:GPUShaderStage.COMPUTE|GPUShaderStage.VERTEX,buffer:{type:'read-only-storage',minBindingSize:N*4}},{binding:1,visibility:GPUShaderStage.COMPUTE,buffer:{type:'storage',minBindingSize:N*4}}]});
+  const groups=[0,1].map(i=>device.createBindGroup({layout,entries:[{binding:0,resource:{buffer:buffers[i]}},{binding:1,resource:{buffer:buffers[1-i]}}]}));
+  const pipelineLayout=device.createPipelineLayout({bindGroupLayouts:[layout]});
+  const module=device.createShaderModule({code:`
+@group(0) @binding(0) var<storage,read> src:array<u32>;
+@group(0) @binding(1) var<storage,read_write> dst:array<u32>;
+fn cell(x:i32,y:i32)->u32{return src[(u32(y+128)&127u)*128u+(u32(x+128)&127u)];}
+@compute @workgroup_size(8,8) fn update(@builtin(global_invocation_id) id:vec3u){
+ if(id.x>=128u||id.y>=128u){return;} let x=i32(id.x);let y=i32(id.y);let i=id.y*128u+id.x;
+ let n=cell(x-1,y-1)+cell(x,y-1)+cell(x+1,y-1)+cell(x-1,y)+cell(x+1,y)+cell(x-1,y+1)+cell(x,y+1)+cell(x+1,y+1);
+ dst[i]=select(0u,1u,n==3u||(src[i]==1u&&n==2u));
+}
+@vertex fn vertex(@location(0) p:vec2f,@builtin(instance_index) id:u32)->@builtin(position) vec4f{
+ let center=vec2f(f32(id&127u)+0.5,f32(id>>7u)+0.5);let pos=center+p*0.5*f32(src[id]);return vec4f(pos/128.0*2.0-1.0,0.0,1.0);
+}
+@fragment fn fragment()->@location(0) vec4f{return vec4f(0.0,1.0,0.0,1.0);}
+`});
+  const diagnostics=await module.getCompilationInfo();if(diagnostics.messages.some(m=>m.type==='error'))throw Error(diagnostics.messages.map(m=>m.message).join('\n'));
+  const compute=device.createComputePipeline({layout:pipelineLayout,compute:{module,entryPoint:'update'}});
+  const render=device.createRenderPipeline({layout:pipelineLayout,vertex:{module,entryPoint:'vertex',buffers:[{arrayStride:8,attributes:[{shaderLocation:0,offset:0,format:'float32x2'}]}]},fragment:{module,entryPoint:'fragment',targets:[{format:'rgba8unorm'}]},primitive:{topology:'triangle-list'}});
+  const vertices=new Float32Array([-.7,-.7,.7,-.7,.7,.7,-.7,-.7,.7,.7,-.7,.7]);const vertex=device.createBuffer({size:vertices.byteLength,usage:GPUBufferUsage.VERTEX|GPUBufferUsage.COPY_DST});device.queue.writeBuffer(vertex,0,vertices);
+  const stateRead=device.createBuffer({size:N*4,usage:GPUBufferUsage.MAP_READ|GPUBufferUsage.COPY_DST});const pixelsRead=device.createBuffer({size:W*H*4,usage:GPUBufferUsage.MAP_READ|GPUBufferUsage.COPY_DST});
+  const started=performance.now();
+  for(let frame=0;frame<STEPS;frame++){
+   const command=device.createCommandEncoder();const computePass=command.beginComputePass();computePass.setPipeline(compute);computePass.setBindGroup(0,groups[frame&1]);computePass.dispatchWorkgroups(16,16);computePass.end();
+   const texture=context.getCurrentTexture();const pass=command.beginRenderPass({colorAttachments:[{view:texture.createView(),clearValue:{r:0,g:0,b:0,a:1},loadOp:'clear',storeOp:'store'}]});pass.setPipeline(render);pass.setBindGroup(0,groups[(frame+1)&1]);pass.setVertexBuffer(0,vertex);pass.draw(6,N);pass.end();
+   if(frame===STEPS-1){command.copyBufferToBuffer(buffers[(frame+1)&1],0,stateRead,0,N*4);command.copyTextureToBuffer({texture},{buffer:pixelsRead,bytesPerRow:W*4},[W,H]);}
+   device.queue.submit([command.finish()]);await device.queue.onSubmittedWorkDone();
+  }
+  await Promise.all([stateRead.mapAsync(GPUMapMode.READ),pixelsRead.mapAsync(GPUMapMode.READ)]);
+  const actual=new Uint32Array(stateRead.getMappedRange());const pixels=new Uint8Array(pixelsRead.getMappedRange());let alive=0,changed=0;
+  for(let i=0;i<N;i++){if(actual[i]!==expected[i])throw Error('Cell '+i+' got '+actual[i]+' expected '+expected[i]);alive+=actual[i];changed+=actual[i]!==initial[i]?1:0;result.cellsVerified++;}
+  function pixel(x,y,wanted){const at=(y*W+x)*4;for(let c=0;c<4;c++)if(pixels[at+c]!==wanted[c])throw Error('Pixel '+x+','+y+' channel '+c+' got '+pixels[at+c]+' expected '+wanted[c]);result.pixelSamplesVerified++;}
+  for(let y=0;y<G;y++)for(let x=0;x<G;x++){const row=H-1-(y*4+2);pixel(x*4+2,row,[0,expected[y*G+x]*255,0,255]);pixel(x*4,row,[0,0,0,255]);}
+  if(alive===0||alive===N||changed<100)throw Error('Nontrivial simulation not verified');stateRead.unmap();pixelsRead.unmap();
+  const error=await device.popErrorScope();if(error||errors.length)throw Error(String(error||errors.join('\n')));
+  result.alive=alive;result.changedCells=changed;result.computeInvocations=N*STEPS;result.renderInstances=N*STEPS;result.elapsedMs=performance.now()-started;result.status='PASS';device.destroy();
+ }catch(error){result.error=String(error);}
+ document.getElementById('result').textContent='WEBGPU_WORKLOAD_RESULT='+JSON.stringify(result);document.title='WEBGPU_'+result.status;return result;
+})();
+</script>
