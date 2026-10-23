@@ -1,0 +1,321 @@
+{
+  "goal_status": "active",
+  "linux_branch": "integration/g16c-g17p",
+  "linux_commit": "29a057239c9407e29a5c4e6b7158da87acb3015f",
+  "kernel": 138,
+  "changes": [
+    "Versioned initialized dispatch DATA template with every offset/size/alignment assertion",
+    "One live device-wide cursor per ASID; initialize only at global quiescence and preserve neighboring cursor cache-line bytes",
+    "Register0x14028 selects context-1; independently allocated backend submission namespace also uses context-1 as policy",
+    "Reuse device-global engine scratch across immutable ASIDs; quiescent cold engine init and retirement preserved",
+    "Native two-live-VM oracle checks cloned BO independence, inactive root bytes, guarded timestamps, positive fences, reversed API orders and true GPU overlap"
+  ],
+  "audit": "build/m4max-gpu/g16c-native-cross-vm-20261023/qualified-result-v50.json",
+  "final_native_sessions": [
+    {
+      "version": "v72",
+      "kernel": 138,
+      "phases": [
+        {
+          "phase": 0,
+          "active_mask": 1,
+          "warm": true,
+          "timestamps": {
+            "0": [
+              27583795500,
+              27694157916
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 1,
+          "active_mask": 2,
+          "warm": true,
+          "timestamps": {
+            "1": [
+              27746435291,
+              27857127125
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 2,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              27867955500,
+              28084941875
+            ],
+            "1": [
+              27867968583,
+              28085693666
+            ]
+          },
+          "actual_overlap": true
+        },
+        {
+          "phase": 3,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              28099563291,
+              28314579583
+            ],
+            "1": [
+              28099545250,
+              28317179500
+            ]
+          },
+          "actual_overlap": true
+        },
+        {
+          "phase": 0,
+          "active_mask": 1,
+          "warm": true,
+          "timestamps": {
+            "0": [
+              29074287500,
+              29074602250
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 1,
+          "active_mask": 2,
+          "warm": true,
+          "timestamps": {
+            "1": [
+              29122711083,
+              29123026250
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 2,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              29133867041,
+              29134180750
+            ],
+            "1": [
+              29135122250,
+              29135437083
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 3,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              29147209250,
+              29147522583
+            ],
+            "1": [
+              29146050916,
+              29146365375
+            ]
+          },
+          "actual_overlap": false
+        }
+      ],
+      "guest_hashes": 256,
+      "memory_checks": 6303,
+      "unbind": true,
+      "log_sha256": "7917104a5f66c067edc47dcd07a256a0862c2b7b4e1e5a2fc5ea5c06462a8d80"
+    },
+    {
+      "version": "v90",
+      "kernel": 138,
+      "phases": [
+        {
+          "phase": 0,
+          "active_mask": 1,
+          "warm": true,
+          "timestamps": {
+            "0": [
+              51671854375,
+              51781589458
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 1,
+          "active_mask": 2,
+          "warm": true,
+          "timestamps": {
+            "1": [
+              51833821875,
+              51944751375
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 2,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              51955596875,
+              52173638208
+            ],
+            "1": [
+              51955611041,
+              52173728000
+            ]
+          },
+          "actual_overlap": true
+        },
+        {
+          "phase": 3,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              52184814541,
+              52406767375
+            ],
+            "1": [
+              52184797000,
+              52407136583
+            ]
+          },
+          "actual_overlap": true
+        },
+        {
+          "phase": 0,
+          "active_mask": 1,
+          "warm": true,
+          "timestamps": {
+            "0": [
+              53191906166,
+              53272731458
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 1,
+          "active_mask": 2,
+          "warm": true,
+          "timestamps": {
+            "1": [
+              53328177666,
+              53413236625
+            ]
+          },
+          "actual_overlap": false
+        },
+        {
+          "phase": 2,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              53429128708,
+              53500746125
+            ],
+            "1": [
+              53429142666,
+              53500763666
+            ]
+          },
+          "actual_overlap": true
+        },
+        {
+          "phase": 3,
+          "active_mask": 3,
+          "warm": false,
+          "timestamps": {
+            "0": [
+              53516730583,
+              53588349541
+            ],
+            "1": [
+              53516713041,
+              53588333750
+            ]
+          },
+          "actual_overlap": true
+        }
+      ],
+      "guest_hashes": 256,
+      "memory_checks": 6303,
+      "unbind": true,
+      "log_sha256": "6b523d26d1023b1119fd2dfdc9940467cccfddb85018d70467908b29bd09b665"
+    }
+  ],
+  "final_native_overlap_pairs": 6,
+  "final_guest_hashes": 512,
+  "whole_source_pages_Max": 197,
+  "whole_source_pages_Neo": 256,
+  "whole_dispatch_Max_pages": 5,
+  "negative_control": {
+    "dropped_context": 2,
+    "other_contexts_correct": true,
+    "dropped_context_incorrect": true,
+    "timeout_records": [
+      "040000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    ],
+    "qualified": true
+  },
+  "replay_evidence": {
+    "opaque-replay-v1/result.json": {
+      "pass_": true,
+      "hypervisor": false,
+      "GPU_overlap": true,
+      "sha256": "8ed625e5a4ef0ef2699ed40cf0af0b6cbc97442e219978e847ffc8aafb86497e"
+    },
+    "private256-opaque-replay-v1/result.json": {
+      "pass_": true,
+      "hypervisor": false,
+      "GPU_overlap": true,
+      "sha256": "eefb6eda17baa5a137361a5ab454ef7035682c739748b3cf4dce5aa23f78f23c"
+    },
+    "source-dispatch-replay-v1/result.json": {
+      "pass_": true,
+      "hypervisor": false,
+      "GPU_overlap": true,
+      "sha256": "d9296b60f66fcfc2ce71a7a73d4bd7762cd84c4139b0a2397fae8b8dac71d1cc"
+    }
+  },
+  "preserved_failures": [
+    "v10: overly strict private C header assertion BEFORE GPU, corrected clientv2",
+    "v20/kernel136: moved context2 window times out with dispatch selector0",
+    "v50/kernel137: balanced/private4096 overlaps pass, high-pressure second context times out even serially",
+    "v60/kernel137: fresh serial high-pressure second context reproduces timeout",
+    "v70/v71: all16 CPU startup stalls BEFORE userspace/GPU, identical RID0/raw retries",
+    "v80/kernel138: missing --phase-pair test argument rejects fixture BEFORE GPU, corrected controller v9"
+  ],
+  "causal_fix": "Kernel138 differs from137 ONLY in compute dispatch selector0x14028 (and its explanatory comment). Pressure overlap and moved-window tests then both pass; work tags remain unchanged.",
+  "remaining": [
+    "Automatic operand demand/capacity and distinct-capacity native overlap qualification",
+    "Fairness and finite recycling with new contexts/generations/closed queues under continuous concurrent work",
+    "Concurrent render/compute and cross-file workloads",
+    "Fault/uncertain-publication recovery, broader controls/formats, permanent platform power/bare-metal and real display/browser work",
+    "LIVE Neo GPU regression and final sustained qualification"
+  ],
+  "private4096_large_native_capture": {
+    "cold_replay_qualified": false,
+    "source_bisection_qualified": false,
+    "native_outputs_qualified": true
+  },
+  "public_snapshot_frozen": "12451cca1fad6f1e5747a20a90c2058b21042af3",
+  "target": "Mac16,5/J616c/6041/JPWWJRX2N0",
+  "reference_single_user": true,
+  "CPUs": 16,
+  "Apple_disassembly": false,
+  "live_Neo_qualified": false
+}
