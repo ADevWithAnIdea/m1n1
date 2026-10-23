@@ -1,0 +1,49 @@
+{
+  "goal_status": "active",
+  "linux_commit": "7d5885eb704455b26bf5786b42fd95ff67dd7f9c",
+  "previous_runtime_commit": "29a057239c9407e29a5c4e6b7158da87acb3015f",
+  "kernel": 138,
+  "kernel_Image_and159_other_source_files_unchanged": true,
+  "change": "Userspace two-root client adds --separate-files and per-file guarded timestamps. Production runtime unchanged.",
+  "qualified": {
+    "kernel": 138,
+    "production_sources_unchanged": 159,
+    "version": "v101",
+    "CPUs": 16,
+    "actual_guest_hashes": 257,
+    "separate_files": 2,
+    "colliding_VM_ids": [
+      1,
+      1
+    ],
+    "colliding_queue_ids": [
+      1,
+      1
+    ],
+    "relocated_kernel_windows": true,
+    "private_pressure_and_balanced_each_two_actual_overlaps": true,
+    "same_file_control_actual_overlap": true,
+    "all_BO_and_timestamp_guards": true,
+    "positive_exported_fences": true,
+    "Vulkan_render_and_compute": true,
+    "memory_checks": 6303,
+    "unbind": true,
+    "cold_proxy_restored": true,
+    "old_initrd_entries_unchanged": 1598,
+    "client_source_sha256": "de17c60ac608cfce1843d796d43bcdf7275e6b6109d660b960002a45e15cd0b5",
+    "client_binary_sha256": "873bf191afe80d4decb9093abb4378c180fc05361607703506abeb52f9dc0aa5",
+    "log_sha256": "01498ba61c1fa7412813116cc5d5e72bc454f06730cc4c4d706104a0fc5b95a9",
+    "full_goal_complete": false
+  },
+  "artifacts": "build/m4max-gpu/g16c-native-cross-vm-20261023",
+  "actual_command": "build/m4max-gpu/g16c-native-cross-vm-20261023/run-native-cross-file-v10.py",
+  "preserved_failure": "v100 all16 CPU0 PSCI startup stall BEFORE userspace/GPU, identical reset/raw retryv101 succeeds",
+  "public_snapshot_unchanged": "12451cca1fad6f1e5747a20a90c2058b21042af3",
+  "limitations": [
+    "No final active DriverFile drop proof; all BO/timestamp mappings released before file close",
+    "Finite two-root rounds do not establish admission/retirement fairness under continuous load",
+    "Different-capacity overlap, automatic operand demand, simultaneous render/compute and LIVE Neo remain open"
+  ],
+  "next": "Qualify continuous-load admission/recycling and ensure reclaimable closed owners cannot starve at global-quiescence boundaries",
+  "Apple_disassembly": false
+}
