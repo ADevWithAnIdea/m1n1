@@ -1,0 +1,110 @@
+{
+  "goal_status": "active",
+  "linux_commit": "52989a8834fdb537fe2856a391ac5e991eb7fac6",
+  "runtime_commit": "8727c38bb",
+  "kernel": 141,
+  "Image": "build/m4max-gpu/g16c-native-cross-vm-20261023/Image-v6",
+  "production_runtime_unchanged": true,
+  "qualified": {
+    "kernel": 141,
+    "version": "v190",
+    "actual_guest_hashes": 259,
+    "CPUs": 16,
+    "kernel_runtime_unchanged": true,
+    "queued_keeper_jobs": 8,
+    "all8_fifo_timestamps": [
+      [
+        0,
+        1028283564875,
+        1028355184791
+      ],
+      [
+        1,
+        1028355185541,
+        1028426803000
+      ],
+      [
+        2,
+        1028426806666,
+        1028498430625
+      ],
+      [
+        3,
+        1028498433333,
+        1028570055208
+      ],
+      [
+        4,
+        1028570058083,
+        1028641045875
+      ],
+      [
+        5,
+        1028641048583,
+        1028712038500
+      ],
+      [
+        6,
+        1028712043083,
+        1028783032541
+      ],
+      [
+        7,
+        1028783034625,
+        1028854018916
+      ]
+    ],
+    "arriving_ASID_runs_AFTER_all_keeper_GPU_work": true,
+    "arrival_interval": [
+      1028896855500,
+      1028968473458
+    ],
+    "old_queue_resumed_after_arrival": true,
+    "return_interval": [
+      1028991083083,
+      1029062703875
+    ],
+    "returned_output_changed_from_seed_and_correct": true,
+    "all_BO_and_timestamp_guards": true,
+    "positive_exported_fences_main_work": 10,
+    "positive_exported_fences_warmup": 2,
+    "positive_exported_fences_total": 12,
+    "Vulkan_render_and_compute": true,
+    "memory_checks": 6303,
+    "unbind": true,
+    "cold_proxy_restored": true,
+    "source_sha256": "56714e9b4954f331219453dc68e37d2942e41792e1a414be50de4f8d2b103acc",
+    "log_sha256": "939610c72385fcb243965f00c6d7bd5f67ab7488596a930eff2f3b9459d5e7e5",
+    "early_new_ASID_admission_qualified": false,
+    "scope": "Late context followed by old-queue return PASSES when no old stream work remains pending. Preserve queued/in-flight work when capturing the failing early-arrival case.",
+    "full_goal_complete": false
+  },
+  "conclusion": "With the committed scheduler, all8 old jobs finish, then the arriving ASID executes, then the old queue resumes with changed/correct output. The separate early-admission timeout requires interleaving the arriving ASID with pending old work; ordinary late-context return is qualified.",
+  "late_Metal_v2": {
+    "source": "proxyclient/experiments/metal_g16c_compute_late_client.m",
+    "source_sha256": "62782f76683b969334b8d0ede1ab54f349ad271163c83888400d2dae3ea9107c",
+    "binary_sha256": "1ed760cb4fe8b93add8c1af5dbf03b1cf1d85561ce563281360bce3c09033aa5",
+    "strict_host_compile": true,
+    "target_execution_qualified": false,
+    "target": "Mac16,5/J616c/6041/JPWWJRX2N0",
+    "single_user_required": true,
+    "CPUs_required": 16,
+    "phases": [
+      "warm: same Metal device, two queues, separate128-byte outputs, two1M-iteration commands, CPU32words+128guards and GPU overlap",
+      "late: child opens Metal ONLY after parent warm completion; queue8 tracked1M parent writes on SAME retained queue/buffer before child1 dispatch; check all8 GPU intervals, both output/guard oracles and whether child ends before last parent begins",
+      "resume: parent dispatches1M again on retained original queue after child completion; CPU16words+64guards"
+    ],
+    "next": "Three-phase capture/continuation replay MUST retain all8 parent publications plus first child publication, instead of silently reducing to two jobs. Validate late interleaving and all9 native timestamps/outputs, cold combined replay, then source bisection.",
+    "Apple_disassembly": false,
+    "version": 2,
+    "late_phase_requires_pending_parent_work": true,
+    "parent_tracked_submissions": 8,
+    "positive_reference_requires_child_before_last_parent": true
+  },
+  "next": "Extend warm->late->resume capture/continuation replay to retain the entire pending parent backlog and child first work. Metal can coalesce publications: validate all submitted work groups, not a guessed two-publication shape. Require child-before-last-parent native GPU timing for interleaving reference, then cold opaque continuation replay and source bisection.",
+  "early_admission_complete": false,
+  "live_Neo_complete": false,
+  "full_goal_complete": false,
+  "Apple_disassembly": false,
+  "public_snapshot_frozen": "12451cca1fad6f1e5747a20a90c2058b21042af3"
+}

@@ -152,17 +152,32 @@ int main(int argc, char **argv) {
         char token = 'P'; if (!transfer(go[1], &token, 1, 1)) return 3;
         Ready second;
         if (!transfer(ready[0], &second, sizeof(second), 0) || second.pid != child || second.iterations != 1) return 8;
-        if (!rearm(first, 1000000)) return 2;
-        printf("READY_LATE before commit; clients=2; gpu_output0=0x%llx; gpu_output1=0x%llx; size=128; pids=%d,%d\n",
+        // Keep multiple tracked writes pending on the parent's SAME output
+        // and queue while the late client publishes its first work. Encode
+        // every command before committing any, so poisoning is CPU-only.
+        NSMutableArray<id<MTLCommandBuffer>> *backlog = [NSMutableArray new];
+        for (unsigned i=0; i<8; i++) {
+            if (!rearm(first, 1000000)) return 2;
+            [backlog addObject:first.command];
+        }
+        printf("READY_LATE before commit; clients=2; parent_submissions=8; gpu_output0=0x%llx; gpu_output1=0x%llx; size=128; pids=%d,%d\n",
             (unsigned long long)first.output.gpuAddress, (unsigned long long)second.gpu, getpid(), child);
         fflush(stdout); if (getchar() == EOF) return 9;
-        [first.command commit];
-        // Allow macOS to publish the first held kick before the other process.
+        for (id<MTLCommandBuffer> command in backlog) [command commit];
+        // Allow macOS to publish the held backlog before the other process.
         usleep(100000);
         token = 'C';
         if (!transfer(go[1], &token, 1, 1)) return 3;
         Result results[2];
         if (!finish(first, &results[0]) || !transfer(done[0], &results[1], sizeof(results[1]), 0)) return 4;
+        for (unsigned i=0; i<backlog.count; i++) {
+            id<MTLCommandBuffer> command = backlog[i];
+            if (command.status != MTLCommandBufferStatusCompleted ||
+                !(command.GPUStartTime > 0 && command.GPUEndTime > command.GPUStartTime)) return 10;
+            printf("BACKLOG_GPU_INTERVAL %u start=%.9f end=%.9f\n", i, command.GPUStartTime, command.GPUEndTime);
+        }
+        printf("LATE_INTERLEAVING child_before_last_parent=%u parent_submissions=8\n",
+            results[1].end < results[0].start);
         for (unsigned job = 0; job < 2; ++job) {
             if (!verify(&results[job], job ? 1 : 1000000)) return 10;
             printf("METAL_GPU_INTERVAL %u start=%.9f end=%.9f\n", job, results[job].start, results[job].end);
