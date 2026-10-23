@@ -1,0 +1,240 @@
+{
+  "artifact_directory": "build/m4max-gpu/g16c-native-private-window-20261022",
+  "result": {
+    "goal_status": "active",
+    "operator_priority": "Kernel implementation toward real graphics workloads; use working WIP Vulkan only to validate the kernel",
+    "linux_commit": "d0b3cb6d3099e0ccf27f54c1d69332aeeede356d",
+    "Mesa_commit": "9817e31",
+    "kernel": 113,
+    "changes": [
+      "Carry immutable caller kernel_end through compute Parameters and prepared render admission into native Owner.private_limit",
+      "Use actual bound for compute growth, queue saves, render allocation and rebind; render allocation checks before mapping/backing allocation",
+      "Preflight retained private extents before choosing a dormant pool for a smaller caller window",
+      "Stage complete64KiB operand table rather than one16KiB page",
+      "Optional operand DATA probe reports actual DVA; default0 remains inactive",
+      "Private-array test supports repeat and actual private-window size together; Neo gate explicitly checks new host metadata comes from immutable VM"
+    ],
+    "firmware_wire_structures_unchanged": true,
+    "single_common_scheduler_preserved": true,
+    "native_diagnostic": {
+      "window_bytes": 1073741824,
+      "growth": [
+        20,
+        65
+      ],
+      "large_initial_pressure_submissions": 3,
+      "small_control_window_bytes": 536870912,
+      "small_control_submissions": 1,
+      "large_reuse_pressure_submissions": 2,
+      "small_reuse_submissions": 1,
+      "compressed_render_phase_pair": 2,
+      "only_one_growth_transaction": true,
+      "warm_large_small_retained_allocations": 448,
+      "warm_large_small_retained_bytes": 760184832,
+      "warm_pool_slots": 2,
+      "warm_queue_slots": 1,
+      "beyond_old_limit_sampled_pages": 10,
+      "high_data_buffers": [
+        61,
+        62,
+        63,
+        64
+      ],
+      "independent_CPU_model_selected_buffers": [
+        60,
+        61,
+        62,
+        63,
+        64
+      ],
+      "independent_CPU_model_words": 80,
+      "model_mutated_values": 30,
+      "model_initialized_values": 50,
+      "scope": "Selected sampled scratch DATA only.134/135 retired samples changed; no all-backing-final-state claim."
+    },
+    "native_default": {
+      "no_driver_boot_args": true,
+      "Vulkan_bindless_sampling": true,
+      "dimensions": [
+        64,
+        32
+      ],
+      "draws": 3,
+      "sampler_index": 127,
+      "sampler_count": 128,
+      "image_sets": 3,
+      "descriptor_pools": 2,
+      "interleaved_combined_sampler_noise_draws_per_measured": 2,
+      "concurrent_unused_descriptor_host_writes": 23042,
+      "Vulkan_fill_compute_copy_submissions": 3,
+      "queued_compute_pair": true,
+      "mixed_render_resolve_batches": 2,
+      "retained_allocations": 358,
+      "retained_bytes": 453476352,
+      "pool_slots": 1,
+      "queue_slots": 2,
+      "default_memory_baseline_unchanged": true
+    },
+    "both_sessions": {
+      "actual_guest_hashes": 233,
+      "all16_CPUs": true,
+      "memory_checks": 6303,
+      "unbind": 0,
+      "DRM_nodes_removed": true,
+      "no_GPU_or_CPU_boot_failures": true
+    },
+    "CPU_gates": {
+      "Neo_tagged_constructor_scheduler_and_admission_checks": 35,
+      "complete_Max_operand_pages": 32,
+      "every_field_offset_size_alignment": true
+    },
+    "build": {
+      "first": 112,
+      "final": 113,
+      "existing_warnings": 17,
+      "strict_ARM64_C": true,
+      "source_hashes": 150,
+      "compiled_sources_match_final_archive": true
+    },
+    "verification_notes": [
+      "Initial C compile rejected Linux __u64/PRIx64 printf mismatch; fixed explicit uint64_t casts before building/testing the client",
+      "Initial Neo textual gate rejected added Max metadata slots; narrowly updated to assert actual immutable VM bound and ignore only those host-only slots. Original tagged Neo logic and limits still compared exactly; gate passed before GPU execution",
+      "No dependent GPU work followed a failed verifier; both actual guest preflights passed before GPU",
+      "Post-build final changes are CPU gate/README only, archived separately with original148 compiled/test source hashes unchanged"
+    ],
+    "remaining": [
+      "Automatic operand growth policy and full capacity/raw allocation failure recovery",
+      "Cross-VM and compute/render concurrency/dependency qualification",
+      "Fault/uncertain-publication and multi-flight close behavior",
+      "Permanent PMGR/bare-metal integration",
+      "LIVE Neo GPU regression and final sustained qualification"
+    ],
+    "state": "cold plain m1n1 proxy after clean unbind, exact owned monitor collection, RID0 raw chainload/identity; N01/N03 unowned",
+    "stats": {
+      "1": [
+        {
+          "allocations": 354,
+          "bytes": 574472192,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 354,
+          "bytes": 574472192,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 448,
+          "bytes": 760184832,
+          "pool_slots": 2,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 448,
+          "bytes": 760184832,
+          "pool_slots": 2,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 448,
+          "bytes": 760184832,
+          "pool_slots": 2,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 448,
+          "bytes": 760184832,
+          "pool_slots": 2,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 448,
+          "bytes": 760184832,
+          "pool_slots": 2,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 448,
+          "bytes": 760184832,
+          "pool_slots": 2,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 618,
+          "bytes": 1016102912,
+          "pool_slots": 2,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 618,
+          "bytes": 1016102912,
+          "pool_slots": 2,
+          "queue_slots": 1
+        }
+      ],
+      "2": [
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        }
+      ]
+    }
+  }
+}
