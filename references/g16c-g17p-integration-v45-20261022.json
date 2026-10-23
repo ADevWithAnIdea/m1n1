@@ -1,0 +1,477 @@
+{
+  "artifact_directory": "build/m4max-gpu/g16c-native-initial-allocation-20261022",
+  "result": {
+    "goal_status": "active",
+    "operator_priority": "Kernel implementation toward real graphics workloads; fixed WIP Vulkan runtime used for actual-output validation",
+    "linux_commit": "3f07124b83b7f0f7c1920c3f32ff4bb86b376dd5",
+    "kernel": 116,
+    "changes": [
+      "Initial owner backing is detached until all allocations and empty root paths exist; cached private/operand metadata is copied without taking it from the dormant owner until commit",
+      "Canonical engine scratch, queue backing and save pages use prepared detached allocations, then adoption/resource-leaf installation",
+      "Initial render DATA is built directly in detached private/metadata backing using existing templates; resource mappings/aliases and descriptor publication follow adoption",
+      "Max-only firmware UAT helper prepares bounded empty parents, preserves all existing leaves, and permits ENOMEM retry; original Neo walker operations are unchanged",
+      "Explicit StageError allocation rejection before adoption; post-install failures remain fail-closed with retained backing",
+      "One-shot test-only initial-allocation stage1/2/3/4 injection defaults disabled; clients verify exact ENOMEM/unchanged BOs/timestamps then same-VM/queue retry"
+    ],
+    "firmware_wire_structs_macros_templates_and_common_scheduler_unchanged": true,
+    "actual_fault_sessions": {
+      "1": {
+        "stage": "owner",
+        "detached_allocations": 94,
+        "detached_bytes": 185712640,
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_and_queue_retry": true,
+        "recycling": true,
+        "post_rejection_graphics_and_compute": true
+      },
+      "2": {
+        "stage": "engine scratch",
+        "detached_allocations": 4,
+        "detached_bytes": 524288,
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_and_queue_retry": true,
+        "recycling": true,
+        "post_rejection_graphics_and_compute": true
+      },
+      "3": {
+        "stage": "queue and saves",
+        "detached_allocations": 14,
+        "detached_bytes": 573440,
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_and_queue_retry": true,
+        "recycling": true,
+        "post_rejection_graphics_and_compute": true
+      },
+      "4": {
+        "stage": "initial render",
+        "detached_allocations": 159,
+        "detached_bytes": 255737856,
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_and_queue_retry": true,
+        "recycling": true,
+        "post_rejection_graphics_and_compute": true
+      }
+    },
+    "retained": {
+      "compute_after_owner_engine_queue_retry": [
+        174,
+        196984832
+      ],
+      "compute_recycled_identical": true,
+      "render_first_retry": [
+        334,
+        452739072
+      ],
+      "render_recycled_identical": true,
+      "all_four_after_compute_and_render": [
+        344,
+        452902912
+      ],
+      "abandoned_detached_backing_not_retained": true
+    },
+    "actual_default": {
+      "no_driver_bootargs": true,
+      "Vulkan_bindless_measured_pixels": 6144,
+      "measured_draws": 3,
+      "dimensions": [
+        64,
+        32
+      ],
+      "sampler_index": 127,
+      "sampler_count": 128,
+      "image_sets": 3,
+      "descriptor_pools": 2,
+      "mixed_noise_draws_per_measured": 2,
+      "concurrent_unused_descriptor_host_updates": 9111,
+      "wrong_pixels": 0,
+      "Vulkan_fill_compute_copy_submissions": 3,
+      "each_outputs": 257,
+      "each_guard_words": 63,
+      "native_queued_compute_pair": true,
+      "mixed_render_compute_resolve_batches": 2,
+      "pre_pressure_allocations": 358,
+      "pre_pressure_bytes": 453476352,
+      "baseline_unchanged": true,
+      "parameter_pressure_batches_per_VM": 2,
+      "parameter_pressure_VMs": 2,
+      "second_origin": "0x7100004000",
+      "four_real_growth_replies": [
+        [
+          23,
+          33
+        ],
+        [
+          33,
+          43
+        ],
+        [
+          43,
+          53
+        ],
+        [
+          53,
+          63
+        ]
+      ],
+      "second_VM_reuses_without_growth": true,
+      "post_growth_compressed_render_pair": true,
+      "post_growth_retained_allocations": 398,
+      "post_growth_retained_bytes": 458719232,
+      "post_growth_pool_slots": 1,
+      "post_growth_queue_slots": 2,
+      "post_growth_recycling_flat": true
+    },
+    "all_five_sessions": {
+      "actual_guest_hashes_each": 233,
+      "additional_pressure_guest_hashes": 36,
+      "total_guest_hash_comparisons": 1201,
+      "all16_CPUs": true,
+      "same_Image_DTB_initrd": true,
+      "memory_checks_each": 6303,
+      "unbind": 0,
+      "DRM_nodes_removed": true,
+      "no_CPU_startup_stall_or_GPU_failure": true
+    },
+    "CPU_evidence": {
+      "whole_source_render_virtual_pages": 31230,
+      "whole_source_render_bytes": 512296920,
+      "all_DATA_and_attributes_equal": true,
+      "source_rebind_metadata_and_ownership_checks_preserved": true,
+      "selected_render_allocation_failure_points": 4,
+      "failed_render_preparation_installs_no_leaf_or_descriptor": true,
+      "whole_source_queue_sets": 4,
+      "whole_queue_backing_objects": 48,
+      "queue_alias_pages": 96,
+      "queue_allocation_failure_points": 12,
+      "engine_allocation_failure_points": 4,
+      "parent_table_allocation_failure_points": 2,
+      "retry_after_preparation_allocates_no_more_parents": true,
+      "Neo_baseline_VM_identical_RAM_bytes": 50864376,
+      "Neo_baseline_VM_identical_allocations": 2267,
+      "Neo_constructor_scheduler_admission_assertions": 35,
+      "LIVE_Neo": false
+    },
+    "build": {
+      "initial_error": "One Iterator::chain / pin_init::Init::chain ambiguity and unused import, fixed before successful kernel116 build/GPU tests",
+      "existing_warnings": 17,
+      "strict_ARM64_C_clients": true,
+      "local_remote_sources": 153,
+      "source_changes_after_build": "README and EXACTLY checked queue module-documentation replacement only; no function/type/wire code changed",
+      "initrd_other_entries_exact": 1572,
+      "all_Vulkan_libraries_shaders_test_clients_and_fixtures_unchanged": true,
+      "no_hot_overlays": true
+    },
+    "verification_notes": [
+      "Earlier host queue test used obsolete FDT fixture missing memory reservations and firmware-build; rebuilt test-only template from current typed DTS nodes, fixed build identity; actual m1n1/libfdt population still executed",
+      "Earlier render-host adapters lacked already-existing growth/VM/lease APIs; adapters updated, complete production allocation/rebind DATA comparison retained",
+      "Queue failure expectation intentionally changed from retaining partial resource mappings to no leaves and successful retry, matching requested transactional preparation; all old positive wire/alias/reset comparisons retained",
+      "Neo VM gate first invoked with systemPython3.9 failed at hashlib.file_digest after running comparison; rerun in repository venv succeeds with fresh evidence path",
+      "All host-gate corrections completed before native GPU; no dependent GPU test followed a failed guest verifier; no native output oracle or guard relaxed"
+    ],
+    "remaining": [
+      "Late/global compute/render work-storage, timestamp and geometry allocation paths",
+      "Physical RAM exhaustion, failures after partial installation and uncertain publication",
+      "Automatic operand-demand growth/full capacity",
+      "Cross-VM dependencies, actual compute/render concurrency and per-flight fault attribution",
+      "Multi-flight close and broader control/format/fault qualification",
+      "Permanent PMGR/bare-metal, LIVE Neo GPU regression and final sustained qualification"
+    ],
+    "native_shader_overlap_proven": false,
+    "state": "Cold plain proxy after successful final unbind/RID0 raw chainload/explicit identity/nop; all owned monitors collected; N01/N03 unowned",
+    "stats": {
+      "1": [
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "2": [
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "3": [
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "4": [
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "5": [
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        }
+      ]
+    }
+  },
+  "evidence_files": {
+    "kernel-v1.json": "d2c40659b15dcad40aa5a5aea84d11fac46a095f878d6767622af9c188f8a88c",
+    "initrd-proof-v1.json": "621bad8c42970457745cceb938e6bab3251e7199ecf81bf4a96422e11eec483a",
+    "source-sha256-final.json": "66e0ec3c9133ca5af94692db811c98dca8d76f53e0c49cb34fb860cb7c485e70",
+    "tested-source-final.tar.gz": "e3db9e44a239b5faa25b50723427c751624b2bfd5e3c9b0b265e1fb565232c2b",
+    "post-build-comment-change.json": "53cdba68c7f6c905f2bd8ea905ae0ab70150aebb0b3a2aa15823ace3a02d6a52",
+    "initial-allocation-committed.patch": "c1b88b36e726b4c3f5505f51b572333d1ee138f2c2dd8ec44d191fdb45b2de97",
+    "host-queues-v4/summary.json": "2f41c6b4d669a31250ccd849726947b69ff1434af4e70e27467b6fe0bd00ab0a",
+    "host-render-v3/summary.json": "bc7cdb9460e7ad9a33cd3fc350a74177c304d3bcb66d79fba10c6c90822daefa",
+    "host-neo-vm-v2/summary.json": "5cbf4d08a4b6d00ec2e5cf473e9df2d7baf3b31af6ba9986a0ff53ae2a4140f8",
+    "neo-shape-v1/summary.json": "5b7e57c0d2e85b1cb82d4fbe6358fa03a1941a51bc402d1ae8f0a5d269f5a474",
+    "source-preservation.json": "c7b3c0e75175807ae2a693707c163f6e4d102707fcaca135cd83bc51a32fa80e",
+    "final-state.json": "5ea3da9c1ffb7e703e6e615446b3dab9d4113b41864a7d4b6223517584072449",
+    "audit-result.py": "cd08b226fc3b0b37c005810d917cd0ba016c2ae30ef70553d0312bebcb092fe3"
+  }
+}
