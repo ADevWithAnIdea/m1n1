@@ -1,0 +1,64 @@
+{
+  "artifact_directory": "build/m4max-gpu/g16c-native-vulkan-features-20261022",
+  "result": {
+    "goal_status": "active",
+    "kernel_tested": 111,
+    "Mesa_libraries": "unchanged from1963776",
+    "operator_priority": "Native kernel implementation and real graphics workloads; defer broader Vulkan frontend/CTS effort",
+    "qualified_profiles_v1": [
+      "transfers",
+      "shared",
+      "shared16k",
+      "private",
+      "atomic",
+      "atomicspill",
+      "bindless",
+      "bindless_mix",
+      "rerender",
+      "rerender_mrt_depth",
+      "texel",
+      "storage_texel",
+      "storage_index",
+      "events"
+    ],
+    "qualified_profiles_v2": [
+      "scalar_control",
+      "vector_bounds",
+      "bounds_wrap",
+      "sample_mask",
+      "draw_control"
+    ],
+    "qualification": "19 focused pure Vulkan profiles, independent output checks; not Vulkan conformance",
+    "default_driver_options": true,
+    "bindless_host_writes": 7718,
+    "event_slots": 10000,
+    "event_GPU_writes": 128,
+    "event_reused_slots": 5000,
+    "retained_high_water": {
+      "allocations": 344,
+      "bytes": 452902912,
+      "pools": 1,
+      "queues": 1
+    },
+    "original_bounds_probe_failed": true,
+    "bounds_resolution": "Core robustness permits whole-attribute zero; source test corrected and scalar positive control added, production driver unchanged",
+    "original_failure_preserved": true,
+    "strict_ARM64_probe_build": true,
+    "memory_checks_each_session": 6303,
+    "unbind_each_session": 0,
+    "CPUs": "0-15",
+    "runtime_v1_files": 62,
+    "runtime_v2_files": 63,
+    "hot_executable_overlays": false,
+    "final_target": "cold plain proxy after successful v2 unbind; RID0 raw chainload/identity; N01/N03 released",
+    "CTS": {
+      "tag": "vulkan-cts-1.4.6.2",
+      "commit": "f6a29701220f34dd1407513bfe80d74ca7b392ce",
+      "source": "/home/lab/VK-GL-CTS-g16c",
+      "build": "/home/lab/VK-GL-CTS-g16c-build-aarch64",
+      "state": "Intentionally stopped own ninjaPID2710755 after operator redirects effort to kernel;598/1408 complete; artifacts kept",
+      "test_cases_run": 0
+    },
+    "next": "Native caller kernel_end allocation and recycling fix; separate worktree/qualification, not proved by these pre-change tests"
+  }
+}
