@@ -14,7 +14,7 @@
 extern char **environ;
 
 typedef struct { uint64_t gpu; uint32_t iterations; int32_t pid; } Ready;
-typedef struct { uint32_t words[32]; double start, end; } Result;
+typedef struct { uint32_t words[40]; double start, end; } Result;
 
 static int transfer(int fd, void *buffer, size_t bytes, int writing) {
     unsigned char *p = buffer;
@@ -32,10 +32,14 @@ static uint32_t expected(unsigned tid, uint32_t iterations) {
         value = ((value << 7) | (value >> 25)) + 0x9e3779b9u + j;
     return value;
 }
-static int verify(const Result *r, uint32_t iterations) {
+static int verify(const Result *r, uint32_t iterations, unsigned commands) {
     if (!(r->start > 0 && r->end > r->start)) return 0;
-    for (unsigned i = 0; i < 32; ++i)
-        if (r->words[i] != (i < 16 ? expected(i, iterations) : 0xa5a5a5a5u)) return 0;
+    if (commands < 1 || commands > 8) return 0;
+    for (unsigned i = 0; i < 40; ++i) {
+        uint32_t want = i < 16 ? expected(i, iterations) :
+            (i < 16 + commands ? 0x5a220000u | (i - 16) : 0xa5a5a5a5u);
+        if (r->words[i] != want) return 0;
+    }
     return 1;
 }
 
@@ -56,36 +60,38 @@ static Work *prepareWithDevice(uint32_t iterations, id<MTLDevice> device) {
     NSError *error = nil;
     NSString *source = @"#include <metal_stdlib>\nusing namespace metal;\n"
         "kernel void fill(device uint *out [[buffer(0)]],"
-        "constant uint &iterations [[buffer(1)]], uint tid [[thread_position_in_grid]]) {"
+        "constant uint &iterations [[buffer(1)]], constant uint &job [[buffer(2)]], uint tid [[thread_position_in_grid]]) {"
         "uint value=0x5a110000u^tid; for(uint j=0;j<iterations;j++)"
-        "value=((value<<7)|(value>>25))+0x9e3779b9u+j; out[tid]=value;}";
+        "value=((value<<7)|(value>>25))+0x9e3779b9u+j; out[tid]=value;if(tid==0)out[16+job]=0x5a220000u|job;}";
     id<MTLLibrary> library = [w.device newLibraryWithSource:source options:nil error:&error];
     id<MTLComputePipelineState> pipeline = library ? [w.device newComputePipelineStateWithFunction:
         [library newFunctionWithName:@"fill"] error:&error] : nil;
     w.pipeline = pipeline;
-    w.output = [w.device newBufferWithLength:128 options:MTLResourceStorageModeShared];
+    w.output = [w.device newBufferWithLength:160 options:MTLResourceStorageModeShared];
     w.queue = [w.device newCommandQueue];
     w.command = [w.queue commandBuffer];
     if (!pipeline || !w.output || !w.queue || !w.command) { NSLog(@"prepare: %@", error); return nil; }
-    memset(w.output.contents, 0xa5, 128);
+    memset(w.output.contents, 0xa5, 160);
     id<MTLComputeCommandEncoder> encoder = [w.command computeCommandEncoder];
     if (!encoder) return nil;
     [encoder setComputePipelineState:pipeline];
     [encoder setBuffer:w.output offset:0 atIndex:0];
     [encoder setBytes:&iterations length:sizeof(iterations) atIndex:1];
+    uint32_t job = 0; [encoder setBytes:&job length:sizeof(job) atIndex:2];
     [encoder dispatchThreads:MTLSizeMake(16,1,1) threadsPerThreadgroup:MTLSizeMake(16,1,1)];
     [encoder endEncoding];
     return w;
 }
 static Work *prepare(uint32_t iterations) { return prepareWithDevice(iterations, nil); }
-static int rearm(Work *w, uint32_t iterations) {
-    memset(w.output.contents, 0xa5, 128);
+static int rearm(Work *w, uint32_t iterations, uint32_t job) {
+    memset(w.output.contents, 0xa5, 160);
     w.command = [w.queue commandBuffer];
     id<MTLComputeCommandEncoder> encoder = [w.command computeCommandEncoder];
     if (!w.command || !encoder) return 0;
     [encoder setComputePipelineState:w.pipeline];
     [encoder setBuffer:w.output offset:0 atIndex:0];
     [encoder setBytes:&iterations length:sizeof(iterations) atIndex:1];
+    [encoder setBytes:&job length:sizeof(job) atIndex:2];
     [encoder dispatchThreads:MTLSizeMake(16,1,1) threadsPerThreadgroup:MTLSizeMake(16,1,1)];
     [encoder endEncoding]; return 1;
 }
@@ -111,7 +117,7 @@ int main(int argc, char **argv) {
             if (!transfer(ready, &identity, sizeof(identity), 1) ||
                 !transfer(go, &token, 1, 0) || token != 'C') return 3;
             [w.command commit];
-            if (!finish(w, &r) || !verify(&r, 1) || !transfer(done, &r, sizeof(r), 1)) return 4;
+            if (!finish(w, &r) || !verify(&r, 1, 1) || !transfer(done, &r, sizeof(r), 1)) return 4;
             // Keep this client's resources alive until the parent releases both.
             if (!transfer(go, &token, 1, 0) || token != 'R') return 5;
             close(ready); close(go); close(done); return 0;
@@ -137,13 +143,13 @@ int main(int argc, char **argv) {
         Work *first = prepareWithDevice(1000000, parentDevice);
         __attribute__((objc_precise_lifetime)) Work *warmSecond = prepareWithDevice(1000000, parentDevice);
         if (!first || !warmSecond) return 2;
-        printf("READY_WARM before commit; gpu_output0=0x%llx; gpu_output1=0x%llx; size=128; pid=%d\n",
+        printf("READY_WARM before commit; gpu_output0=0x%llx; gpu_output1=0x%llx; size=160; pid=%d\n",
             (unsigned long long)first.output.gpuAddress, (unsigned long long)warmSecond.output.gpuAddress, getpid());
         fflush(stdout); if (getchar() == EOF) return 9;
         [first.command commit]; [warmSecond.command commit];
         Result warm[2];
         if (!finish(first, &warm[0]) || !finish(warmSecond, &warm[1]) ||
-            !verify(&warm[0], 1000000) || !verify(&warm[1], 1000000)) return 10;
+            !verify(&warm[0], 1000000, 1) || !verify(&warm[1], 1000000, 1)) return 10;
         for (unsigned i=0; i<2; i++)
             printf("WARM_GPU_INTERVAL %u start=%.9f end=%.9f\n", i, warm[i].start, warm[i].end);
         if (!(warm[0].start < warm[1].end && warm[1].start < warm[0].end)) return 12;
@@ -157,15 +163,15 @@ int main(int argc, char **argv) {
         // every command before committing any, so poisoning is CPU-only.
         NSMutableArray<id<MTLCommandBuffer>> *backlog = [NSMutableArray new];
         for (unsigned i=0; i<8; i++) {
-            if (!rearm(first, 1000000)) return 2;
+            if (!rearm(first, 4000000, i)) return 2;
             [backlog addObject:first.command];
         }
-        printf("READY_LATE before commit; clients=2; parent_submissions=8; gpu_output0=0x%llx; gpu_output1=0x%llx; size=128; pids=%d,%d\n",
+        printf("READY_LATE before commit; clients=2; parent_submissions=8; gpu_output0=0x%llx; gpu_output1=0x%llx; size=160; pids=%d,%d\n",
             (unsigned long long)first.output.gpuAddress, (unsigned long long)second.gpu, getpid(), child);
         fflush(stdout); if (getchar() == EOF) return 9;
         for (id<MTLCommandBuffer> command in backlog) [command commit];
         // Allow macOS to publish the held backlog before the other process.
-        usleep(100000);
+        usleep(1000);
         token = 'C';
         if (!transfer(go[1], &token, 1, 1)) return 3;
         Result results[2];
@@ -179,19 +185,20 @@ int main(int argc, char **argv) {
         printf("LATE_INTERLEAVING child_before_last_parent=%u parent_submissions=8\n",
             results[1].end < results[0].start);
         for (unsigned job = 0; job < 2; ++job) {
-            if (!verify(&results[job], job ? 1 : 1000000)) return 10;
+            if (!verify(&results[job], job ? 1 : 4000000, job ? 1 : 8)) return 10;
             printf("METAL_GPU_INTERVAL %u start=%.9f end=%.9f\n", job, results[job].start, results[job].end);
             printf("CLIENT_OUTPUT %u:", job);
             for (unsigned i = 0; i < 16; ++i) printf(" %08x", results[job].words[i]);
             putchar('\n');
         }
         puts("PASS: two independent Metal clients, all 32 output words and 128 guard bytes");
-        if (!rearm(first, 1000000)) return 2;
-        printf("READY_RESUME before commit; gpu_output=0x%llx; size=128; pid=%d\n",
+        puts("BACKLOG_MARKERS_PASS: all8 independently written job markers and both clients marker guards");
+        if (!rearm(first, 1000000, 0)) return 2;
+        printf("READY_RESUME before commit; gpu_output=0x%llx; size=160; pid=%d\n",
             (unsigned long long)first.output.gpuAddress, getpid());
         fflush(stdout); if (getchar() == EOF) return 9;
         [first.command commit]; Result resumed;
-        if (!finish(first, &resumed) || !verify(&resumed, 1000000)) return 10;
+        if (!finish(first, &resumed) || !verify(&resumed, 1000000, 1)) return 10;
         printf("RESUME_GPU_INTERVAL start=%.9f end=%.9f\n", resumed.start, resumed.end);
         puts("RESUME_OUTPUT_PASS: all16 arithmetic words and64 guard bytes");
         puts("REPLAY READY: holding Metal resources; press Enter to release");

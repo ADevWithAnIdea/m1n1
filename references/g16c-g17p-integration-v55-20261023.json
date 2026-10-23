@@ -1,0 +1,451 @@
+{
+  "version": 55,
+  "date": "2026-10-23",
+  "milestone": "Native late-client/pending-backlog reference and three stable full-UAT phases qualified; independent cold replay NOT YET RUN",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "e64da3110d3079e2c396a4838c19ffcfccbc5530",
+  "kernel_changed": false,
+  "browser_WebGPU_V54_retained": true,
+  "target": "Mac16,5/J616c/chip6041/JPWWJRX2N0",
+  "single_user": true,
+  "CPUs": 16,
+  "source_files_sha256": {
+    "proxyclient/experiments/agx_g16c_capture_late_phases.py": "7e42c809128c33586d1f30ecd7097d9c179d34783e8843d687282d80755717c6",
+    "proxyclient/experiments/agx_g16c_validate_late_phase.py": "7dfe9aeb568883b742c139da3bd7589b043b63e292b50515fdfb12e10a2f9c0a",
+    "proxyclient/experiments/g16c_late_reference_oracle.c": "43ab2c8557464c749d3f37e877188d34f7df7e96eb4cf3c95cc88ec5464c2590",
+    "proxyclient/experiments/metal_g16c_compute_late_client.m": "a0632aebcbfadad8949529c4e98e28a26fc1598c1e6662f0398413c1cab94bd6"
+  },
+  "artifacts": "build/m4max-gpu/g16c-native-late-admission-20261023",
+  "negative_reference_v2": {
+    "native_outputs_pass": true,
+    "warm_GPU_overlap": true,
+    "early_late_ASID_interleaving": false,
+    "coalesced_parent_command_buffers": 8,
+    "native_parent_work_groups": 1,
+    "parent_GPU_backlog_ms": 116.45475,
+    "child_end_after_parent_backlog": true,
+    "qualification": "negative discriminator; does not qualify early-admission reference",
+    "owned_temp_directory_removed": true,
+    "variant3": "Late parent4M iterations and1ms child delay; fast observation omits full SKSM reads"
+  },
+  "positive_native_v3": {
+    "native_late_ASID_while_old_backlog_pending": true,
+    "all16_CPUs_single_user": true,
+    "warm_intervals": [
+      [
+        0,
+        99.314286125,
+        99.338999375
+      ],
+      [
+        1,
+        99.338573875,
+        99.351884375
+      ]
+    ],
+    "eight_parent_intervals": [
+      [
+        0,
+        99.636801917,
+        99.703395042
+      ],
+      [
+        1,
+        99.70339575,
+        99.75662975
+      ],
+      [
+        2,
+        99.756630375,
+        99.809864542
+      ],
+      [
+        3,
+        99.80986525,
+        99.8630995
+      ],
+      [
+        4,
+        99.863100042,
+        99.91633425
+      ],
+      [
+        5,
+        99.916334875,
+        99.969568875
+      ],
+      [
+        6,
+        99.969569417,
+        100.02280375
+      ],
+      [
+        7,
+        100.022804375,
+        100.076038417
+      ]
+    ],
+    "parent_final_and_child_intervals": [
+      [
+        0,
+        100.022804375,
+        100.076038417
+      ],
+      [
+        1,
+        99.699815167,
+        99.699817792
+      ]
+    ],
+    "resume_interval": [
+      [
+        "100.192773042",
+        "100.225171875"
+      ]
+    ],
+    "child_finishes_during_first_parent_job": true,
+    "parent_jobs_not_started_when_child_finishes": 7,
+    "all_native_output_and_guard_oracles_pass": true,
+    "native_firmware_compute_work_groups": 5,
+    "coalesced_parent_command_buffers": 8,
+    "parent_backlog_native_groups": 1,
+    "physical_queue_addresses": [
+      18446739816323219456,
+      18446739816323219648,
+      18446739816323219456,
+      18446739816323219840,
+      18446739816323219456
+    ],
+    "UAT_contexts": [
+      1,
+      1,
+      1,
+      2,
+      1
+    ],
+    "stable_UAT_or_cold_replay_qualified": false,
+    "owned_temp_removed": true,
+    "next": "Variant4 adds one unique GPU-written marker per queued command. Full held-producer3-phase capture must verify all8 markers in cold replay.",
+    "sha256": {
+      "metal-late-client-v3.m": "b16e2c27f44cbf840de4915e50edfa788bf3767034fd3070c448a275acc954ad",
+      "metal-late-client-v3": "8ccfee2b45798ed9136a547510e27a41a29bc0a86314d040a8fde7fa29977de9",
+      "native-observe-v3/observed-publications.json": "9f35a63d814f03f1f9eda9cac13a859e2a5d33ac14cea4de3d2b0f6ad31bd670",
+      "native-observe-v3/vuart-late-observe-v3.log": "e81d7b049636e9fbb1c4dac701d78a2820cbf53f18063960952d7c70e96e5e58",
+      "native-observe-v3/console-late-observe-v3.json": "3648065bab055afc607b53d1895de4fcb74023bcbc3161e6e4cf3d6e1c7bc0c4"
+    }
+  },
+  "positive_native_marked_v4": {
+    "native_late_ASID_with_pending_old_backlog": true,
+    "unique_GPU_markers_all8_verified": true,
+    "CPUs": 16,
+    "single_user": true,
+    "first_parent_interval": [
+      0,
+      376.21053125,
+      376.27812325
+    ],
+    "child_interval": [
+      376.249860042,
+      376.249862917
+    ],
+    "seven_parent_commands_not_started_before_child_end": true,
+    "warm_overlap_and_old_queue_return_pass": true,
+    "owned_temp_removed": true,
+    "plain_replay_qualified": false,
+    "source_sha256": "a0632aebcbfadad8949529c4e98e28a26fc1598c1e6662f0398413c1cab94bd6",
+    "binary_sha256": "98236bcb8540383a0bac1493c094b1bb1212a69014fc1bdae969da699f9601e9",
+    "guest_binary_sha256": "98236bcb8540383a0bac1493c094b1bb1212a69014fc1bdae969da699f9601e9"
+  },
+  "three_held_phases": {
+    "warm": {
+      "phase": "warm",
+      "total_bytes": 197885952,
+      "tables": 29,
+      "groups": 2,
+      "descriptors": [
+        {
+          "queue": 18446739816323219456,
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "slot": 1,
+          "ready": 1,
+          "local_count": 0,
+          "completed_stamp": 0,
+          "expected_stamp": 256
+        },
+        {
+          "queue": 18446739816323219648,
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "slot": 1,
+          "ready": 1,
+          "local_count": 0,
+          "completed_stamp": 0,
+          "expected_stamp": 256
+        }
+      ],
+      "contexts": [
+        1
+      ],
+      "output_bytes": 320,
+      "unique_parent_job_markers": 0,
+      "native_outputs_verified": true,
+      "all_mappings_covered": true,
+      "stable_tables_and_contexts": true,
+      "all_hardware_producers_held": true,
+      "plain_replay_qualified": false,
+      "source_replacement_pages": 0,
+      "apple_binary_disassembly_performed": false,
+      "manifest_sha256": "5386ef56436dbafe68d045ceb9a13a75da2f7e53dfb12a1da68971173f26a9ff",
+      "pass": true
+    },
+    "late": {
+      "phase": "late",
+      "total_bytes": 385417216,
+      "tables": 44,
+      "groups": 2,
+      "descriptors": [
+        {
+          "queue": 18446739816323219456,
+          "context": 1,
+          "descriptor": 18446739816326733952,
+          "slot": 2,
+          "ready": 2,
+          "local_count": 1,
+          "completed_stamp": 256,
+          "expected_stamp": 512
+        },
+        {
+          "queue": 18446739816323219840,
+          "context": 2,
+          "descriptor": 18446739816326767232,
+          "slot": 1,
+          "ready": 1,
+          "local_count": 0,
+          "completed_stamp": 0,
+          "expected_stamp": 256
+        }
+      ],
+      "contexts": [
+        1,
+        2
+      ],
+      "output_bytes": 320,
+      "unique_parent_job_markers": 8,
+      "native_outputs_verified": true,
+      "all_mappings_covered": true,
+      "stable_tables_and_contexts": true,
+      "all_hardware_producers_held": true,
+      "plain_replay_qualified": false,
+      "source_replacement_pages": 0,
+      "apple_binary_disassembly_performed": false,
+      "manifest_sha256": "ca0cadd399350f2c86ef476be359bf7bcf0f038c74487137f09663e9695e54c7",
+      "pass": true
+    },
+    "resume": {
+      "phase": "resume",
+      "total_bytes": 384745472,
+      "tables": 45,
+      "groups": 1,
+      "descriptors": [
+        {
+          "queue": 18446739816323219456,
+          "context": 1,
+          "descriptor": 18446739816326771392,
+          "slot": 10,
+          "ready": 10,
+          "local_count": 9,
+          "completed_stamp": 2304,
+          "expected_stamp": 2560
+        }
+      ],
+      "contexts": [
+        1
+      ],
+      "output_bytes": 160,
+      "unique_parent_job_markers": 0,
+      "native_outputs_verified": true,
+      "all_mappings_covered": true,
+      "stable_tables_and_contexts": true,
+      "all_hardware_producers_held": true,
+      "plain_replay_qualified": false,
+      "source_replacement_pages": 0,
+      "apple_binary_disassembly_performed": false,
+      "manifest_sha256": "c98d56380b9bd3362672275fd87d5ef359394b4640b5d3418defdb6a5c487fbd",
+      "pass": true
+    }
+  },
+  "full_late_inventory": {
+    "all_eight_parent_native_records_already_in_full_snapshot": true,
+    "first_child_record_in_full_snapshot": true,
+    "parent_uses_existing_scratch": true,
+    "child_uses_third_fresh_scratch": true,
+    "rows": [
+      {
+        "context": 1,
+        "queue": 18446739816323219456,
+        "scratch_low": 481040760832,
+        "scratch_high": 18446739813103304704,
+        "records": [
+          {
+            "slot": 1,
+            "ready": 1,
+            "descriptor": 18446739816326725632,
+            "local_count": 0,
+            "completed_stamp": 256,
+            "expected_stamp": 256,
+            "pending": false
+          },
+          {
+            "slot": 2,
+            "ready": 2,
+            "descriptor": 18446739816326733952,
+            "local_count": 1,
+            "completed_stamp": 256,
+            "expected_stamp": 512,
+            "pending": true
+          },
+          {
+            "slot": 3,
+            "ready": 3,
+            "descriptor": 18446739816326738112,
+            "local_count": 2,
+            "completed_stamp": 256,
+            "expected_stamp": 768,
+            "pending": true
+          },
+          {
+            "slot": 4,
+            "ready": 4,
+            "descriptor": 18446739816326742272,
+            "local_count": 3,
+            "completed_stamp": 256,
+            "expected_stamp": 1024,
+            "pending": true
+          },
+          {
+            "slot": 5,
+            "ready": 5,
+            "descriptor": 18446739816326746432,
+            "local_count": 4,
+            "completed_stamp": 256,
+            "expected_stamp": 1280,
+            "pending": true
+          },
+          {
+            "slot": 6,
+            "ready": 6,
+            "descriptor": 18446739816326750592,
+            "local_count": 5,
+            "completed_stamp": 256,
+            "expected_stamp": 1536,
+            "pending": true
+          },
+          {
+            "slot": 7,
+            "ready": 7,
+            "descriptor": 18446739816326754752,
+            "local_count": 6,
+            "completed_stamp": 256,
+            "expected_stamp": 1792,
+            "pending": true
+          },
+          {
+            "slot": 8,
+            "ready": 8,
+            "descriptor": 18446739816326758912,
+            "local_count": 7,
+            "completed_stamp": 256,
+            "expected_stamp": 2048,
+            "pending": true
+          },
+          {
+            "slot": 9,
+            "ready": 9,
+            "descriptor": 18446739816326763072,
+            "local_count": 8,
+            "completed_stamp": 256,
+            "expected_stamp": 2304,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "context": 2,
+        "queue": 18446739816323219840,
+        "scratch_low": 481041088512,
+        "scratch_high": 18446739813103632384,
+        "records": [
+          {
+            "slot": 1,
+            "ready": 1,
+            "descriptor": 18446739816326767232,
+            "local_count": 0,
+            "completed_stamp": 0,
+            "expected_stamp": 256,
+            "pending": true
+          }
+        ]
+      }
+    ],
+    "outer_work_group_count": 2,
+    "logical_pending_compute_commands": 9,
+    "cold_replay_qualified": false
+  },
+  "native_capture_all_output_progress_guard_bytes_match": true,
+  "output_size_per_buffer": 160,
+  "per_client_guard_bytes": 64,
+  "unique_parent_job_markers": 8,
+  "execution_slot_evidence": {
+    "warm": "Two distinct queues in ASID1 use scratch0x7000438000/0x7000460000, selectors1/2. Each local_count0/ready1.",
+    "late": "Eight parent records use existing first scratch/selector1, local_count1..8/ready2..9. Child ASID2 has new third scratch0x7000488000, selector0x0020140000021008, engine value4, local_count0/ready1. Eight parent resume transactions followed by fresh third-slot full binding are recorded.",
+    "resume": "Original parent queue uses first scratch again, local_count9/ready10; prior driver stamp2304.",
+    "causal_qualification": "New third native slot/scratch is an observed difference, NOT yet proven cause of failed kernel139/140 early-admission case. Do not change driver from this observation alone."
+  },
+  "full_backlog_coverage": "Two outer work groups at late kick contain ALL9 pending native compute records, including8 parent command buffers. Each parent writes a unique marker; replay must check all8 markers and output/guard bytes. Never equate outer-message count with command count.",
+  "first_held_boot_failure": {
+    "HV_session": 52068,
+    "HV_terminal_exit": 1,
+    "console_session": 29946,
+    "console_terminal_exit": 1,
+    "cause": "Actual serial device disconnected during early macOS startup; monitor and console exited, device reappeared in first-stage proxy",
+    "GPU_workload_started": false,
+    "held_capture_code_exercised": false,
+    "CPUs_requested": 16,
+    "next": "Identical all16 RID0/raw retry; no source or CPU changes"
+  },
+  "service_failure": {
+    "stage": "before first Metal workload commit",
+    "actual_failure": "Workload exit2; compiler XPC getpwuid0 failed before Data mounted",
+    "GPU_functionality_tested": false,
+    "HV_monitor_retained": true,
+    "next": "Reuse current single-user all16 guest; mount Data and enable the same bounded compiler helper services as qualified V50"
+  },
+  "cleanup": {
+    "directory_absent": true,
+    "live_test_processes_absent": true,
+    "launchd_job_lookup_status": 0,
+    "launchd_entry_absence_before_reboot_proven": false,
+    "subsequent_cold_RID0_reboot_clears_guest_job_state": true
+  },
+  "cold_proxy_identity_verified": true,
+  "plain_replay_qualified": false,
+  "source_bisection_qualified": false,
+  "Apple_binary_disassembly": false,
+  "public_snapshot_unchanged": "12451cca1fad6f1e5747a20a90c2058b21042af3",
+  "next": "Cold opaque sequential warm->late->resume replay first. Use full AP restore between phases, publish new ASID2 roots, preserve live RTKit state, replay exact captured engine setup and all pending records/kicks. Require BOTH output buffers, all8 unique markers/guards and original-queue return. Then bisect fresh child scratch/binding vs current2-slot reuse without assuming cause. Live Neo and full sustained/concurrency/fault qualification remain open.",
+  "commands": {
+    "HV": "M1N1DEVICE=/dev/cu.usbmodemJPWWJRX2N01 .venv/bin/python -u build/m4max-gpu/g16c-native-late-admission-20261023/wrapper-held-v1.py --artifact build/m4max-gpu/g16c-native-late-admission-20261023/native-held-v2 --startup-history --submissions 2 --cross-client-compute-pair --hold-two-compute-producers",
+    "console": ".venv/bin/python -u build/m4max-gpu/g16c-native-late-admission-20261023/console-held-v2.py --artifact build/m4max-gpu/g16c-native-late-admission-20261023/native-held-v2 --binary build/m4max-gpu/g16c-native-late-admission-20261023/metal-late-client-v4 --mount-data --dirhelper-service --notify-service --compiler-service --launchd --capture --expected-cpus 16"
+  },
+  "key_artifact_sha256": {
+    "metal-late-client-v4": "98236bcb8540383a0bac1493c094b1bb1212a69014fc1bdae969da699f9601e9",
+    "output-oracles-v1.json": "ea4605082fe5790cfab44617f0666d193309452a90a159b58229c466734cc2df",
+    "native-marked-backlog-v4.json": "405c92606d336891410f855654552430e29f6038873ac9a718382796895264e1",
+    "captured-backlog-inventory-v1.json": "cbca516eac023b6d9d894a3e42eed568cc4ae82c87066bd10933b7d8b8091477",
+    "native-held-v2/console-late-held-v2.json": "2802a7ca9989fa6495da4c885c780bb93200e477a592bbe1d5692b35f830049a",
+    "native-held-v2/vuart-late-held-v2.log": "75c6dd653c5a2be5147a62454a13a923c9c961bad652d70af7925ac2a75432ad",
+    "native-held-v2/final-owned-cleanup.log": "e9cf60998546237bcaf4e4e7f94ab17d5ec1e0b38ab5483c78e0146ce429c62f",
+    "hv-held-v2.log": "5f60047f562de421b94fdf0d7b1ca9e53225a82bf1c261e260b35694847ff62f"
+  }
+}
