@@ -1,0 +1,1167 @@
+{
+  "version": 56,
+  "date": "2026-10-23",
+  "milestone": "Independent cold and production-Rust late-backlog replays qualified; native submission-slot allocation investigated",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "e64da3110d3079e2c396a4838c19ffcfccbc5530",
+  "qualified_kernel": 142,
+  "production_changes_retained": false,
+  "browser_and_conditional_real_WebGPU_V54_pass_retained": true,
+  "target": "Mac16,5/J616c/chip6041/JPWWJRX2N0",
+  "cold_replay": {
+    "phases": [
+      "warm",
+      "late",
+      "resume"
+    ],
+    "independent_opaque_and_source_runs": true,
+    "plain_m1n1_without_macOS": true,
+    "RTKit_restarted_between_phases": false,
+    "output_buffers_per_run": 5,
+    "output_bytes_per_run": 800,
+    "positive_GPU_intervals_per_run": 12,
+    "all_eight_unique_parent_job_markers_verified": true,
+    "old_parent_FIFO_verified": true,
+    "child_completes_during_first_parent_job": true,
+    "old_queue_return_verified": true,
+    "all_output_guard_and_retirement_checks_pass": true,
+    "all_surrounding_pages_source_built": false,
+    "note": "Full captured AP restore and changed ASID2 roots between phases; surrounding opaque pages retained. Workload output, not kick acknowledgement, qualifies execution."
+  },
+  "production_Rust_bisection": {
+    "whole_descriptors": 12,
+    "whole_SKSM_records": 12,
+    "whole_wrappers": 5,
+    "source_object_bytes": 56256,
+    "ordered_register_writes": 72,
+    "complete_objects_equal_native_RE_bytes": true,
+    "production_Default_templates_and_versions_macro_used": true,
+    "native_payload_bytes_used_to_construct_source_objects": false,
+    "future_coalesced_records_ready_false": true,
+    "current_record_ready_true": true,
+    "existing_RecordParameters_ready_field_sufficient": true,
+    "wire_or_macro_change_required": false,
+    "manifest_preparation_only_flag": false,
+    "hardware_qualification_receipt": "source-replay-v1/result.json",
+    "note": "The preparation manifest deliberately remains immutable with its pre-replay flag false. Actual hardware replay and independent audit prove qualification separately."
+  },
+  "failed_kernel143_experiment": {
+    "kernel": 143,
+    "actual_Guest_CPUs": "0-15",
+    "actual_guest_hashes": 259,
+    "Image_sha256": "556b092a44c9a14d52b2506b27566a8378cfde701932c3e500093a80fca96ff4",
+    "experiment": "Original failed139 Max early publication handoff plus first=(engine_sequence0 OR queue_ordinal0)",
+    "actual_failure": "Firmware event4 and C sync-file status assertion failure; keeper0/1 fences+timestamps positive; keeper2 fails after new-client fence",
+    "first_queue_flag_alone_qualified": false,
+    "new_client_fence_positive": true,
+    "whole_old_backlog_output_qualified": false,
+    "firmware_failure": true,
+    "observation_timeout_not_used_as_failure_evidence": true,
+    "source_archive": "tested-source-entryflag-v1.tar.gz",
+    "next": "Restore qualified142 source and cold proxy; retain source-native reference success"
+  },
+  "failed_experiment_reverted": {
+    "local_Linux_clean_at_qualified142": true,
+    "all160_remote_source_paths_restored_and_hash_verified": true,
+    "remote_compiled_Image143_is_failed_do_not_deploy": true,
+    "qualified_Image": "../g16c-native-chromium-20261023/Image-browser-v2",
+    "note": "Changing first to include a new queue ordinal did not fix early admission. The new client fence passed, but original keeper job2 failed with firmware event4. No full-backlog output qualification."
+  },
+  "native_five_queue_reference": {
+    "five_live_API_queues_with_distinct_submission_slots": true,
+    "native_GPU_output_words": 80,
+    "native_guard_bytes": 320,
+    "positive_GPU_intervals": [
+      {
+        "index": 0,
+        "start": 238.383499917,
+        "end": 238.383508
+      },
+      {
+        "index": 1,
+        "start": 238.412331375,
+        "end": 238.412339792
+      },
+      {
+        "index": 2,
+        "start": 238.43597075,
+        "end": 238.435978875
+      },
+      {
+        "index": 3,
+        "start": 238.459224042,
+        "end": 238.459232625
+      },
+      {
+        "index": 4,
+        "start": 238.482080875,
+        "end": 238.482089167
+      }
+    ],
+    "single_user": true,
+    "CPUs": 16,
+    "rows": [
+      {
+        "queue": 18446739816323219456,
+        "context": 1,
+        "grid": 0,
+        "scratch_low": 481040760832,
+        "scratch_high": 18446739813103304704,
+        "namespace": 0
+      },
+      {
+        "queue": 18446739816323219648,
+        "context": 1,
+        "grid": 1,
+        "scratch_low": 481040924672,
+        "scratch_high": 18446739813103468544,
+        "namespace": 1
+      },
+      {
+        "queue": 18446739816323219840,
+        "context": 1,
+        "grid": 2,
+        "scratch_low": 481041088512,
+        "scratch_high": 18446739813103632384,
+        "namespace": 2
+      },
+      {
+        "queue": 18446739816323220032,
+        "context": 1,
+        "grid": 3,
+        "scratch_low": 481041252352,
+        "scratch_high": 18446739813103796224,
+        "namespace": 3
+      },
+      {
+        "queue": 18446739816323220224,
+        "context": 1,
+        "grid": 4,
+        "scratch_low": 481041416192,
+        "scratch_high": 18446739813103960064,
+        "namespace": 4
+      }
+    ],
+    "observed_selectors_and_start_bits_match_0_through4": true,
+    "four_slots_is_not_hardware_capacity_evidence": true,
+    "physical_engine_identity_claim": false,
+    "stable_UAT_or_plain_replay_qualified": false,
+    "binary_sha256": "3e2967d277420555821cafda937c5de00213718b6d4753b7b920cfdc21e6a1ad",
+    "source_sha256": "e62311b3723cf06bb5099493c60d03395ccbaaa280b7f42a0fd7dd03cf2dc43b"
+  },
+  "interpretation": "Five live Metal queues on one device/ASID obtain five distinct submission grids, scratch buffers and namespaces. A four-slot physical-engine limit is unsupported. Ownership/recycling semantics require further source-built qualification before changing runtime allocation.",
+  "host_report_errors_preserved": {
+    "opaque_v1": "Warm and late arithmetic/markers passed, then duplicate expected_stamp keyword raised a host TypeError. Fixed report and independently cold-reran all phases as v2.",
+    "source_preparation_v1": "Full-byte mismatch identified ready=false for future coalesced records; corrected existing semantic input.",
+    "source_preparation_v2": "Absolute/relative path comparison omitted transaction validation; canonicalized paths in v3 and validated all72 writes."
+  },
+  "protected2_plus14_dirty_files_exact": true,
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "Neo_baseline": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "public_snapshot_unchanged": "12451cca1fad6f1e5747a20a90c2058b21042af3",
+  "Apple_binary_disassembly": false,
+  "kernel_early_admission_fix_qualified": false,
+  "live_Neo_tested": false,
+  "full_goal_complete": false,
+  "next": "Qualify actual native slot allocation and start-bank semantics, then source-build ownership and recycling for pending-work late admission. Preserve142 and frozen Neo/public snapshots. Sustained recycling, differing capacities/auto demand, render-compute overlap, faults, and live Neo remain open.",
+  "artifact_directory": "build/m4max-gpu/g16c-native-late-admission-20261023",
+  "key_artifact_sha256": {
+    "cold-source-qualified-v1.json": "9bad95b828877362e8096b6eb7addaa509e6938aecb66bfa2021c3fcc8c7049c",
+    "cold-replay-v2/result.json": "f03a6f1e13720421d93e28b405fb12a9a5041d9d110e9b615a0723485494751b",
+    "source-replay-v1/result.json": "9033e1703602e868a8878e8f2966dae4e5812e00c363127818c775071e9ca5ad",
+    "source-late-v3/manifest.json": "77810389dc3bffef5f43f61fb9fa61b592e4734ad66f7020536efce94caf08c9",
+    "source-late-v3/source.rs": "ece4002374d8aecd26385d20fe2d6857d78a7a9c82b57d72606a5c09bea6d7ee",
+    "audit-cold-and-source-v1.py": "e4cf08db8b4ca3cddcd0d6a48a015f6403d45fcc95f6651a4ac24524e867b1b8",
+    "replay-phase-helpers-v1.py": "063ff980ef3665c0a7a1f0d8ee0a7052869571b068448c6a2b253cc94f13f24c",
+    "replay-phase-continuation-v1.py": "8327d01a2e6b2b56d11e13f077052613b85fe664beea23380eff8e2dc2a0a1d7",
+    "replay-late-phases-v2.py": "dfc78c1ad3c76ef098a90889f2dc3e1335aabd107a5224a0d16c26d73df80d2a",
+    "source-injection-helpers-v1.py": "490b94072f9fb3856388f85173560396c004333dd4a65b37a78d1c7eb5562b20",
+    "replay-source-late-v1.py": "ce46273a20554120775ad3650b7277f74bb5bc96605c87ab9f2bf3c9d507675b",
+    "prepare-source-late-v3.py": "652a70f3bc3af17fcf903010384969eaa689020cbf0203fade574d3675f9af4d",
+    "five-native-slots-qualified-v1.json": "5c983d5ca4c118a1c170df9407535e1efe16a72bdc251da12ed4d1b241bc16fc",
+    "audit-five-v1.py": "65837915d89918867c5c9ad479fc8798963aaa24cf5bad662c4dacf4c55f1394",
+    "metal-five-queues-v1.m": "e62311b3723cf06bb5099493c60d03395ccbaaa280b7f42a0fd7dd03cf2dc43b",
+    "metal-five-queues-v1": "3e2967d277420555821cafda937c5de00213718b6d4753b7b920cfdc21e6a1ad",
+    "failed-entryflag-v1.json": "164da92138b8978ebcaeec4194c7f0a053c7b4d82d48e3cab3e5f597e47cdd5b",
+    "entryflag-v1.patch": "a0a42e92bd390fe72d945f96cab79d989b6bcc8bb055b90d2a61e0f13902df8c",
+    "tested-source-entryflag-v1.tar.gz": "56f1453ce38e9add80996723abea356a91fc7f1094ad5b94113698313af2ce03",
+    "kernel-entryflag-v1.json": "2294a4f363283c1f5408e26003cf3b1bf75e789614cb1743a5a94b4b0d577717",
+    "native-entryflag-v1.json": "c8b9eae0348de9d46551d626bdba1d31c2623625c46f9176a909bffe3df6f96a",
+    "probe-v201.log": "951dd817db3b25c297781ae157e6ce05222413d3428331ec9470a06af107062b",
+    "remote-qualified-source-restored-v1.json": "1c01d71e1eee577d4f577ea7003d24e214f5ac372ec32f6b001e0df3e1e6628f",
+    "canonical-source-check-v1.json": "51d4a8b34f2d6cf5bff038ee06c3b2f3549c7ac835213e83e3d09a363d10eef4",
+    "sixtyfive-native-slots-qualified-v1.json": "98732d9138b9b28afa9134edd56410ceef565d8032395711520ca8c87a1daa7c",
+    "audit-sixtyfive-v1.py": "3edc9579b79913a8c531316c9e2c8836c015bd13e5ab2a09b547329773c685ca",
+    "metal-sixtyfive-queues-v1.m": "9166b99617ddf739e95d1f7e6da17b7fbbdf076e84ba23c20ce3067e750cf4e3",
+    "metal-sixtyfive-queues-v1": "39abc0b1960bfeb15dbcc80e3e2fa009e75051993704d71853269ae07d98f67f",
+    "sixtyfive-preworkload-stall-v1.json": "8219b160d382876c12c893da8df4b81a7a7139dfd6122e23187a4ad89792f0c5",
+    "reset-after-sixtyfive-v2.log": "c411495cd111803799c8d5bc0034151c04151995448bfac7e684ffe7c23daa01",
+    "proxy-after-sixtyfive-v2.log": "337b6b83ea0ca0db7d2f9389910ac6286698388fb7255880fb66297d2e7f1598",
+    "chainload-after-sixtyfive-v2.log": "d0d5c6af258b2fc2b7f28329b6d631c95cfd54d7217f43dd296f362572dc2cda"
+  },
+  "canonical_layout_validation_tool": "proxyclient/experiments/agx_g16c_validate_late_source.py",
+  "canonical_layout_validation_tool_sha256": "a85e67a9ce9786c544cf38841158b9082a70a8205d4fd9635ee7113e0eddfd11",
+  "canonical_layout_validation_reproduces_hardware_qualified_source_and_bytes": true,
+  "native_sixtyfive_queue_reference": {
+    "sixtyfive_live_API_queues_with_distinct_submission_slots": true,
+    "single_user": true,
+    "CPUs": 16,
+    "native_GPU_output_words": 1040,
+    "native_guard_bytes": 4160,
+    "positive_GPU_intervals": 65,
+    "one_Metal_device_and_UAT_context": true,
+    "rows": [
+      {
+        "queue": 18446739816323219456,
+        "context": 1,
+        "grid": 0,
+        "namespace": 0,
+        "scratch_low": 481040760832,
+        "scratch_high": 18446739813103304704
+      },
+      {
+        "queue": 18446739816323219648,
+        "context": 1,
+        "grid": 1,
+        "namespace": 1,
+        "scratch_low": 481040924672,
+        "scratch_high": 18446739813103468544
+      },
+      {
+        "queue": 18446739816323219840,
+        "context": 1,
+        "grid": 2,
+        "namespace": 2,
+        "scratch_low": 481041088512,
+        "scratch_high": 18446739813103632384
+      },
+      {
+        "queue": 18446739816323220032,
+        "context": 1,
+        "grid": 3,
+        "namespace": 3,
+        "scratch_low": 481041252352,
+        "scratch_high": 18446739813103796224
+      },
+      {
+        "queue": 18446739816323220224,
+        "context": 1,
+        "grid": 4,
+        "namespace": 4,
+        "scratch_low": 481041416192,
+        "scratch_high": 18446739813103960064
+      },
+      {
+        "queue": 18446739816323220416,
+        "context": 1,
+        "grid": 5,
+        "namespace": 5,
+        "scratch_low": 481041580032,
+        "scratch_high": 18446739813104123904
+      },
+      {
+        "queue": 18446739816323220608,
+        "context": 1,
+        "grid": 6,
+        "namespace": 6,
+        "scratch_low": 481041743872,
+        "scratch_high": 18446739813104287744
+      },
+      {
+        "queue": 18446739816323220800,
+        "context": 1,
+        "grid": 7,
+        "namespace": 7,
+        "scratch_low": 481041907712,
+        "scratch_high": 18446739813104451584
+      },
+      {
+        "queue": 18446739816323220992,
+        "context": 1,
+        "grid": 8,
+        "namespace": 8,
+        "scratch_low": 481042071552,
+        "scratch_high": 18446739813104615424
+      },
+      {
+        "queue": 18446739816323221184,
+        "context": 1,
+        "grid": 9,
+        "namespace": 9,
+        "scratch_low": 481042235392,
+        "scratch_high": 18446739813104779264
+      },
+      {
+        "queue": 18446739816323221376,
+        "context": 1,
+        "grid": 10,
+        "namespace": 10,
+        "scratch_low": 481042399232,
+        "scratch_high": 18446739813104943104
+      },
+      {
+        "queue": 18446739816323221568,
+        "context": 1,
+        "grid": 11,
+        "namespace": 11,
+        "scratch_low": 481042563072,
+        "scratch_high": 18446739813105106944
+      },
+      {
+        "queue": 18446739816323221760,
+        "context": 1,
+        "grid": 12,
+        "namespace": 12,
+        "scratch_low": 481042726912,
+        "scratch_high": 18446739813105270784
+      },
+      {
+        "queue": 18446739816323221952,
+        "context": 1,
+        "grid": 13,
+        "namespace": 13,
+        "scratch_low": 481042890752,
+        "scratch_high": 18446739813105434624
+      },
+      {
+        "queue": 18446739816323222144,
+        "context": 1,
+        "grid": 14,
+        "namespace": 14,
+        "scratch_low": 481043054592,
+        "scratch_high": 18446739813105598464
+      },
+      {
+        "queue": 18446739816323222336,
+        "context": 1,
+        "grid": 15,
+        "namespace": 15,
+        "scratch_low": 481043218432,
+        "scratch_high": 18446739813105762304
+      },
+      {
+        "queue": 18446739816323222528,
+        "context": 1,
+        "grid": 16,
+        "namespace": 16,
+        "scratch_low": 481043382272,
+        "scratch_high": 18446739813105926144
+      },
+      {
+        "queue": 18446739816323222720,
+        "context": 1,
+        "grid": 17,
+        "namespace": 17,
+        "scratch_low": 481043546112,
+        "scratch_high": 18446739813106089984
+      },
+      {
+        "queue": 18446739816323222912,
+        "context": 1,
+        "grid": 18,
+        "namespace": 18,
+        "scratch_low": 481043709952,
+        "scratch_high": 18446739813106253824
+      },
+      {
+        "queue": 18446739816323223104,
+        "context": 1,
+        "grid": 19,
+        "namespace": 19,
+        "scratch_low": 481043873792,
+        "scratch_high": 18446739813106417664
+      },
+      {
+        "queue": 18446739816323223296,
+        "context": 1,
+        "grid": 20,
+        "namespace": 20,
+        "scratch_low": 481044037632,
+        "scratch_high": 18446739813106581504
+      },
+      {
+        "queue": 18446739816323223488,
+        "context": 1,
+        "grid": 21,
+        "namespace": 21,
+        "scratch_low": 481044201472,
+        "scratch_high": 18446739813106745344
+      },
+      {
+        "queue": 18446739816323223680,
+        "context": 1,
+        "grid": 22,
+        "namespace": 22,
+        "scratch_low": 481044365312,
+        "scratch_high": 18446739813106909184
+      },
+      {
+        "queue": 18446739816323223872,
+        "context": 1,
+        "grid": 23,
+        "namespace": 23,
+        "scratch_low": 481044529152,
+        "scratch_high": 18446739813107073024
+      },
+      {
+        "queue": 18446739816323224064,
+        "context": 1,
+        "grid": 24,
+        "namespace": 24,
+        "scratch_low": 481044692992,
+        "scratch_high": 18446739813107236864
+      },
+      {
+        "queue": 18446739816323224256,
+        "context": 1,
+        "grid": 25,
+        "namespace": 25,
+        "scratch_low": 481044856832,
+        "scratch_high": 18446739813107400704
+      },
+      {
+        "queue": 18446739816323224448,
+        "context": 1,
+        "grid": 26,
+        "namespace": 26,
+        "scratch_low": 481045020672,
+        "scratch_high": 18446739813107564544
+      },
+      {
+        "queue": 18446739816323224640,
+        "context": 1,
+        "grid": 27,
+        "namespace": 27,
+        "scratch_low": 481045184512,
+        "scratch_high": 18446739813107728384
+      },
+      {
+        "queue": 18446739816323224832,
+        "context": 1,
+        "grid": 28,
+        "namespace": 28,
+        "scratch_low": 481045348352,
+        "scratch_high": 18446739813107892224
+      },
+      {
+        "queue": 18446739816323225024,
+        "context": 1,
+        "grid": 29,
+        "namespace": 29,
+        "scratch_low": 481045512192,
+        "scratch_high": 18446739813108056064
+      },
+      {
+        "queue": 18446739816323225216,
+        "context": 1,
+        "grid": 30,
+        "namespace": 30,
+        "scratch_low": 481045676032,
+        "scratch_high": 18446739813108219904
+      },
+      {
+        "queue": 18446739816323225408,
+        "context": 1,
+        "grid": 31,
+        "namespace": 31,
+        "scratch_low": 481045839872,
+        "scratch_high": 18446739813108383744
+      },
+      {
+        "queue": 18446739816323225600,
+        "context": 1,
+        "grid": 32,
+        "namespace": 32,
+        "scratch_low": 481046003712,
+        "scratch_high": 18446739813108547584
+      },
+      {
+        "queue": 18446739816323225792,
+        "context": 1,
+        "grid": 33,
+        "namespace": 33,
+        "scratch_low": 481046167552,
+        "scratch_high": 18446739813108711424
+      },
+      {
+        "queue": 18446739816323225984,
+        "context": 1,
+        "grid": 34,
+        "namespace": 34,
+        "scratch_low": 481046331392,
+        "scratch_high": 18446739813108875264
+      },
+      {
+        "queue": 18446739816323226176,
+        "context": 1,
+        "grid": 35,
+        "namespace": 35,
+        "scratch_low": 481046495232,
+        "scratch_high": 18446739813109039104
+      },
+      {
+        "queue": 18446739816323226368,
+        "context": 1,
+        "grid": 36,
+        "namespace": 36,
+        "scratch_low": 481046659072,
+        "scratch_high": 18446739813109202944
+      },
+      {
+        "queue": 18446739816323226560,
+        "context": 1,
+        "grid": 37,
+        "namespace": 37,
+        "scratch_low": 481046822912,
+        "scratch_high": 18446739813109366784
+      },
+      {
+        "queue": 18446739816323226752,
+        "context": 1,
+        "grid": 38,
+        "namespace": 38,
+        "scratch_low": 481046986752,
+        "scratch_high": 18446739813109530624
+      },
+      {
+        "queue": 18446739816323226944,
+        "context": 1,
+        "grid": 39,
+        "namespace": 39,
+        "scratch_low": 481047150592,
+        "scratch_high": 18446739813109694464
+      },
+      {
+        "queue": 18446739816323227136,
+        "context": 1,
+        "grid": 40,
+        "namespace": 40,
+        "scratch_low": 481047314432,
+        "scratch_high": 18446739813109858304
+      },
+      {
+        "queue": 18446739816323227328,
+        "context": 1,
+        "grid": 41,
+        "namespace": 41,
+        "scratch_low": 481047478272,
+        "scratch_high": 18446739813110022144
+      },
+      {
+        "queue": 18446739816323227520,
+        "context": 1,
+        "grid": 42,
+        "namespace": 42,
+        "scratch_low": 481047642112,
+        "scratch_high": 18446739813110185984
+      },
+      {
+        "queue": 18446739816323227712,
+        "context": 1,
+        "grid": 43,
+        "namespace": 43,
+        "scratch_low": 481047805952,
+        "scratch_high": 18446739813110349824
+      },
+      {
+        "queue": 18446739816323227904,
+        "context": 1,
+        "grid": 44,
+        "namespace": 44,
+        "scratch_low": 481047969792,
+        "scratch_high": 18446739813110513664
+      },
+      {
+        "queue": 18446739816323228096,
+        "context": 1,
+        "grid": 45,
+        "namespace": 45,
+        "scratch_low": 481048133632,
+        "scratch_high": 18446739813110677504
+      },
+      {
+        "queue": 18446739816323228288,
+        "context": 1,
+        "grid": 46,
+        "namespace": 46,
+        "scratch_low": 481048297472,
+        "scratch_high": 18446739813110841344
+      },
+      {
+        "queue": 18446739816323228480,
+        "context": 1,
+        "grid": 47,
+        "namespace": 47,
+        "scratch_low": 481048461312,
+        "scratch_high": 18446739813111005184
+      },
+      {
+        "queue": 18446739816323228672,
+        "context": 1,
+        "grid": 48,
+        "namespace": 48,
+        "scratch_low": 481048625152,
+        "scratch_high": 18446739813111169024
+      },
+      {
+        "queue": 18446739816323228864,
+        "context": 1,
+        "grid": 49,
+        "namespace": 49,
+        "scratch_low": 481048788992,
+        "scratch_high": 18446739813111332864
+      },
+      {
+        "queue": 18446739816323229056,
+        "context": 1,
+        "grid": 50,
+        "namespace": 50,
+        "scratch_low": 481048952832,
+        "scratch_high": 18446739813111496704
+      },
+      {
+        "queue": 18446739816323229248,
+        "context": 1,
+        "grid": 51,
+        "namespace": 51,
+        "scratch_low": 481049116672,
+        "scratch_high": 18446739813111660544
+      },
+      {
+        "queue": 18446739816323229440,
+        "context": 1,
+        "grid": 52,
+        "namespace": 52,
+        "scratch_low": 481049280512,
+        "scratch_high": 18446739813111824384
+      },
+      {
+        "queue": 18446739816323229632,
+        "context": 1,
+        "grid": 53,
+        "namespace": 53,
+        "scratch_low": 481049444352,
+        "scratch_high": 18446739813111988224
+      },
+      {
+        "queue": 18446739816323229824,
+        "context": 1,
+        "grid": 54,
+        "namespace": 54,
+        "scratch_low": 481049608192,
+        "scratch_high": 18446739813112152064
+      },
+      {
+        "queue": 18446739816323230016,
+        "context": 1,
+        "grid": 55,
+        "namespace": 55,
+        "scratch_low": 481049772032,
+        "scratch_high": 18446739813112315904
+      },
+      {
+        "queue": 18446739816323230208,
+        "context": 1,
+        "grid": 56,
+        "namespace": 56,
+        "scratch_low": 481049935872,
+        "scratch_high": 18446739813112479744
+      },
+      {
+        "queue": 18446739816323230400,
+        "context": 1,
+        "grid": 57,
+        "namespace": 57,
+        "scratch_low": 481050099712,
+        "scratch_high": 18446739813112643584
+      },
+      {
+        "queue": 18446739816323230592,
+        "context": 1,
+        "grid": 58,
+        "namespace": 58,
+        "scratch_low": 481050263552,
+        "scratch_high": 18446739813112807424
+      },
+      {
+        "queue": 18446739816323230784,
+        "context": 1,
+        "grid": 59,
+        "namespace": 59,
+        "scratch_low": 481050427392,
+        "scratch_high": 18446739813112971264
+      },
+      {
+        "queue": 18446739816323230976,
+        "context": 1,
+        "grid": 60,
+        "namespace": 60,
+        "scratch_low": 481050591232,
+        "scratch_high": 18446739813113135104
+      },
+      {
+        "queue": 18446739816323231168,
+        "context": 1,
+        "grid": 61,
+        "namespace": 61,
+        "scratch_low": 481050755072,
+        "scratch_high": 18446739813113298944
+      },
+      {
+        "queue": 18446739816323231360,
+        "context": 1,
+        "grid": 62,
+        "namespace": 62,
+        "scratch_low": 481050918912,
+        "scratch_high": 18446739813113462784
+      },
+      {
+        "queue": 18446739816323231552,
+        "context": 1,
+        "grid": 63,
+        "namespace": 63,
+        "scratch_low": 481051082752,
+        "scratch_high": 18446739813113626624
+      },
+      {
+        "queue": 18446739816323231744,
+        "context": 1,
+        "grid": 64,
+        "namespace": 64,
+        "scratch_low": 481051246592,
+        "scratch_high": 18446739813113790464
+      }
+    ],
+    "observed_bindings": [
+      {
+        "grid": 0,
+        "selector": 9011597301387272,
+        "high_mask": 0,
+        "low_mask": 1
+      },
+      {
+        "grid": 1,
+        "selector": 9020393394409480,
+        "high_mask": 0,
+        "low_mask": 2
+      },
+      {
+        "grid": 2,
+        "selector": 9029189487431688,
+        "high_mask": 0,
+        "low_mask": 4
+      },
+      {
+        "grid": 3,
+        "selector": 9037985580453896,
+        "high_mask": 0,
+        "low_mask": 8
+      },
+      {
+        "grid": 4,
+        "selector": 9046781673476104,
+        "high_mask": 0,
+        "low_mask": 16
+      },
+      {
+        "grid": 5,
+        "selector": 9055577766498312,
+        "high_mask": 0,
+        "low_mask": 32
+      },
+      {
+        "grid": 6,
+        "selector": 9064373859520520,
+        "high_mask": 0,
+        "low_mask": 64
+      },
+      {
+        "grid": 7,
+        "selector": 9073169952542728,
+        "high_mask": 0,
+        "low_mask": 128
+      },
+      {
+        "grid": 8,
+        "selector": 9081966045564936,
+        "high_mask": 0,
+        "low_mask": 256
+      },
+      {
+        "grid": 9,
+        "selector": 9090762138587144,
+        "high_mask": 0,
+        "low_mask": 512
+      },
+      {
+        "grid": 10,
+        "selector": 9099558231609352,
+        "high_mask": 0,
+        "low_mask": 1024
+      },
+      {
+        "grid": 11,
+        "selector": 9108354324631560,
+        "high_mask": 0,
+        "low_mask": 2048
+      },
+      {
+        "grid": 12,
+        "selector": 9117150417653768,
+        "high_mask": 0,
+        "low_mask": 4096
+      },
+      {
+        "grid": 13,
+        "selector": 9125946510675976,
+        "high_mask": 0,
+        "low_mask": 8192
+      },
+      {
+        "grid": 14,
+        "selector": 9134742603698184,
+        "high_mask": 0,
+        "low_mask": 16384
+      },
+      {
+        "grid": 15,
+        "selector": 9143538696720392,
+        "high_mask": 0,
+        "low_mask": 32768
+      },
+      {
+        "grid": 16,
+        "selector": 9152334789742600,
+        "high_mask": 0,
+        "low_mask": 65536
+      },
+      {
+        "grid": 17,
+        "selector": 9161130882764808,
+        "high_mask": 0,
+        "low_mask": 131072
+      },
+      {
+        "grid": 18,
+        "selector": 9169926975787016,
+        "high_mask": 0,
+        "low_mask": 262144
+      },
+      {
+        "grid": 19,
+        "selector": 9178723068809224,
+        "high_mask": 0,
+        "low_mask": 524288
+      },
+      {
+        "grid": 20,
+        "selector": 9187519161831432,
+        "high_mask": 0,
+        "low_mask": 1048576
+      },
+      {
+        "grid": 21,
+        "selector": 9196315254853640,
+        "high_mask": 0,
+        "low_mask": 2097152
+      },
+      {
+        "grid": 22,
+        "selector": 9205111347875848,
+        "high_mask": 0,
+        "low_mask": 4194304
+      },
+      {
+        "grid": 23,
+        "selector": 9213907440898056,
+        "high_mask": 0,
+        "low_mask": 8388608
+      },
+      {
+        "grid": 24,
+        "selector": 9222703533920264,
+        "high_mask": 0,
+        "low_mask": 16777216
+      },
+      {
+        "grid": 25,
+        "selector": 9231499626942472,
+        "high_mask": 0,
+        "low_mask": 33554432
+      },
+      {
+        "grid": 26,
+        "selector": 9240295719964680,
+        "high_mask": 0,
+        "low_mask": 67108864
+      },
+      {
+        "grid": 27,
+        "selector": 9249091812986888,
+        "high_mask": 0,
+        "low_mask": 134217728
+      },
+      {
+        "grid": 28,
+        "selector": 9257887906009096,
+        "high_mask": 0,
+        "low_mask": 268435456
+      },
+      {
+        "grid": 29,
+        "selector": 9266683999031304,
+        "high_mask": 0,
+        "low_mask": 536870912
+      },
+      {
+        "grid": 30,
+        "selector": 9275480092053512,
+        "high_mask": 0,
+        "low_mask": 1073741824
+      },
+      {
+        "grid": 31,
+        "selector": 9284276185075720,
+        "high_mask": 0,
+        "low_mask": 2147483648
+      },
+      {
+        "grid": 32,
+        "selector": 9293072278097928,
+        "high_mask": 0,
+        "low_mask": 4294967296
+      },
+      {
+        "grid": 33,
+        "selector": 9301868371120136,
+        "high_mask": 0,
+        "low_mask": 8589934592
+      },
+      {
+        "grid": 34,
+        "selector": 9310664464142344,
+        "high_mask": 0,
+        "low_mask": 17179869184
+      },
+      {
+        "grid": 35,
+        "selector": 9319460557164552,
+        "high_mask": 0,
+        "low_mask": 34359738368
+      },
+      {
+        "grid": 36,
+        "selector": 9328256650186760,
+        "high_mask": 0,
+        "low_mask": 68719476736
+      },
+      {
+        "grid": 37,
+        "selector": 9337052743208968,
+        "high_mask": 0,
+        "low_mask": 137438953472
+      },
+      {
+        "grid": 38,
+        "selector": 9345848836231176,
+        "high_mask": 0,
+        "low_mask": 274877906944
+      },
+      {
+        "grid": 39,
+        "selector": 9354644929253384,
+        "high_mask": 0,
+        "low_mask": 549755813888
+      },
+      {
+        "grid": 40,
+        "selector": 9363441022275592,
+        "high_mask": 0,
+        "low_mask": 1099511627776
+      },
+      {
+        "grid": 41,
+        "selector": 9372237115297800,
+        "high_mask": 0,
+        "low_mask": 2199023255552
+      },
+      {
+        "grid": 42,
+        "selector": 9381033208320008,
+        "high_mask": 0,
+        "low_mask": 4398046511104
+      },
+      {
+        "grid": 43,
+        "selector": 9389829301342216,
+        "high_mask": 0,
+        "low_mask": 8796093022208
+      },
+      {
+        "grid": 44,
+        "selector": 9398625394364424,
+        "high_mask": 0,
+        "low_mask": 17592186044416
+      },
+      {
+        "grid": 45,
+        "selector": 9407421487386632,
+        "high_mask": 0,
+        "low_mask": 35184372088832
+      },
+      {
+        "grid": 46,
+        "selector": 9416217580408840,
+        "high_mask": 0,
+        "low_mask": 70368744177664
+      },
+      {
+        "grid": 47,
+        "selector": 9425013673431048,
+        "high_mask": 0,
+        "low_mask": 140737488355328
+      },
+      {
+        "grid": 48,
+        "selector": 9433809766453256,
+        "high_mask": 0,
+        "low_mask": 281474976710656
+      },
+      {
+        "grid": 49,
+        "selector": 9442605859475464,
+        "high_mask": 0,
+        "low_mask": 562949953421312
+      },
+      {
+        "grid": 50,
+        "selector": 9451401952497672,
+        "high_mask": 0,
+        "low_mask": 1125899906842624
+      },
+      {
+        "grid": 51,
+        "selector": 9460198045519880,
+        "high_mask": 0,
+        "low_mask": 2251799813685248
+      },
+      {
+        "grid": 52,
+        "selector": 9468994138542088,
+        "high_mask": 0,
+        "low_mask": 4503599627370496
+      },
+      {
+        "grid": 53,
+        "selector": 9477790231564296,
+        "high_mask": 0,
+        "low_mask": 9007199254740992
+      },
+      {
+        "grid": 54,
+        "selector": 9486586324586504,
+        "high_mask": 0,
+        "low_mask": 18014398509481984
+      },
+      {
+        "grid": 55,
+        "selector": 9495382417608712,
+        "high_mask": 0,
+        "low_mask": 36028797018963968
+      },
+      {
+        "grid": 56,
+        "selector": 9504178510630920,
+        "high_mask": 0,
+        "low_mask": 72057594037927936
+      },
+      {
+        "grid": 57,
+        "selector": 9512974603653128,
+        "high_mask": 0,
+        "low_mask": 144115188075855872
+      },
+      {
+        "grid": 58,
+        "selector": 9521770696675336,
+        "high_mask": 0,
+        "low_mask": 288230376151711744
+      },
+      {
+        "grid": 59,
+        "selector": 9530566789697544,
+        "high_mask": 0,
+        "low_mask": 576460752303423488
+      },
+      {
+        "grid": 60,
+        "selector": 9539362882719752,
+        "high_mask": 0,
+        "low_mask": 1152921504606846976
+      },
+      {
+        "grid": 61,
+        "selector": 9548158975741960,
+        "high_mask": 0,
+        "low_mask": 2305843009213693952
+      },
+      {
+        "grid": 62,
+        "selector": 9556955068764168,
+        "high_mask": 0,
+        "low_mask": 4611686018427387904
+      },
+      {
+        "grid": 63,
+        "selector": 9565751161786376,
+        "high_mask": 0,
+        "low_mask": 9223372036854775808
+      },
+      {
+        "grid": 64,
+        "selector": 9574547254808584,
+        "high_mask": 1,
+        "low_mask": 0
+      }
+    ],
+    "slot64_observed_selector": "0x0022040000021008",
+    "slot64_observed_start_write_order": [
+      "SGX+0x21070=1",
+      "SGX+0x21068=0"
+    ],
+    "four_slots_is_not_hardware_capacity_evidence": true,
+    "physical_engine_identity_claim": false,
+    "all128_slots_or_recycling_qualified": false,
+    "stable_work_UAT_or_plain_replay_qualified": false,
+    "capture_mode": "Pass-through work publications and MMIO observation; boot UAT only. Comments inherited by the workload referring to held producers do not describe this run.",
+    "binary_sha256": "39abc0b1960bfeb15dbcc80e3e2fa009e75051993704d71853269ae07d98f67f",
+    "source_sha256": "9166b99617ddf739e95d1f7e6da17b7fbbdf076e84ba23c20ce3067e750cf4e3",
+    "evidence_sha256": {
+      "observed-publications.json": "13717e5a4a3b1162d79824c964a9c6ab1470801a7f21414d55923e0991845855",
+      "startup-history.json": "6a89005a13c1236696fa0ac6bbab6e7a8ae6237c8834f2e4367a50389379d5f4",
+      "console-sixtyfive-v1.json": "d566a6c5f65697857320cb27ce1bbc652010b74e987f13df727a2a0c8743a9f4",
+      "vuart-sixtyfive-v1.log": "812f649603b395175a49a7242e3ac40a7013d8bfff32117b3802d9c764121ee7"
+    }
+  },
+  "slot64_bank_boundary_observed": true,
+  "note_on_workload_comments": "65-queue workload inherited held-producer comments. This actual observation passed producers through; only boot UAT was captured. No stable work-UAT/cold replay claim for this 65-queue experiment.",
+  "final_cold_proxy_identity_verified": true,
+  "final_reset_name": "after-sixtyfive-v2"
+}
