@@ -1,0 +1,273 @@
+{
+  "artifact_directory": "build/m4max-gpu/g16c-native-flight-allocation-20261022",
+  "result": {
+    "goal_status": "active",
+    "operator_priority": "Kernel implementation toward real graphics workloads; WIP Vulkan unchanged and used for actual-output validation",
+    "linux_commit": "e3c84457e83e60b0931bec56fa43d2fbe103c450",
+    "kernel": 118,
+    "changes": [
+      "Detached compute/render work-storage allocation and prepared empty firmware UAT aliases before adoption",
+      "Detached geometry backing, prepared root paths and RootLease, reserved retained bookkeeping; install only after all allocations succeed",
+      "Receipt/client leases/timestamp Cache and retirement metadata allocated before publication; reuse existing Cache for cleaning",
+      "Max transport separates allocation/validation/flight ownership preparation from allocation-free publication",
+      "Prepare transport BEFORE context/control activation and engine arm; any failure after successful preparation remains fatal with retained ownership",
+      "One-shot diagnostic stages5..9 default disabled; exact negative fence/BO/timestamp/retry checks"
+    ],
+    "firmware_wire_structs_macros_templates_and_common_scheduler_unchanged": true,
+    "actual_fault_sessions": {
+      "v11": {
+        "stage": 9,
+        "mode": "compute",
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_queue_retry": true,
+        "recycling": true,
+        "post_rejection_render_and_compute": true
+      },
+      "v12": {
+        "stage": 9,
+        "mode": "render",
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_queue_retry": true,
+        "recycling": true,
+        "post_rejection_render_and_compute": true
+      },
+      "v13": {
+        "stage": 5,
+        "mode": "compute",
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_queue_retry": true,
+        "recycling": true,
+        "post_rejection_render_and_compute": true
+      },
+      "v14": {
+        "stage": 6,
+        "mode": "render",
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_queue_retry": true,
+        "recycling": true,
+        "post_rejection_render_and_compute": true
+      },
+      "v15": {
+        "stage": 7,
+        "mode": "render",
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_queue_retry": true,
+        "recycling": true,
+        "post_rejection_render_and_compute": true
+      },
+      "v16": {
+        "stage": 8,
+        "mode": "compute",
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_queue_retry": true,
+        "recycling": true,
+        "post_rejection_render_and_compute": true
+      },
+      "v17": {
+        "stage": 8,
+        "mode": "render",
+        "binary_fence": -12,
+        "all_caller_BO_and_timestamp_bytes_untouched": true,
+        "same_VM_queue_retry": true,
+        "recycling": true,
+        "post_rejection_render_and_compute": true
+      }
+    },
+    "retained": {
+      "v11": [
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "v12": [
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "v13": [
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "v14": [
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "v15": [
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "v16": [
+        {
+          "allocations": 174,
+          "bytes": 196984832,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "v17": [
+        {
+          "allocations": 334,
+          "bytes": 452739072,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        }
+      ],
+      "v19": [
+        {
+          "allocations": 344,
+          "bytes": 452902912,
+          "pool_slots": 1,
+          "queue_slots": 1
+        },
+        {
+          "allocations": 358,
+          "bytes": 453476352,
+          "pool_slots": 1,
+          "queue_slots": 2
+        },
+        {
+          "allocations": 398,
+          "bytes": 458719232,
+          "pool_slots": 1,
+          "queue_slots": 2
+        }
+      ]
+    },
+    "default": {
+      "version": "v19",
+      "Vulkan_bindless_pixels_checked": 6144,
+      "measured_draws": 3,
+      "sampler": 127,
+      "samplers": 128,
+      "texture_sets": 3,
+      "pools": 2,
+      "mixed_noise_draws_per_measured": 2,
+      "concurrent_unused_descriptor_updates": 7885,
+      "wrong_pixels": 0,
+      "Vulkan_fill_compute_copy_submissions": 3,
+      "outputs_per_compute": 257,
+      "guard_words_per_compute": 63,
+      "native_queued_compute_pair": true,
+      "native_mixed_render_compute": true,
+      "actual_GPU_overlap_proved": false,
+      "firmware_parameter_growth_blocks": [
+        23,
+        33,
+        43,
+        53,
+        63
+      ],
+      "relocated_VM_reuses_pool": true,
+      "post_growth_compressed_render": true
+    },
+    "guest_hash_comparisons": 1900,
+    "all_final_native_sessions": 8,
+    "all16CPUs": true,
+    "same_Image_DTB_initrd": true,
+    "unchanged_V45_initrd_clients_Vulkan_runtime_shaders_fixtures": true,
+    "compiled_local_remote_source_hashes": 155,
+    "no_post_build_source_changes": true,
+    "memory_checks_per_session": 6303,
+    "all_unbinds_succeed": true,
+    "cold_proxy_restored": true,
+    "failed_attempts_preserved": {
+      "kernel117_transport_compute": "v10: ENOMEM correct but engine armed before allocation; next poll got firmware timeout kind4; retry failed EIO; no dependent tests sent",
+      "startup_stalls": [
+        "v1",
+        "v6",
+        "v18"
+      ],
+      "CPU_startup_stalls_recovered_identical_all16CPU": true,
+      "hardware_bug_fixed_by_ordering_not_ignoring_timeouts": true
+    },
+    "CPU": {
+      "transport": "host-transport-v2/summary.json",
+      "render": "host-render-v1/summary.json",
+      "exact_render_inheritance": "host-render-v1-inheritance.json",
+      "Neo_shape": "neo-shape-v2/summary.json",
+      "Neo_VM_inherited": "build/m4max-gpu/g16c-native-initial-allocation-20261022/host-neo-vm-v2/summary.json",
+      "not_live_Neo": true
+    },
+    "build_warnings": 18,
+    "remaining": [
+      "Per-flight ownership for cross-VM dependencies and true physical GPU compute/render overlap; current firmware work remains serialized",
+      "Automatic operand demand growth/full capacity, physical-RAM exhaustion and later allocation/partial-install/uncertain-publication recovery",
+      "Multiple-flight close, broader controls/formats/faults, permanent PMGR and bare-metal startup",
+      "LIVE Neo hardware regression and final sustained qualification",
+      "Display/compositor/browser presentation remains unqualified"
+    ]
+  },
+  "protected_source_receipt": "source-preservation.json",
+  "final_state": "final-state.json",
+  "independent_audit": "audit-result.py",
+  "final_matrix": "native-matrix-v2.json",
+  "compiled_source_archive": "tested-source-v2.tar.gz",
+  "compiled_source_manifest": "kernel-v2.json",
+  "exact_commit_patch": "flight-allocation-v2-final.patch"
+}
