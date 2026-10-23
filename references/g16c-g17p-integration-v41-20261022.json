@@ -1,0 +1,75 @@
+{
+  "milestone": "Production Vulkan pivot and first live G16C Honeykrisp compute/render qualification",
+  "artifact_directory": "build/m4max-gpu/g16c-native-vulkan-20261022",
+  "result": {
+    "operator_direction": "Production Honeykrisp Vulkan; OpenGL through Zink; OpenCL through Rusticl over Zink. Pivot application integration to this stack.",
+    "goal_status": "active",
+    "upstream_repository": "https://github.com/niklassheth/mesa-wip",
+    "upstream_branch": "wip/apple9-latest",
+    "upstream_commit": "50cfaf889f3e9d96e6e2bb88e8d40d9cff28eacb",
+    "mesa_commit": "1963776619e386f5d82b903183768819e3823548",
+    "linux_commit": "07cb195a97fe97bf5443b6646c74177b93331a29",
+    "kernel": 111,
+    "source_changes": "Explicit G16C chip identity; shared G16G/G16C native launch/descriptors/render/capabilities and compact render-private window. G17P selection and existing chip numeric values preserved.",
+    "build": {
+      "ARM64_Honeykrisp": true,
+      "ARM64_Zink": true,
+      "matching_host_tools": true,
+      "LLVM_host_tools": "18.1.3",
+      "bootstrap_failure": "Old asahi_clc omitted new libagx_nir; resolved with matching branch tools",
+      "first_host_tools_setup_failure": "LLVM21 installation lacked shared libLLVM-21.so; used installed LLVM18",
+      "strict_ARM64_app_builds": true
+    },
+    "native_results": {
+      "renderer": "Apple M4 Max (G16C B1)",
+      "reported_API": "1.4",
+      "CPU_online": "0-15",
+      "live_DRM": true,
+      "DRM_shim": false,
+      "exported_fixtures": false,
+      "runtime_shader_compilation": true,
+      "profiles": [
+        "nocluster,nocompress compute 3 submissions",
+        "nocluster,nocompress offscreen draw 3 submissions",
+        "default settings offscreen draw 3 submissions",
+        "default settings compute 3 submissions"
+      ],
+      "total_submissions": 12,
+      "compute_outputs_per_submission": 257,
+      "compute_guard_words": 63,
+      "indirect_dispatch": true,
+      "changing_compute_inputs": true,
+      "render_image": [
+        37,
+        19
+      ],
+      "render_pixels_checked_per_submission": 703,
+      "render_guards": true,
+      "all_exit_codes": 0,
+      "memory_checks": 6303,
+      "unbind": 0,
+      "DRM_nodes_removed": true,
+      "live_GPU_failures": 0
+    },
+    "limitations": [
+      "Small integration tests, not Vulkan conformance or broad application coverage",
+      "Zink runtime, Rusticl and browser not tested yet",
+      "Presentation/display/compositor not qualified",
+      "No LIVE Neo GPU regression this turn",
+      "Kernel capacity/kernel_end, concurrency, faults and sustained requirements remain open",
+      "CPU hk-image-limits source extended for G16C but not executed this turn"
+    ],
+    "next": "Package and test Zink EGL/GLES offscreen on the same native Vulkan stack, then Rusticl/OpenCL and browser integration",
+    "evidence_files": [
+      "probe-v1.log",
+      "guest-preflight-v1.json",
+      "runtime-v1-sha256.json",
+      "runtime-v1-proof.json",
+      "source-sha256-final.json",
+      "source-preservation.json",
+      "tested-source-delta.tar.gz",
+      "mesa-g16c-candidate.patch",
+      "final-state.json"
+    ]
+  }
+}
