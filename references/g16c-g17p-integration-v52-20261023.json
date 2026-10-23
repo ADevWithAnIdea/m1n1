@@ -1,0 +1,133 @@
+{
+  "goal_status": "active",
+  "linux_commit": "9d7457f4bcf2bca1c00b38a38fb1957e02af6cdf",
+  "qualified_runtime_commit": "8727c38bbc4c2a261d1f66485b239a5287dcb171",
+  "kernel": 141,
+  "Image": "build/m4max-gpu/g16c-native-cross-vm-20261023/Image-v6",
+  "compiled_sources": "build/m4max-gpu/g16c-native-cross-vm-20261023/tested-source-v6.tar.gz",
+  "qualified": {
+    "kernel": 141,
+    "qualified_sessions": [
+      {
+        "version": "v170",
+        "kernel": 141,
+        "actual_guest_hashes": 258,
+        "CPUs": 16,
+        "Vulkan_render_compute": true,
+        "memory_checks": 6303,
+        "unbind": true,
+        "log_sha256": "9b2d6d3c1bf58a6318793b64516a4ffb41b32abf4e1b3c87f5684dcc755b7187",
+        "close_request": 3.90539,
+        "firmware_close": 4.049399,
+        "close_delay_seconds": 0.14400900000000005,
+        "keeper_fences_before_close": [
+          0
+        ],
+        "all8_ordered_GPU_jobs_and_guards_pass": true
+      },
+      {
+        "version": "v180",
+        "kernel": 141,
+        "actual_guest_hashes": 258,
+        "CPUs": 16,
+        "Vulkan_render_compute": true,
+        "memory_checks": 6303,
+        "unbind": true,
+        "log_sha256": "de6221ddcfce832cd59bdcf66e97d378834dfccaab969a064da984e92b39b780",
+        "raw_render_first": true,
+        "unfinished_closed_queue_jobs_complete": true,
+        "independent_file_relocated_balanced_and_pressure_overlaps": 4,
+        "mixed_render_compute": true
+      }
+    ],
+    "baseline_delayed_closes": [
+      {
+        "version": "v122",
+        "kernel": 138,
+        "close_request": 4.045974,
+        "firmware_close": 4.613935,
+        "delay_seconds": 0.5679609999999995,
+        "keeper_fences_before_close": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "version": "v130",
+        "kernel": 138,
+        "close_request": 3.915492,
+        "firmware_close": 4.487429,
+        "delay_seconds": 0.5719369999999997,
+        "keeper_fences_before_close": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "arrival_early": false
+      }
+    ],
+    "all160_qualified_commit_source_archive_remote_hashes_exact": true,
+    "test_only_followup_matches_compiled_reproducer": true,
+    "qualified_change": "Only seven-line Max reclaimable queue admission gate",
+    "unfinished_accepted_jobs_not_blocked": true,
+    "common_Neo_scheduler_unchanged": true,
+    "public_snapshot_unchanged": true,
+    "initrd_provenance": {
+      "changed_client": "g16c_drm_compute_drain",
+      "other_entries_unchanged": 1599,
+      "kernel138_Image_unchanged": true,
+      "guest_hashes": 258,
+      "C_source_sha256": "7e77b87926d93a830e05fe53bb6a2ddea93572ce4b6d4b732c97e8cd284b7cb6",
+      "binary_sha256": "8d3b6ed43449d6bbea89041de46d00523aaa81a52e0327ffa9bec0ffeef2b7fe",
+      "initrd_sha256": "45972f70735dbe725596278435cb347134c6f79117b1cebb1f65768c5276687e"
+    },
+    "protected_files_exact": true,
+    "early_new_ASID_admission_qualified": false,
+    "new_ASID_failure_artifacts": [
+      "failed-arrival-resume-v140.json",
+      "failed-arrival-coldbinding-v150.json"
+    ],
+    "new_ASID_experiments_removed": true,
+    "full_goal_complete": false,
+    "live_Neo_qualified": false,
+    "Apple_disassembly": false
+  },
+  "post_build_change": "Only the native C test gained drain/arrival modes; its exact strict-compiled source equals tested-drain-client-v3.c. All runtime sources/image unchanged.",
+  "late_client_Metal": {
+    "source": "proxyclient/experiments/metal_g16c_compute_late_client.m",
+    "source_sha256": "71dbba44308914a91394e103cbcde4fe7083cccb67bc60c088edd4d3d4d43719",
+    "binary_sha256": "76c0ae7dc297f32ae02fe0dc17a1ad198f0c91fdca38a45cfd4bf8dbc4a37a5a",
+    "strict_host_compile": true,
+    "target_execution_qualified": false,
+    "target": "Mac16,5/J616c/6041/JPWWJRX2N0",
+    "single_user_required": true,
+    "CPUs_required": 16,
+    "phases": [
+      "warm: same Metal device, two queues, separate128-byte outputs, two1M-iteration commands, CPU32words+128guards and GPU overlap",
+      "late: child opens its Metal device ONLY after parent warm completion; retained parent queue1M + child1iteration, separate128-byte outputs; CPU32words+128guards",
+      "resume: parent dispatches1M again on retained original queue after child completion; CPU16words+64guards"
+    ],
+    "next": "Adapt the existing two-phase capture/continuation replay to warm->late->resume; verify actual native physical engine bindings in warm MMIO history. Capture full UAT per phase, cold combined opaque replay, then source bisection. Do not count compilation as GPU evidence.",
+    "Apple_disassembly": false
+  },
+  "open_issue": "Admitting a new ASID before an existing fully warmed queue has finished its stream causes a later existing-queue firmware event4. The arriving context and first3 keeper fences pass. Full initial engine binding does NOT fix it. Both experimental handoff patches are removed from the qualified runtime.",
+  "next": "Check late-client then return-to-old-queue with the committed scheduler, then single-user/all16 Metal warm->late->resume full-UAT captures, cold sequential opaque replay and source bisection. Do not infer native first-queue/wait/cache semantics from cold-only evidence.",
+  "remaining": [
+    "Late ASID/context-return safety and new-owner admission fairness under continuous load",
+    "Broader continuous generation/VM recycling and final active DriverFile drop",
+    "Distinct live operand capacities and automatic demand",
+    "Actual render/compute overlap, fault/uncertain-publication recovery and real display/browser workloads",
+    "LIVE Neo regression and final sustained qualification"
+  ],
+  "public_snapshot_frozen": "12451cca1fad6f1e5747a20a90c2058b21042af3",
+  "Apple_disassembly": false
+}
