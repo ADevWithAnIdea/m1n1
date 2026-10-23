@@ -1,0 +1,77 @@
+{
+  "artifact_directory": "build/m4max-gpu/g16c-native-independent-queues-20261022",
+  "result": {
+    "goal_status": "active",
+    "previous_turn_classification": "progress",
+    "linux_commit": "3d0c0b9e3481aae35715e1fab3f657b9fea3ffae",
+    "kernel": 122,
+    "qualified_changes": [
+      "G16C dependency span is independent of enabled predecessor count/mask",
+      "Existing fully enabled constructor delegates without changing output bytes",
+      "All8 full tracked/untracked two/four-queue records match actual native DATA; generated size/alignment/every-field assertions;12 malformed vectors/spans reject"
+    ],
+    "G16C_G17P_axis_and_all_wire_struct_layouts_unchanged": true,
+    "constant_struct_templates_unchanged": true,
+    "common_scheduler_and_native_runtime_exact_V46": true,
+    "native_reference_proof": "native-reference-proof.json",
+    "actual_native_Metal_and_cold_source_record_overlap": true,
+    "native_Linux_overlap": false,
+    "source_record_bytes_replaced": 1024,
+    "opaque_surrounding_reference_pages_still_required": true,
+    "native_Linux_default_regression": {
+      "version": "v11",
+      "CPUs": 16,
+      "guest_hashes": 233,
+      "Vulkan_pixels": 6144,
+      "Vulkan_host_descriptor_updates": 15712,
+      "Vulkan_wrong_pixels": 0,
+      "Vulkan_compute_transfer_submissions": 3,
+      "compute_outputs_each": 257,
+      "compute_guards_each": 63,
+      "queued_compute_pair": true,
+      "private_pressure_submissions": 2,
+      "mixed_render_compute": true,
+      "memory_checks": 6303,
+      "unbind": 0,
+      "cold_proxy_restored": true
+    },
+    "all155_compiled_local_remote_sources_exact": true,
+    "no_post_build_source_changes": true,
+    "initrd_clients_Vulkan_runtime_shaders_fixtures_exact_V46": true,
+    "failed_experiments": {
+      "kernel119": "probe-v1: first strict overlap pair firmware timeout/negative fence; dependent tests gated",
+      "kernel120": "probe-v6: matching native header bit60 still timed out; dependent tests gated",
+      "kernel121": "prebind candidate built but never run because reference early-start/empty-record control failed",
+      "preGPU_opaque_v1": "missing capture-validation.json refused; validator then fresh cold v2 passed",
+      "deferred_engine_v1_v2": "observation saw first compute already finished before second setup; no conclusion about live-engine setup"
+    },
+    "CPU_startup_stalls": [
+      "v4",
+      "v10"
+    ],
+    "unqualified_native_candidate": "unqualified-native-overlap-v3.patch",
+    "next_reference": {
+      "source": "proxyclient/experiments/metal_g16c_compute_untracked_reuse_pair.m",
+      "binary": "metal-untracked-reuse-pair-v1",
+      "strict_host_compile": true,
+      "run": false,
+      "plan": "Output-check initial untracked pair on SAME queues, then capture next pair; compare current records and exact engine setup/reuse history, establish cold correct-output replay before port"
+    },
+    "full_remaining_scope": [
+      "Native compute overlap and GPU-side dependencies; cross-VM dispatch ownership and compute/render overlap",
+      "Multiple-flight close/retirement and final sustained concurrency/lifetime qualification",
+      "Automatic operand demand growth/full capacity, physical-RAM exhaustion, later allocation/partial-install/uncertain-publication recovery",
+      "Broader controls/formats/faults, permanent PMGR/bare-metal startup",
+      "LIVE Neo GPU regression",
+      "Display/compositor/browser presentation remains unqualified"
+    ],
+    "no_completion_claim": true
+  },
+  "source_preservation": "source-preservation-final.json",
+  "final_state": "final-state.json",
+  "audit": "audit-result.py",
+  "compiled_sources": "tested-source-v4.tar.gz",
+  "kernel": "kernel-v4.json",
+  "capture": "single-user-untracked-v1",
+  "exact_commit_patch": "independent-compute-v4.patch"
+}
