@@ -1,0 +1,22 @@
+{
+  "version": 40,
+  "date": "2026-10-22",
+  "linux_commit": "07cb195a97fe97bf5443b6646c74177b93331a29",
+  "bootloader_parent_commit": "95a732b13ae00f9e95208309bb6089b12feddb59",
+  "goal_status": "active",
+  "evidence": "build/m4max-gpu/g16c-native-operand-use-20261022",
+  "result": "native-operand-use-result.json",
+  "source_preservation": "source-preservation.json",
+  "final_state": "final-state.json",
+  "qualified_native_jobs": 44,
+  "compute_jobs": 32,
+  "render_jobs": 12,
+  "final_kernel": 111,
+  "all5appended_buffers_identified_by_own_shader_DATA": true,
+  "CPU_model_proof": "host-scratch-model-v2/summary.json",
+  "source_count": 148,
+  "automatic_growth_policy": false,
+  "next_task": "Wire actual caller vm.kernel_end through G16C private-pool ownership/admission; current VM_CREATE accepts any >=512MiB window but lowering only passes kernel_start and uses fixed+0x20000000. Then qualify larger incremental growth and recoverable unpublished ENOMEM; derive automatic policy from evidence.",
+  "known_Neo_tag": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "full_goal_complete": false
+}
