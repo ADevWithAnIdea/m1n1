@@ -15,6 +15,8 @@ from m1n1.g16c.memory import GPU_SHARED_RW
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('capture', type=Path)
 p.add_argument('output', type=Path)
+p.add_argument('--balanced', action='store_true',
+    help='use two million-iteration jobs so either independent worker may publish first')
 a = p.parse_args()
 m = json.loads((a.capture / 'manifest.json').read_text())
 assert m['offline_only'] and not m['gpu_execution'] and m['apple_binary_pages'] == 0
@@ -51,7 +53,8 @@ out, uniform, table, cdm = 0x2000000000, 0x2000100000, (1 << 40) + 0x2000000, 0x
 root = bytearray(images[13])
 struct.pack_into('<QQQ', root, 0, table + 0xc0, uniform, out)
 root[0x100:0x110] = literal32(2, table & 0xffffffff) + literal32(3, table >> 32)
-ubo = bytearray(images[11]); struct.pack_into('<I', ubo, 0, 1)
+second_iterations = iterations if a.balanced else 1
+ubo = bytearray(images[11]); struct.pack_into('<I', ubo, 0, second_iterations)
 struct.pack_into('<Q', stream, 8, (((table + 0x100) >> 6) & 0xffffffff) |
     ((0x40000000 | ((table + 0x100) >> 40)) << 32))
 for handle, address, b in ((100, out, images[10]), (101, uniform, ubo), (102, table, root),
@@ -63,14 +66,14 @@ second = uapi.drm_asahi_cmd_compute.from_bytes(c.payload.to_bytes())
 second.cdm_ctrl_stream_base, second.cdm_ctrl_stream_end = cdm, cdm + 48
 commands = b''.join(uapi.drm_asahi_cmd_header(1, 64, 0xffff, 0xffff).to_bytes() + cmd.to_bytes()
                     for cmd in (c.payload, second))
-metadata = struct.pack('<8I', 0x384f4347, 1, len(objects), len(binds), len(commands), 10, 100, iterations)
+metadata = struct.pack('<8I', 0x384f4347, 2 if a.balanced else 1, len(objects), len(binds), len(commands), 10, 100, iterations)
 metadata += b''.join(struct.pack('<IIQ', *o) for o in objects)
 metadata += b''.join(op.to_bytes() for op in binds) + commands
 a.output.mkdir(parents=True, exist_ok=False)
 (a.output / 'inputs.bin').write_bytes(metadata)
 for handle, b in images.items():
     (a.output / f'gem-{handle}.bin').write_bytes(b)
-for handle, steps in ((10, iterations), (100, 1)):
+for handle, steps in ((10, iterations), (100, second_iterations)):
     expected = bytearray(images[handle])
     for i in range(16):
         v = 0x5a110000 ^ i
@@ -80,7 +83,7 @@ for handle, steps in ((10, iterations), (100, 1)):
     (a.output / f'expected-gem-{handle}.bin').write_bytes(expected)
 report = dict(own_mesa_resources=True, apple_binary_pages=0, gpu_execution=False,
     source_capture=str(a.capture), source_manifest_sha256=hashlib.sha256((a.capture/'manifest.json').read_bytes()).hexdigest(),
-    iterations=[iterations, 1], output_handles=[10, 100], output_words=16,
+    iterations=[iterations, second_iterations], output_handles=[10, 100], output_words=16,
     independent_CPU_oracle=True, original_GEMs_exact=True,
     relocated_own_launcher_pointer_literals=True,
     files={f.name: hashlib.sha256(f.read_bytes()).hexdigest() for f in a.output.iterdir()})
