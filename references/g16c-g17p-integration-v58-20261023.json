@@ -1,0 +1,125 @@
+{
+  "version": 58,
+  "date": "2026-10-23",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "c38b4bb32ad38eeee30be70ea70d8dc053ae1fed",
+  "Linux_clean": true,
+  "qualified_kernel": 146,
+  "all160_qualified_local_remote_sources_restored": true,
+  "remote_compiled_Image150_is_failed_do_not_use": true,
+  "retained_slot_experiment": {
+    "kernel": 150,
+    "qualified": false,
+    "actual_guest_hashes": 259,
+    "actual_CPUs": "0-15",
+    "first_three_native_tests_pass": true,
+    "old_stream_job2_failed_after_incoming": true,
+    "actual_firmware_event4": true,
+    "actual_C_exit": 1,
+    "exact160_compiled_sources_preserved": true,
+    "all_four_experimental_files_reverted": true,
+    "hypothesis_not_sufficient": "Exclusive retained compute scratch leases did not fix render-first early handoff"
+  },
+  "native_operand_banks": {
+    "descriptors": 12,
+    "phases": [
+      "warm",
+      "late",
+      "resume"
+    ],
+    "register_14028_equals_support_word_08": true,
+    "selected_dispatch_directory_equals_support_directory": true,
+    "warm_parent": {
+      "ASID": 1,
+      "grid": [
+        0,
+        1
+      ],
+      "bank": 0
+    },
+    "late_child": {
+      "ASID": 2,
+      "grid": 2,
+      "bank": 1
+    },
+    "returning_parent": {
+      "ASID": 1,
+      "grid": 0,
+      "bank": 1,
+      "new_support": true,
+      "new_directory": true
+    },
+    "ASID_minus_one_not_a_general_ABI_rule": true,
+    "assignment_protocol_or_kernel_failure_causality_proven": false,
+    "scope": "Offline audit of existing native output-qualified and cold/source-replayed captures; no new hardware bank test"
+  },
+  "preceding_Chromium_WebGPU_V54": {
+    "kernel": 142,
+    "hashes_reaudited": true,
+    "primary_browser_pass_precedes_WebGPU": true,
+    "checker_pixels_verified": 4096,
+    "workload": "128x128 Game of Life,32 generations,WGSL compute and instanced rendering",
+    "cells_verified": 16384,
+    "pixel_samples_verified": 32768,
+    "software_fallback": false,
+    "browser_rerun_on146_or150": false,
+    "desktop_presentation_tested": false
+  },
+  "target_final": "RID0 reboot/raw chainload/exact N01 Mac16,5 chip6041 nop verified; both serial ports unowned",
+  "protected_AGENTS_checklist_and14_dirty_files_exact": true,
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "Mesa_clean": true,
+  "Neo_tag_and_public_snapshot_unchanged": true,
+  "new_pushes": false,
+  "live_Neo_tested": false,
+  "early_pending_owner_fairness_qualified": false,
+  "Apple_binary_disassembly": false,
+  "full_goal_complete": false,
+  "next": "Before another handoff behavior patch, observe support+8 and selected dispatch entries around render-first initialization, new-client admission and old-client return. The kernel explicitly reserves ASID-derived banks; determine whether firmware preserves that reservation or reassigns it. Existing native evidence disproves an inherent ASID mapping but does not prove the kernel policy fails. Independently source-replay any bank relocation before adopting new semantics.",
+  "remaining_full_goal": [
+    "early pending-owner fairness",
+    "sustained recycling and active DriverFile drop",
+    "differing live capacities and automatic demand",
+    "actual render-compute overlap",
+    "fault and uncertain-publication paths",
+    "live Neo regression"
+  ],
+  "artifact_root": "build/m4max-gpu/g16c-binding-leases-20261023",
+  "key_artifact_sha256": {
+    "kernel-leases-v1.json": "8f2f98b3e9b7cd1657be292800ead9e667ba3dfacbd4f4ad00ca054ef111d6b5",
+    "tested-source-leases-v1.tar.gz": "ab61454aa1a995697f238c6cec62db0b75557bcb5aeb07868cf656ab4b3b44c3",
+    "indexed-dispatch-leases-v1.patch": "3385c7208ad75747de7d330058bfe68823efdc8b3c02973fc4d21b7e899e6dda",
+    "Image-leases-v1": "399584ceb32bceba090593a951dc79e3e6ac240b3d4b83122a6ff2610017cc52",
+    "failed-leases-v1.json": "686c5d36c31b2633919bfe40c1e2bb9c40c7ef62a4e13bf85ea4c3d3610aaa4b",
+    "probe-v110.log": "e2d83342e9d301572c9a3c08b90fc870860bc2f1bd16bf7f9931c05892ef0bbd",
+    "controller-leases-v1.log": "6f3eaa02932facc227fade21d2f70ed36a1920f27aa114cffe7058dd47eec3f5",
+    "guest-v110-verified.json": "ba0416d013d06d41f118bac5a67dcef31177e2ecf3494ac794c542516e60239a",
+    "native-leases-v1.json": "f7e263d637dc6fb0a7ec7e7dc98ebf4533bdae59fb06a5f40f7ff7e166435990",
+    "operand-bank-audit-v1.json": "2d51ea347c2ca041ef477b04938306455e119fae6632aa29c7204cd8a779b9d7",
+    "remote-qualified146-restored-v1.json": "7c7a87f360c8ecd2306b59bfae77478e7d008f73e6f6f83c261b9f1bc37fba92",
+    "reset-after-failed150-v1.py": "9068681f58ed4a8f5d9426f1a9092b99ce3f16bb0cfd2bbb26c70e7fdf501997",
+    "reboot-after-failed150-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "chainload-after-failed150-v1.log": "e63bbe87bb287bd2798801a1c53a4afc2fb1a72e74abc9dae83d7db9a8fc5fbe",
+    "proxy-after-failed150-v1.log": "27ea8f371f7c2e0276164435701c34bf5bb481f70cffceb06482628cf9b9bc81"
+  },
+  "canonical_source_sha256": {
+    "proxyclient/experiments/agx_g16c_validate_operand_banks.py": "ed1c393e1bff850565bfb2f3a3ff8aa3c9c358320d79448806de695f991594a8"
+  }
+}
