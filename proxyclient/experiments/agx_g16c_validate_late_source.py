@@ -5,7 +5,7 @@
 Run from the bootloader checkout. This host-only bisection stage requires the
 stable warm/late/resume UAT captures and successful independent cold replay.
 It compiles the actual Linux versions macro and production Rust structs, builds
-all twelve descriptors, twelve ready records and five wrappers from semantic
+the shared Neo/Max constructor inputs, all twelve descriptors, twelve ready records and five wrappers from semantic
 inputs, then checks every byte and all 72 ordered register writes. Captured
 objects are comparison oracles; their payload bytes never populate Rust structs.
 The output is suitable for the separate cold hardware source-replacement replay;
@@ -33,14 +33,15 @@ class Capture:
   result=bytearray()
   while size:
    j=bisect_right(self.vs,va)-1;assert j>=0;r=self.maps[j];assert va<r['va']+r['size'];pa=r['pa']+va-r['va'];i=bisect_right(self.starts,pa)-1;assert i>=0;c=self.chunks[i];assert pa<c['pa']+c['size']
-   if i not in self.cache:self.cache[i]=gzip.decompress((self.path/c['file']).read_bytes())
+   if i not in self.cache:
+    data=gzip.decompress((self.path/c['file']).read_bytes());assert len(data)==c['size']and hashlib.sha256(data).hexdigest()==c['sha256'];self.cache[i]=data
    n=min(size,r['va']+r['size']-va,c['pa']+c['size']-pa);at=pa-c['pa'];result.extend(self.cache[i][at:at+n]);va+=n;size-=n
   return bytes(result)
 sha=lambda data:hashlib.sha256(data).hexdigest()
 code=['#![allow(dead_code)]\nuse std::path::Path;\n']
-for name,source in [('wire','scheduled_compute.rs'),('work','scheduled_work.rs'),('execution','scheduled_execution_g16c.rs')]:code.append(f'#[path={json.dumps(str(tests.parent/source))}] mod {name};\n')
+for name,source in [('protocol','g17p_compute.rs'),('wire','scheduled_compute.rs'),('work','scheduled_work.rs'),('execution','scheduled_execution_g16c.rs')]:code.append(f'#[path={json.dumps(str(tests.parent/source))}] mod {name};\n')
 code.append('fn main(){let d=std::env::args().nth(1).unwrap();let d=Path::new(&d);\n')
-manifest=dict(source_payload_bytes_copied=False,baseline=str(out/'cold-replay-v2/result.json'),baseline_sha256=sha((out/'cold-replay-v2/result.json').read_bytes()),phases={},source_sha256={str(p.relative_to(linux)):sha(p.read_bytes())for p in [tests.parent/'scheduled_compute.rs',tests.parent/'scheduled_work.rs',tests.parent/'scheduled_execution_g16c.rs',linux/'rust/macros/versions.rs']});expected={};serial=0
+manifest=dict(source_payload_bytes_copied=False,baseline=str(out/'cold-replay-v2/result.json'),baseline_sha256=sha((out/'cold-replay-v2/result.json').read_bytes()),phases={},source_sha256={str(p.relative_to(linux)):sha(p.read_bytes())for p in [tests.parent/'g17p_compute.rs',tests.parent/'scheduled_compute.rs',tests.parent/'scheduled_work.rs',tests.parent/'scheduled_execution_g16c.rs',linux/'rust/macros/versions.rs']});expected={};serial=0
 inventory=json.loads((out/'captured-backlog-inventory-v1.json').read_text())
 for name in ['warm','late','resume']:
  capture=Capture(root/name/'uat');plan=json.loads((root/name/'uat/replay-plan.json').read_text());phase=dict(objects=[],transactions_file=name+'-transactions.bin');manifest['phases'][name]=phase
@@ -50,12 +51,14 @@ for name in ['warm','late','resume']:
   pairs=[struct.unpack_from('<IQ',body,0x40+i*12)for i in range(h(0x1e))];values=dict(pairs);first=lambda reg:next(v for n,v in pairs if n==reg)
   params=dict(save_area=values[0x1a510],cdm=values[0x1a420],identity=values[0x1a540],context=w(0xc),ordinal=values[0x10201]&255,robustness=values[0x14070]&~1,operand_state=values[0xa5c1]-5,helper_binary=values.get(0x11841,0),helper_data=values.get(0x11849,0),helper_config=values.get(0x11f81,0),execution_gate=values[0x14028],register_a599=first(0xa599))
   usc='Some('+str(values[0x10071])+')'if 0x10071 in values else'None'
-  code.append('let program=wire::ProgramParameters{'+','.join(f'{k}:{v}'for k,v in params.items())+',usc_exec_base:'+usc+'};\nlet program=wire::ComputeProgramG16C::new(&program).unwrap();\n')
+  adapter_params={({'save_area':'preempt','helper_config':'helper_cfg'}.get(k,k)):v for k,v in params.items()}
+  code.append('let program=protocol::ProgramG16C{'+','.join(f'{k}:{v}'for k,v in adapter_params.items())+',usc_exec_base:'+usc+'}.build().unwrap();\n')
   code.append('assert_eq!(program.registers(),&['+','.join(f'({n},{v})'for n,v in pairs)+']);\n')
   descriptor=dict(save_area=values[0x1a510],cdm=values[0x1a420],identity=values[0x1a540],sequence=q(4),context=w(0xc),scheduler=q(0x10),alias=q(0x740)-0x40,terminator=q(0xee0),sampler_array=q(0xf2c),sampler_count=w(0xf34),grid=w(0xf54),queue_submission=w(0xf50)>>8,queue_ordinal=w(0xf58),submission_index=w(0xf60),ordinal=w(0xf70),support=q(0xfb2),support_control=w(0xfba),support_flags=w(0xfbe),support_kind=h(0xfc5),support_phase=body[0xfd3],zero_page=q(0xfcb))
-  code.append('let p=wire::Parameters{'+','.join(f'{k}:{v}'for k,v in descriptor.items())+f',dispatch:[{q(0xf40)},{q(0xf48)}],status:[{q(0xf7c)},{q(0xf84)}],timestamps:[{q(0xf8c)},{q(0xf94)}]'+'};\n')
+  adapter_fields={({'alias':'low_alias','terminator':'cdm_terminator','support':'shared_control'}.get(k,k)):v for k,v in descriptor.items()}
+  code.append('let p=protocol::DescriptorG16C{'+','.join(f'{k}:{v}'for k,v in adapter_fields.items())+f',dispatch:[{q(0xf40)},{q(0xf48)}],status:[{q(0xf7c)},{q(0xf84)}],timestamps:[{q(0xf8c)},{q(0xf94)}]'+'};\n')
   filename=f'{name}-{serial:02d}-descriptor.bin';serial+=1
-  code.append(f'let mut raw=vec![0u8;0x1000];wire::ComputeDescriptorG16C::write(&mut raw,&p,program.registers()).unwrap();std::fs::write(d.join("{filename}"),&raw).unwrap();\n');expected[filename]=body;phase['objects'].append(dict(kind='descriptor',address=address,bytes=0x1000,file=filename,inputs=descriptor,program_inputs=params))
+  code.append(f'let mut raw=vec![0u8;0x1000];p.build(&mut raw,program.registers()).unwrap();std::fs::write(d.join("{filename}"),&raw).unwrap();\n');expected[filename]=body;phase['objects'].append(dict(kind='descriptor',address=address,bytes=0x1000,file=filename,inputs=descriptor,program_inputs=params))
   record_address=row['scratch_high']+row['slot']*512;raw=capture.read(record_address,512);rq=lambda at:struct.unpack_from('<Q',raw,at)[0];header=rq(0);dep=rq(0x20);points=[];enabled=dep&0xffffffff;assert enabled in [1,3,7,15]
   for i in range(enabled.bit_count()):
    point=rq(0x28+i*8);points.append((point>>40,point&0xffffffff))
@@ -93,5 +96,5 @@ from collections import Counter
 counts=Counter(obj['kind']for phase in manifest['phases'].values()for obj in phase['objects']);assert counts=={'descriptor':12,'record':12,'wrapper':5}
 assert sum(phase['transactions_count']for phase in manifest['phases'].values())==72
 assert sum(len(value)for value in expected.values())==56256
-manifest.update(all_generated_bytes_match_complete_captured_objects=True,descriptors=12,records=12,wrappers=5,source_object_bytes=sum(len(v)for v in expected.values()),source_file_sha256=sha((build/'source.rs').read_bytes()),kernel_source_unchanged=True,hardware_source_replay_qualified=False)
+manifest.update(all_generated_bytes_match_complete_captured_objects=True,descriptors=12,records=12,wrappers=5,source_object_bytes=sum(len(v)for v in expected.values()),source_file_sha256=sha((build/'source.rs').read_bytes()),kernel_source_unchanged=True,runtime_instantiation_uses_shared_Neo_input_adapters=True,hardware_source_replay_qualified=False)
 (build/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print('PASS production macro-generated Rust:12 complete descriptors,12 full SKSM records,5 wrappers,72 ordered transactions match RE bytes; no payload bytes copied')
