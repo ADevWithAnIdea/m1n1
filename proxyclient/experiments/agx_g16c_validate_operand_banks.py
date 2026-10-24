@@ -69,9 +69,9 @@ def inspect_descriptor(capture, address):
     data = capture.read(address, 0x1000)
     count = struct.unpack_from('<H', data, 0x1e)[0]
     assert 0 < count <= (0x740 - 0x40) // 12
-    gates = [value for register, value in
-             (struct.unpack_from('<IQ', data, 0x40 + index * 12)
-              for index in range(count)) if register == 0x14028]
+    registers = [struct.unpack_from('<IQ', data, 0x40 + index * 12)
+                 for index in range(count)]
+    gates = [value for register, value in registers if register == 0x14028]
     assert len(gates) == 1
     bank = gates[0]
     # This reference exercises banks zero and one; do not infer capacity.
@@ -85,8 +85,15 @@ def inspect_descriptor(capture, address):
     assert support_bank == bank, (hex(address), bank, support_bank)
     assert encoded_directory == 0x4000000000000000 | directory >> 7
     assert directory % 0x4000 == 0 and pages > 0
+    tags = [value for register, value in registers
+            if register in (0x10201, 0x10428)]
+    assert len(tags) == 2 and tags[0] == tags[1]
+    context = struct.unpack_from('<I', data, 0xc)[0]
+    assert tags[0] >> 8 == context
     return dict(descriptor=address, descriptor_sha256=digest(data),
-                context=struct.unpack_from('<I', data, 0xc)[0],
+                context=context, program_tag=tags[0],
+                program_ordinal=tags[0] & 255,
+                descriptor_sequence=struct.unpack_from('<Q', data, 4)[0],
                 grid=struct.unpack_from('<I', data, 0xf54)[0],
                 register_14028=bank, support=support_address,
                 support_sha256=digest(support), support_word_08=support_bank,
@@ -142,6 +149,13 @@ def main():
     assert (resumed['context'], resumed['grid'], resumed['register_14028']) == (1, 0, 1)
     assert resumed['support'] != warm[0]['support']
     assert resumed['directory'] != warm[0]['directory']
+    # Two different warm queues share the client's tag sequence. The later
+    # return changes pools without resetting that sequence. This short capture
+    # does not establish wrap behavior or the full tag-allocation protocol.
+    parent = [r for phase in phases.values() for r in phase if r['context'] == 1]
+    assert [r['program_ordinal'] for r in parent] == list(range(11))
+    assert [r['descriptor_sequence'] for r in parent] == [0, 0] + list(range(1, 10))
+    assert child_late[0]['program_ordinal'] == 0
     report = dict(pass_=True, scope='Offline DATA audit of previously qualified captures',
                   descriptors_verified=12, phases=phases, evidence_sha256=evidence,
                   register_matches_support_word_08=True,
@@ -149,6 +163,9 @@ def main():
                   asid_minus_one_is_not_a_general_abi_rule=True,
                   bank_capacity_or_assignment_protocol_proven=False,
                   cause_of_kernel_interleaving_failure_proven=False,
+                  parent_program_ordinals=list(range(11)),
+                  child_program_ordinal=0,
+                  program_tag_wrap_or_allocation_protocol_proven=False,
                   new_hardware_execution=False, apple_binary_disassembly=False)
     report['pass'] = report.pop('pass_')
     args.output.parent.mkdir(parents=True, exist_ok=True)

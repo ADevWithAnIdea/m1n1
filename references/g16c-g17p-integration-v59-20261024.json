@@ -1,0 +1,225 @@
+{
+  "version": 59,
+  "date": "2026-10-24",
+  "goal_status": "active; not complete",
+  "previous_goal_turn_classification": "progress: new hardware diagnostics and captured tag relationships; no qualified runtime change",
+  "Linux_clean": true,
+  "Linux_HEAD": "c38b4bb32ad38eeee30be70ea70d8dc053ae1fed",
+  "qualified_kernel": 146,
+  "all160_local_remote_qualified_sources_restored": true,
+  "remote_compiled_Image154_failed_do_not_use": true,
+  "trials": [
+    {
+      "kernel": 151,
+      "name": "banks-v1",
+      "all160_compiled_sources_archived_exact": true,
+      "source_manifest_sha256": "6e9e48576c635855fe90bc3f0a92ab6c4b03b37dc4bbe6ac8f435e19ea7b7bee",
+      "patch_sha256": "0ec948de13f894442f149edf2c7c6647c6c394845ce12a609cc5c2eea49edb7e",
+      "qualified": false
+    },
+    {
+      "kernel": 152,
+      "name": "banks-v2",
+      "all160_compiled_sources_archived_exact": true,
+      "source_manifest_sha256": "baf2bc6e4cee14917d5de83708e87858cf5f92dc1a32ec493680199d20d429aa",
+      "patch_sha256": "cc2c8babc06f95b7add4cc06ad9be673985f053093c8f7686807a62b49f07aae",
+      "qualified": false
+    },
+    {
+      "kernel": 153,
+      "name": "tag-v1",
+      "all160_compiled_sources_archived_exact": true,
+      "source_manifest_sha256": "b760c66ae45e610428ba186b44f436c0a31b0e10d7e33ee58b134b64c76d3a51",
+      "patch_sha256": "e07142f9017a0babbba20f7c4ff431797fe567356aa073dd80f4249902570de5",
+      "qualified": false
+    },
+    {
+      "kernel": 154,
+      "name": "failure-data-v1",
+      "all160_compiled_sources_archived_exact": true,
+      "source_manifest_sha256": "798dd6085259ec3864669c455d2010e13c89a9cdae9af3197e0453daca4d3a8f",
+      "patch_sha256": "edc906795453b30c3c9ab90c106e8aae3f6e3bfb5538575dc662651e436eb3f8",
+      "qualified": false
+    }
+  ],
+  "diagnostic151": {
+    "render_first32_pass": true,
+    "old_queue_return_pass": true,
+    "memory_checks": 6313,
+    "CPUs": "0-15",
+    "actual_guest_hashes": 259,
+    "per_submission_logging_changed_admission_timing": true,
+    "Vulkan_not_run": true,
+    "not_a_fix_or_general_qualification": true
+  },
+  "failure152": {
+    "no_per_submission_logging": true,
+    "actual_firmware_event4": true,
+    "reserved_dispatch_directories_intact": true,
+    "C_final_line_not_reliably_visible": true
+  },
+  "failure153": {
+    "per_client_program_tag_matches_native_short_sequence": true,
+    "actual_firmware_event4_and_C_failure": true,
+    "did_not_fix_handoff": true
+  },
+  "failure154": {
+    "kernel": 154,
+    "qualified": false,
+    "all160_tested_sources_exact": true,
+    "actual_firmware_event4": true,
+    "packets": [
+      {
+        "index": 0,
+        "grid": 2,
+        "driver_stamp": 2048,
+        "expected_stamp": 2304,
+        "GPU_start": 0,
+        "GPU_end": 0
+      },
+      {
+        "index": 1,
+        "grid": 3,
+        "driver_stamp": 1536,
+        "expected_stamp": 1792,
+        "GPU_start": 742185083,
+        "GPU_end": 743879084
+      }
+    ],
+    "terminal_owned_DATA_lines": [
+      "G16C: failed binding index=0 event=2 sequence=9 bound=true queue=0 key=(5, 1) context=1 local=4 namespace=0 scratch=0xfffffc2206040000 header=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000] pointers=[0000000000000008, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000008, 0000000000000000] context_words=[00c8000403040000, 0000000003e80000, 0000000000040000, 0000000000000000, 0002000000000000, 0000000000000000, 0000000000000000, 0000000000000000]",
+      "G16C: failed record binding=0 address=0xfffffc2206041200 offset=0x0 words=[1000080000000024, 0000000000000000, fffffc20d1000000, fffffc2208058000, 0fa0080000000003, 0000020000000008, 0000030000000007, 0000000000000000]",
+      "G16C: failed record binding=0 address=0xfffffc2206041200 offset=0x40 words=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000]",
+      "G16C: failed record binding=0 address=0xfffffc2206041200 offset=0x100 words=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000002]",
+      "G16C: failed record binding=0 address=0xfffffc2206041200 offset=0x140 words=[0000000000000000, 0000000000000000, 000130038087f402, 000020038087f43b, 0000000000000000, 0000000000000000, 0000000000000000, 003fffffffffffff]",
+      "G16C: failed binding index=1 event=3 sequence=7 bound=true queue=1 key=(5, 1) context=1 local=2 namespace=1 scratch=0xfffffc2206060000 header=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000] pointers=[0000000000000004, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000004, 0000000000000000] context_words=[00c8000403040101, 0000000003e80000, 0000000000080000, 0000000000000000, 0002000000000000, 4c00000000000000, 000000000100020f, 0000000000000000]",
+      "G16C: failed record binding=1 address=0xfffffc2206060e00 offset=0x0 words=[10000c000000001c, 0000000000000000, fffffc20d1080000, fffffc22080dc000, 0fa0080100000001, 0000030000000006, 0000000000000000, 0000000000000000]",
+      "G16C: failed record binding=1 address=0xfffffc2206060e00 offset=0x40 words=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000]",
+      "G16C: failed record binding=1 address=0xfffffc2206060e00 offset=0x100 words=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000002]",
+      "G16C: failed record binding=1 address=0xfffffc2206060e00 offset=0x140 words=[0000000000000000, 0000000000000001, 0001380380883402, 000020038088343b, 0000000000000000, 0000000000000000, 0000000000000000, 003fffffffffffff]",
+      "G16C: failed binding index=2 event=4 sequence=1 bound=true queue=2 key=(4, 1) context=2 local=1 namespace=2 scratch=0xfffffc2206080000 header=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000] pointers=[0000000000000002, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000002, 0000000000000000] context_words=[00c8000403040202, 0000000003e80000, 0000000000100000, 0000000000000000, 0002000000000000, 0000000000000000, 0000000002000000, 0000000000000000]",
+      "G16C: failed record binding=2 address=0xfffffc2206080200 offset=0x0 words=[1000100000000004, 0000000000000000, fffffc20d1000000, fffffc2208160000, 0fa0080200000001, 0000040000000000, 0000000000000000, 0000000000000000]",
+      "G16C: failed record binding=2 address=0xfffffc2206080200 offset=0x40 words=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000]",
+      "G16C: failed record binding=2 address=0xfffffc2206080200 offset=0x100 words=[0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000002]",
+      "G16C: failed record binding=2 address=0xfffffc2206080200 offset=0x140 words=[0000000000000000, 0000000000000000, 000130038087f402, 000020038087f43b, 0000000000000000, 0000000000000000, 0000000000000000, 003fffffffffffff]",
+      "G16C: failed packet index=0 queue=0 descriptor=0xfffffc20d1000000 header=[0000000500000003, 0000000100000000, fffffc20d1008000, 0028002700270026, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000] trailer=[fffffc20d100c100, fffffc2208059040, 0000000200000900, 0000000000000000, 0000000000000009, 00000000000000c1, 0000000000000005, d100c12000000000] scheduler=[fffffc20d100c140, 0000000000000000, 0000000000000050, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000] stamps=[0000000000000800, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000]",
+      "G16C: failed packet index=1 queue=1 descriptor=0xfffffc20d1080000 header=[0000000400000003, 0000000100000000, fffffc20d1088000, 0028002700270026, 0000000000010000, 0000000000000000, 0000000000000000, 0000000000000000] trailer=[fffffc20d108c100, fffffc22080dd040, 0000000300000700, 0000000000000000, 0000000000000007, 00000000000000c1, 0000000000000004, d108c12000000000] scheduler=[fffffc20d108c140, 0000000000000000, 0000000000000050, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000, 0000000000000000] stamps=[0000000000000600, 0000000000000000, 0000000000000000, 0000000000000000, 000000002c3cd87b, 000000002c56b1ac, 0000000000000000, 0000000000000000]"
+    ],
+    "partial_inference": "GPU timestamps produced for grid3 without its driver stamp; grid2 record waits for grid3 count7. Not proof of the missing retirement operation.",
+    "C_failure_line_visible": false,
+    "log_sha256": "12533864bc9177071ec5a6f82b2a19e9a2bbd73202313384b897cc914b5dc0e9"
+  },
+  "operator_steering": "Reuse the good Neo runtime/scheduling and minimize Max-specific changes; #ver is intended to keep this one driver. Do not continue speculative independent Max runtime work.",
+  "code_audit": {
+    "shared": [
+      "Point/Schedule dependency DAG",
+      "publication and user fences",
+      "CPU worker/event callbacks",
+      "caller immutable snapshots and BO references"
+    ],
+    "divergence": [
+      {
+        "path": "drivers/gpu/drm/asahi/g17p_schedule.rs",
+        "line": 687,
+        "fact": "G16C dispatch branches into separate stage_g16c_compute/stage_g16c_render before Neo admission/preparation/retirement path"
+      },
+      {
+        "path": "drivers/gpu/drm/asahi/g17p_compute_queues.rs",
+        "line": 22,
+        "fact": "Neo retained queue-generation model: Layout per owner, per-slot descriptor/scheduler/status storage, preparation seeds built outside runtime mutex"
+      },
+      {
+        "path": "drivers/gpu/drm/asahi/scheduled_compute_runtime.rs",
+        "line": 881,
+        "fact": "Max separately manages two reusable work packet addresses plus queue/owner/scratch lifetime state"
+      },
+      {
+        "path": "drivers/gpu/drm/asahi/g17p_schedule.rs",
+        "line": 510,
+        "fact": "G16C bypasses Neo render scratch/template and other off-lock preparation helpers"
+      }
+    ],
+    "cause_of_timeout_from_architectural_divergence_proven": false,
+    "next": "Finish an evidence-based port of Max wire types/constants into Neo queue-generation and lifetime machinery. Preserve Neo behavior and qualify Max as each portion moves; do not create another scheduler or merely wrap two different runtimes in a common trait."
+  },
+  "render_first_reference": {
+    "own_source_compiled": true,
+    "source": "proxyclient/experiments/metal_g16c_compute_late_render_first.m",
+    "binary_sha256": "6fc0cd0e3dc705fe09bb46a6d9b5e64578dc6346c3cd662dc6f33dc34ea03245",
+    "compiler_command": "xcrun clang -arch arm64 -O2 -fobjc-arc -Wall -Wextra -Werror -framework Foundation -framework Metal proxyclient/experiments/metal_g16c_compute_late_render_first.m -o build/m4max-gpu/g16c-render-first-late-20261024/metal-render-first-late-v1",
+    "intended_phases": [
+      "render",
+      "warm",
+      "late",
+      "resume"
+    ],
+    "render_child_must_exit_before_parent_Metal_device_creation": true,
+    "all12_work_channels_hooked": true,
+    "trusted_existing_render_capture_helper_reused": true,
+    "HV_command": "env -u M1N1HEAP M1N1DEVICE=/dev/cu.usbmodemJPWWJRX2N01 .venv/bin/python -u build/m4max-gpu/g16c-render-first-late-20261024/wrapper-render-first-v1.py --artifact build/m4max-gpu/g16c-render-first-late-20261024/native-render-first-v1 --startup-history --submissions 2 --cross-client-compute-pair --hold-two-compute-producers",
+    "actual_native_GPU_execution": false,
+    "new_UAT_capture": false,
+    "all16_CPUs_requested": true,
+    "guest_all16_not_yet_verified": true,
+    "console_process_terminal": "180-second shell observation deadline; no workload ran",
+    "HV_process_live_confirmed": "98776 11:36 S+   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u build/m4max-gpu/g16c-render-first-late-20261024/wrapper-render-first-v1.py --artifact build/m4max-gpu/g16c-render-first-late-20261024/native-render-first-v1 --startup-history --submissions 2 --cross-client-compute-pair --hold-two-compute-producers",
+    "HV_pid": 98776,
+    "HV_exec_session": 53097,
+    "HV_response_to_one_explicit_SIGINT_not_yet_observed": true,
+    "HV_not_declared_terminal_or_rebooted_due_to_console_observation_deadline": true,
+    "last_guest_output": "PCI configuration end, bridges3 devices0",
+    "last_HV_output": "CPU9 start on cluster1",
+    "do_not_start_a_second_monitor_on_N01": true
+  },
+  "remaining_full_goal": [
+    "finish sharing Neo generation/admission/retirement machinery with only evidenced Max ABI/platform differences",
+    "fix and qualify new-client admission/old-client return",
+    "sustained recycling and active file close",
+    "differing live pool capacities and automatic demand",
+    "true render-compute overlap",
+    "fault and uncertain publication paths",
+    "live Neo hardware regression",
+    "final combined sustained qualification"
+  ],
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "Neo_tag_and_public_snapshot_unchanged": true,
+  "new_pushes": false,
+  "Apple_binary_disassembly": false,
+  "full_goal_complete": false,
+  "canonical_source_sha256": {
+    "proxyclient/experiments/agx_g16c_validate_operand_banks.py": "bc8b3a6d290fb860cbec43f51275bf90227d2c04d364d16382aa4790269da298",
+    "proxyclient/experiments/metal_g16c_compute_late_render_first.m": "4eb3d21a08df8c8c5f8424e8123cf8740b26166d6f8532e57fcf0f320738e542",
+    "proxyclient/experiments/metal_g16c_compute_late_client.m": "a0632aebcbfadad8949529c4e98e28a26fc1598c1e6662f0398413c1cab94bd6"
+  },
+  "artifact_root": "build/m4max-gpu/g16c-binding-leases-20261023",
+  "new_reference_root": "build/m4max-gpu/g16c-render-first-late-20261024",
+  "key_artifact_sha256": {
+    "build/m4max-gpu/g16c-binding-leases-20261023/operand-bank-and-tag-audit-v2.json": "ea07d2fc850c700d8bcf1b63aa48f561a637d4b9ca3a65028dde5bc56aa3aa34",
+    "build/m4max-gpu/g16c-binding-leases-20261023/failure-banks-v2.json": "9c16f3565993169e55523fafaccc6b90c347a40b2bf7b3236f04d45f867adad1",
+    "build/m4max-gpu/g16c-binding-leases-20261023/failure-tag-v1.json": "f61dc4625f775bb403f71844dd7918a43afa2d11fb97cbd73237fd063dacc1a3",
+    "build/m4max-gpu/g16c-binding-leases-20261023/failure-data-decoded-v1.json": "92128d7d9b15cf97bb83e40ea08d4e6ae0ba2457ff40c90b7a7a1409bea94c01",
+    "build/m4max-gpu/g16c-binding-leases-20261023/remote-qualified146-restored-v2.json": "8d94f34793464886a7aec3cbd80d676bb6fba37e9ebd81495c123fba89c83c7b",
+    "build/m4max-gpu/g16c-render-first-late-20261024/capture-render-first-v1.py": "a50eee886ce9a01753aa3de917cfd22dbfd77d547502fc7957ca404b138e69e0",
+    "build/m4max-gpu/g16c-render-first-late-20261024/wrapper-render-first-v1.py": "d34b12252092b47eb90062c470c07d072c9e982bb70f3a40e2514d97f3cf3993",
+    "build/m4max-gpu/g16c-render-first-late-20261024/console-render-first-v1.py": "383d8ef70954363d2029e81a7592e4a7924906780d0c763e8d451bd450cecc94",
+    "build/m4max-gpu/g16c-render-first-late-20261024/console-v1.log": "081b01d292df3e023ae113a9308bd7e3120daf35bdb5728f077418828f4039a1",
+    "build/m4max-gpu/g16c-render-first-late-20261024/native-render-first-v1/console-render-first-v1.json": "c14438679d5b1e43b500ac4776a857610abad70e60c1c66f2b25dce43904fbdd"
+  }
+}
