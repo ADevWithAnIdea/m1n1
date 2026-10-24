@@ -1,0 +1,766 @@
+{
+  "version": 65,
+  "date": "2026-10-24",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "f4f05b2944a3c3a8aab39e5b6d27ff668d7d2446",
+  "production_driver_changed": false,
+  "qualified_native_kernel": 172,
+  "actual_remote_compiled_kernel": 174,
+  "current174_not_native_tested": true,
+  "actual174_driver_machine_code_bit_identical_to_qualified172": true,
+  "all164_current_local_remote_source_hashes_exact": true,
+  "source_bisections": [
+    {
+      "case": "same-asid-cold-replay-v1",
+      "result_sha256": "1f3815d1a5e99ce7df57987c2eb73870204844e6658faf1ee865685937651a34",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 482751659,
+          "end": 484243072,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 482752202,
+          "end": 484243607,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20114605130
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20114605130
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "all_AP_DATA_and_roots_preseeded": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "ee17b416980b2661d28db3da485b5a1853994526812e87fe4d81a8455c854c95"
+      }
+    },
+    {
+      "case": "same-asid-live-leaves-replay-v1",
+      "result_sha256": "f506ca225560a194ea0c64824c93f0ca4e42c392d4e20eb55205496e1bbada87",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 485250625,
+          "end": 486742040,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 485251249,
+          "end": 486742668,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20218713714
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20218718048
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "AP_DATA_preseeded_but_16_scratch_leaves_withheld_until_acceptance": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "38fcea79bd4acb5206a7ea166c7c424dd8bbc8a644591c27262ee0754775e5cb",
+        "global_invalidation_matches_Linux_Vm_invalidate_gpu": true
+      }
+    },
+    {
+      "case": "same-asid-live-scratch-replay-v1",
+      "result_sha256": "31cadac8a1672431a2cb867301b67cb93131be6a18e28b2fab2ebf4da2d33f1b",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 482557245,
+          "end": 484048687,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 482557972,
+          "end": 484049391,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20106481997
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20106496580
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "AP_DATA_preseeded_but_16_scratch_leaves_withheld_until_acceptance": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "fec5e0aa9587aea9399d760883e0623ce917dde04ca24d99d0cb3d283336748d",
+        "live_full_source_SKSM": {
+          "bytes": 131072,
+          "zero_bytes": 130560,
+          "Rust_source_record_bytes": 512,
+          "Rust_source_record_sha256": "e499f60c69ceca09c1b51aed6d98752cad74de8900165a46a13ec657ac41ae69",
+          "all_backing_initialized_AFTER_parent_acceptance": true,
+          "no_captured_payload_copied": true
+        },
+        "global_invalidation_matches_Linux_Vm_invalidate_gpu": true
+      }
+    },
+    {
+      "case": "same-asid-shared-namespace-replay-v1",
+      "result_sha256": "de786aea2f0cadb144dd68b7ef6dd2d68ef767816727a6583a0a11368e229c87",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 480589041,
+          "end": 482080467,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 480589778,
+          "end": 482081199,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20024491639
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20024491681
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "all_AP_DATA_and_roots_preseeded": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "ee17b416980b2661d28db3da485b5a1853994526812e87fe4d81a8455c854c95"
+      }
+    },
+    {
+      "case": "same-asid-global-start-replay-v1",
+      "result_sha256": "0c4d6b4cc99a1ac074c52d0a1b97d9717c9afa46b82dbec98e901b3bbb652aea",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 484516268,
+          "end": 486007682,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 484516836,
+          "end": 486008241,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20188125560
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20188125560
+        },
+        "EXTRA_Linux_global_start_write": {
+          "address": 10885349376,
+          "width": 32,
+          "value": 327685
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "all_AP_DATA_and_roots_preseeded": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "6c1c2dacc9ec4734cee2e25ccefc0d44b17afd7a7eb9384a631e74f260bcc857"
+      }
+    },
+    {
+      "case": "same-asid-namespace-start-replay-v1",
+      "result_sha256": "4b8fca4851a4780d701f90270035670c7b8afa708a43339b541f2d520db22ef6",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 485370014,
+          "end": 486861441,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 485370710,
+          "end": 486862129,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20223699847
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 0,
+          "CPU_tick": 20223699847
+        },
+        "EXTRA_Linux_global_start_write": {
+          "address": 10885349376,
+          "width": 32,
+          "value": 327685
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "all_AP_DATA_and_roots_preseeded": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "6c1c2dacc9ec4734cee2e25ccefc0d44b17afd7a7eb9384a631e74f260bcc857"
+      }
+    },
+    {
+      "case": "same-asid-delay1ms-replay-v2",
+      "result_sha256": "7d0c8ef3325ec72d08c65f4c0ff6bde9b2e5dea9921c5fc69262e2bce4bedb11",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 483577753,
+          "end": 485069166,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 483602430,
+          "end": 485093854,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 2,
+          "CPU_tick": 20150032206
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 2,
+          "CPU_tick": 20150032206
+        },
+        "EXTRA_Linux_global_start_write": {
+          "address": 10885349376,
+          "width": 32,
+          "value": 327685
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "all_AP_DATA_and_roots_preseeded": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "6609c185bf7eea650b9a1474d6416f614ba5a01d70a10798e81cefd77fedeadf",
+        "post_acceptance_delay": {
+          "start": 20149032167,
+          "end": 20150032206,
+          "frequency": 1000000000,
+          "required_seconds": 0.001
+        },
+        "completion_stamps": {
+          "before": 0,
+          "after": 0,
+          "expected": 256,
+          "physical": 1100722372608
+        }
+      }
+    },
+    {
+      "case": "same-asid-live-delayed-replay-v1",
+      "result_sha256": "f72bbcc6dc95d5c7bc2a9cefb1b50f2d3574070700ce66e16a234422d7b36bcb",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 484993234,
+          "end": 486484727,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 485018183,
+          "end": 486509644,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 2,
+          "CPU_tick": 20209004042
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 2,
+          "CPU_tick": 20209019226
+        },
+        "EXTRA_Linux_global_start_write": {
+          "address": 10885349376,
+          "width": 32,
+          "value": 327685
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "other_AP_DATA_and_roots_preseeded_but_16_scratch_leaves_withheld": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "2729370e300b6a7156e9480491c652fb29ceff5f9ef9b8c63123c05677d1a2d9",
+        "post_acceptance_delay": {
+          "start": 20208004003,
+          "end": 20209004042,
+          "frequency": 1000000000,
+          "required_seconds": 0.001
+        },
+        "completion_stamps": {
+          "before": 0,
+          "after": 0,
+          "expected": 256,
+          "physical": 1100722372608
+        },
+        "live_full_source_SKSM": {
+          "bytes": 131072,
+          "zero_bytes": 130560,
+          "Rust_source_record_bytes": 512,
+          "Rust_source_record_sha256": "724f0b7995053fb6ac608f145281758146dc4e56b7f50969f925c183f08cfd8d",
+          "all_backing_initialized_AFTER_parent_acceptance_and_delay": true,
+          "no_captured_payload_copied": true
+        },
+        "global_invalidation_matches_Linux_Vm_invalidate_gpu": true
+      }
+    },
+    {
+      "case": "same-asid-uapi40-replay-v2",
+      "result_sha256": "0b730976412c327b38351d6c59026ea412082014b089d4c12f8d1a93da5062ac",
+      "complete_output_buffers": 5,
+      "output_bytes": 800,
+      "GPU_intervals": 12,
+      "all_eight_late_parent_markers_and_original_queue_return": true,
+      "warm_actual_overlap": true,
+      "warm_GPU_intervals": [
+        {
+          "context": 1,
+          "descriptor": 18446739816326725632,
+          "start": 482165449,
+          "end": 483656874,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        },
+        {
+          "context": 1,
+          "descriptor": 18446739816326729792,
+          "start": 482189957,
+          "end": 483681382,
+          "driver_stamp": 256,
+          "expected_stamp": 256
+        }
+      ],
+      "trace": {
+        "context": 1,
+        "parent_grid": 0,
+        "child_grid": 1,
+        "target_status": 0,
+        "before_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 2,
+          "CPU_tick": 20091179255
+        },
+        "after_binding": {
+          "outer_read": 1,
+          "parent_end": 0,
+          "parent_queue_done": 2,
+          "CPU_tick": 20091179297
+        },
+        "EXTRA_Linux_global_start_write": {
+          "address": 10885349376,
+          "width": 32,
+          "value": 327685
+        },
+        "outer_producer_split": [
+          1,
+          2
+        ],
+        "all_AP_DATA_and_roots_preseeded": true,
+        "firmware_acceptance_is_not_GPU_execution_proof": true,
+        "own_target_routine_sha256": "6609c185bf7eea650b9a1474d6416f614ba5a01d70a10798e81cefd77fedeadf",
+        "post_acceptance_delay": {
+          "start": 20090179217,
+          "end": 20091179255,
+          "frequency": 1000000000,
+          "required_seconds": 0.001
+        },
+        "completion_stamps": {
+          "before": 0,
+          "after": 0,
+          "expected": 256,
+          "physical": 1100722372608
+        }
+      }
+    }
+  ],
+  "totals": {
+    "independent_cold_positive_replays": 9,
+    "phases": 27,
+    "complete_output_buffers": 45,
+    "checked_output_bytes": 7200,
+    "actual_GPU_intervals": 108
+  },
+  "corrected_observation": "Queue pointer0 reached2 while GPU end timestamp remained0. It is consumption, not GPU completion proof. Earlier target/log labels parent_queue_done and before-first-retirement MUST NOT imply execution/completion. Correct delayed v2 and combined live case gate on end AND actual completion stamp, then verify full output/GPU intervals.",
+  "failed_probe": {
+    "case": "same-asid-delay1ms-replay-v1",
+    "GPU_firmware_failed": false,
+    "child_binding_attempted": false,
+    "reason": "bad diagnostic completion gate rejected consumed queue; corrected in v2"
+  },
+  "host_cleanup_failure": {
+    "case": "same-asid-live-leaves-replay-v1",
+    "actual_replay_pass": true,
+    "controller_exit1_from_raw_chainload_UartTimeout": true,
+    "subsequent_own_controllers_verified_RID0_raw_exact_identity": true
+  },
+  "host_uapi40_preparation_v1": "Independent verifier expected only one count but actual layout has four header counts and packed primary_count. Initial preparation stopped BEFORE hardware. Correct v2 independently validates ALL4096 descriptor bytes, all four inserted register pairs and derived scalar counts.",
+  "interpretation": "The listed same-ASID delayed cold binding protocols WORK with source-built128KiB scratch/live aliases and with actual40-register UAPI constructor form. No evidence here establishes an inherent firmware prohibition on same-ASID cold binding. Native173 remains a real failure; do not remove the guard without matching/qualifying actual kernel graph. Isolated namespace assignment, extra global start, their combination, and40-register form do not by themselves reproduce that failure under these tested inputs.",
+  "limits": [
+    "Different replay variants combine different pieces: 40-register test uses preseeded scratch; combined live-scratch test uses36-register programs. Do not claim their full combination was tested.",
+    "All replay roots and non-selected AP objects preseeded; live fresh-ASID root/dispatch publication NOT tested.",
+    "Reference warm queues use identities0/1 and firmware channel8/priority2. Native C default uses reserved-render identities2/3 and firmware low-priority channel11; this topology/input difference remains unbisected.",
+    "Replay still retains opaque surrounding pages and shader/resource inputs; only named data graph portions source built.",
+    "No native kernel or browser rerun this turn; no live Neo hardware test."
+  ],
+  "next": "Compare actual Linux173 failing emitted graph and exact immutable ownership against the working active same-ASID40-register source path. Reuse existing logging/crash-dump/packet ownership facilities if possible; preserve timing when observing. Continue common Neo generation/preparation machinery rather than new backend manager or guessed flags. Source bisection of remaining identity/channel/fully-source resource differences is available if comparison needs it.",
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "Apple_binary_disassembly": false,
+  "CPU_policy": "all16 native CPUs unchanged; plain replay CPU configuration unchanged",
+  "target_final": "Last uapi40v2 actual replay terminal PASS; RID0/raw chainload/exact N01 Mac16,5 chip6041/nop; N01/N03 unowned, no active target process",
+  "full_goal_complete": false,
+  "remaining": [
+    "early new-VM admission and working live cold binding or equivalent safe eager ownership",
+    "complete shared generation/admission/off-lock preparation and producer-dependency retirement machinery",
+    "asymmetric live pool capacities and automatic demand",
+    "actual render/compute overlap",
+    "fault and uncertain publication paths",
+    "final sustained recycling/active file-close and combined production graphics regression",
+    "Neo regression qualification; current evidence is source/wire/compiled metadata only, no live Neo hardware"
+  ],
+  "artifact_root": "build/m4max-gpu/g16c-shared-generations-20261024",
+  "key_artifact_sha256": {
+    "same-asid-cold-replay-v1/result.json": "1f3815d1a5e99ce7df57987c2eb73870204844e6658faf1ee865685937651a34",
+    "same-asid-cold-replay-v1/same-asid-cold-target.S": "47d9afbce5c870e45f52b56305329a13f52e919c01c4f5bea4bb8b29e0295308",
+    "same-asid-cold-replay-v1/same-asid-cold-target.bin": "ee17b416980b2661d28db3da485b5a1853994526812e87fe4d81a8455c854c95",
+    "same-asid-live-leaves-replay-v1/result.json": "f506ca225560a194ea0c64824c93f0ca4e42c392d4e20eb55205496e1bbada87",
+    "same-asid-live-leaves-replay-v1/same-asid-cold-target.S": "884fd38c943b6605e4acb07983b400ddcbbac3a65ddf2b41feb1d0ef85fc9dcc",
+    "same-asid-live-leaves-replay-v1/same-asid-cold-target.bin": "38fcea79bd4acb5206a7ea166c7c424dd8bbc8a644591c27262ee0754775e5cb",
+    "same-asid-live-scratch-replay-v1/result.json": "31cadac8a1672431a2cb867301b67cb93131be6a18e28b2fab2ebf4da2d33f1b",
+    "same-asid-live-scratch-replay-v1/same-asid-cold-target.S": "52450cabd40f6a0e2b59550019b1eec7d019d26deb46ead478686ca9fbf2e7ce",
+    "same-asid-live-scratch-replay-v1/same-asid-cold-target.bin": "fec5e0aa9587aea9399d760883e0623ce917dde04ca24d99d0cb3d283336748d",
+    "same-asid-shared-namespace-replay-v1/result.json": "de786aea2f0cadb144dd68b7ef6dd2d68ef767816727a6583a0a11368e229c87",
+    "same-asid-shared-namespace-replay-v1/same-asid-cold-target.S": "47d9afbce5c870e45f52b56305329a13f52e919c01c4f5bea4bb8b29e0295308",
+    "same-asid-shared-namespace-replay-v1/same-asid-cold-target.bin": "ee17b416980b2661d28db3da485b5a1853994526812e87fe4d81a8455c854c95",
+    "same-asid-global-start-replay-v1/result.json": "0c4d6b4cc99a1ac074c52d0a1b97d9717c9afa46b82dbec98e901b3bbb652aea",
+    "same-asid-global-start-replay-v1/same-asid-cold-target.S": "d892afc9637d1e112131cd9a29309de838a02e40480ca6ff3be89871f4f118d1",
+    "same-asid-global-start-replay-v1/same-asid-cold-target.bin": "6c1c2dacc9ec4734cee2e25ccefc0d44b17afd7a7eb9384a631e74f260bcc857",
+    "same-asid-namespace-start-replay-v1/result.json": "4b8fca4851a4780d701f90270035670c7b8afa708a43339b541f2d520db22ef6",
+    "same-asid-namespace-start-replay-v1/same-asid-cold-target.S": "d892afc9637d1e112131cd9a29309de838a02e40480ca6ff3be89871f4f118d1",
+    "same-asid-namespace-start-replay-v1/same-asid-cold-target.bin": "6c1c2dacc9ec4734cee2e25ccefc0d44b17afd7a7eb9384a631e74f260bcc857",
+    "same-asid-delay1ms-replay-v2/result.json": "7d0c8ef3325ec72d08c65f4c0ff6bde9b2e5dea9921c5fc69262e2bce4bedb11",
+    "same-asid-delay1ms-replay-v2/same-asid-cold-target.S": "f9071d1da6694189d94df9feea8c442af23a446972d9f42c53cc75026c1ab7d6",
+    "same-asid-delay1ms-replay-v2/same-asid-cold-target.bin": "6609c185bf7eea650b9a1474d6416f614ba5a01d70a10798e81cefd77fedeadf",
+    "same-asid-live-delayed-replay-v1/result.json": "f72bbcc6dc95d5c7bc2a9cefb1b50f2d3574070700ce66e16a234422d7b36bcb",
+    "same-asid-live-delayed-replay-v1/same-asid-cold-target.S": "b7d296b9676c76bede62ef20dbbf94f93ccb85606f8fbfa57251603edb51e40d",
+    "same-asid-live-delayed-replay-v1/same-asid-cold-target.bin": "2729370e300b6a7156e9480491c652fb29ceff5f9ef9b8c63123c05677d1a2d9",
+    "same-asid-uapi40-replay-v2/result.json": "0b730976412c327b38351d6c59026ea412082014b089d4c12f8d1a93da5062ac",
+    "same-asid-uapi40-replay-v2/same-asid-cold-target.S": "f9071d1da6694189d94df9feea8c442af23a446972d9f42c53cc75026c1ab7d6",
+    "same-asid-uapi40-replay-v2/same-asid-cold-target.bin": "6609c185bf7eea650b9a1474d6416f614ba5a01d70a10798e81cefd77fedeadf",
+    "chainload-before-same-asid-delay1ms-v2.log": "23daa7ea1141a8671f42ba2c68d20f7b5a3037785a4c26b59abfbec9fdfd9e67",
+    "same-asid-namespace-start-replay-v1.log": "c45ece248b2b0e6a66ee0dde592dfc3c2abaca8d51b9da444b5be4e9839ffd8b",
+    "chainload-before-same-asid-live-scratch-v1.log": "bdd0470478aaf1093679491aa95ac6c399a7511b96e45870deb6eb1cf6b881ee",
+    "proxy-after-same-asid-namespace-start-v1.log": "8e114769b91e9017bc3373c1213a3301366cc9f0f1085736c65418e79153bd3a",
+    "reboot-before-same-asid-namespace-start-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "same-asid-live-scratch-command-v1.json": "c107076dfaf655014b1363c2ebcb6b37781407e6d2841226949ac2bba708ab42",
+    "proxy-after-same-asid-delay1ms-v2.log": "930cf63b3bef61ca9e4ab71fa16732f693b05905f5956fb9343a2b11e2849543",
+    "chainload-before-same-asid-delay1ms-v1.log": "f600554ba240ecf7ce7560dd009eb2fff7de99dd4863d776322287f8e9f2988b",
+    "chainload-before-same-asid-live-delayed-v1.log": "bcdaa6beec5fe48bde2c74e235412113713b24fedf01eb9b9057e2b7735ca81d",
+    "same-asid-shared-namespace-command-v1.json": "ed343735c866986c5024e1eb2962c01bec2d4c0bee5e611d1033afe14bb59195",
+    "same-asid-uapi40-command-v2.json": "1b67ba06bb7aa95824e21fff38cb61f465dd68f3b6d16a683b9c3b329f7eeda1",
+    "same-asid-namespace-start-command-v1.json": "eec2f712735588baf65b6960be21efc3458d6704228798448ac4f73b2c280db6",
+    "proxy-before-same-asid-global-start-v1.log": "634c90a94eca856813ce20060e0b46b46c977d34383ba295d09054c2ae5e38a3",
+    "proxy-after-same-asid-delay1ms-v1.log": "dfcd18fdf86e5480dbb2c471068691754bb77d72830da0b1145126ece5888e84",
+    "replay-same-asid-uapi40-v2.py": "39a745793588e0557a574234d63437b1e769b51f057890cc4b2f223d0864de07",
+    "run-same-asid-shared-namespace-v1.py": "a191a0f1bf1050e1ee9418ce5f8ef64fa405c724686e4beda94c297ffcdb448b",
+    "chainload-after-same-asid-shared-namespace-v1.log": "da370e8df35dfbc018dc80bf5715962e247e15912bc135cba0dcd68baa553de7",
+    "same-asid-delay1ms-replay-v1.log": "a7dd7c79c02fc0d2e7a9109421f7a886b048d2a5c723aceeb5e50cbd672dbd1c",
+    "same-asid-cold-helper-v1.py": "eb7910280bf43b69a5e6a5bfd453a4dd0adf248274fa40555a51fd3a8ce23ad5",
+    "chainload-before-same-asid-live-leaves-v1.log": "af169c25c7bd375eb1a2e8fd385f39218af991426d74f23709501f126f0bcfe6",
+    "run-same-asid-uapi40-v2.py": "c2dccc2dfb5050f86e5da0ed85771bc265b6d358735b017e41a90afa6aeaf768",
+    "chainload-before-same-asid-uapi40-v2.log": "297a533945a20c402e2e78292b650132fef440b1f1ab18828948cd1d142d1a2d",
+    "same-asid-delay1ms-replay-v2.log": "c4cd309183745ecbb6d856e42b4756e1a8d51d658733a0786fc052fa02da8712",
+    "same-asid-live-delayed-command-v1.json": "d10b4bbb837f99c9328962422ee441356c68b493573bda5ca6cdd6d0471586c4",
+    "chainload-before-same-asid-cold-v1.log": "dcf555c71d7dfd8c8295f93c59c012167c2a9109afcdf50dcbead6f8531fded6",
+    "run-same-asid-live-delayed-v1.py": "cbb3e6edb2c5362e6edddfa0ce67cf8f4cc4049051b5e16c40c9e31da9aa120b",
+    "same-asid-delay1ms-command-v2.json": "98ee48f5ebd70cc2e40df8dbb39263d4d883d8f8efc03b8a890d00f61db075bc",
+    "reboot-before-same-asid-live-scratch-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "run-same-asid-delay1ms-v1.py": "5dc5ce008fec9e0fd106bd9a7d33487d008c4143abfda052e73820ebdfdcee97",
+    "run-same-asid-namespace-start-v1.py": "13efd043f165a28522e911deb69b696ecd581d074db746550173e6a5017e8991",
+    "chainload-after-same-asid-global-start-v1.log": "54d16ac8142caaf6c8809ad4d4d578bc99cdbb4c415706d29986fc3ecd363e9b",
+    "prepare-same-asid-uapi40-v2.py": "61d9cb3fd29835391ef24f479c475e8f98264547f0be90edfb45eefe74b4326e",
+    "proxy-after-same-asid-shared-namespace-v1.log": "8800c6c9e4a14398450386669d388596a319d1fe48d73b1533b9789aa58aa88d",
+    "same-asid-uapi40-replay-v2.log": "36cf18c894fd8178db813c7bbcf7fc644aeeb4122875fb7c01299a5bb7c5f369",
+    "replay-same-asid-delay1ms-v2.py": "aecbf8bf6fe8380f9e4aebe059f964f010ae2dfe7992dd1fa1399ec3a85becee",
+    "reboot-before-same-asid-live-delayed-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "chainload-after-same-asid-delay1ms-v1.log": "da40f44c669da57f99047251339fd4c5bbc2d134c88f8ce1b569794331356b79",
+    "run-same-asid-live-leaves-v1.py": "2895001d50bdc8ab09fc9ea6c66e32fe49f080d9ad53595565fae31eced29d25",
+    "proxy-after-same-asid-live-delayed-v1.log": "ed6ce7cb0aaa7444b2cdd1c81f091542f23304182add166e1d568f8f5d837d7d",
+    "reboot-after-same-asid-delay1ms-v2.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "prepare-same-asid-shared-namespace-v1.py": "85e01dfe8e86994586796e4ea1d6eb4f79758ff41fd706630d7e949c8062e5ca",
+    "chainload-before-same-asid-shared-namespace-v1.log": "373d45a4edc048be38ed5bb3e8f76ec4576f9e270e67eb3f75bb584a14fa5820",
+    "reboot-after-same-asid-live-delayed-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "replay-same-asid-global-start-v1.py": "83aa7a4997ebaf99dd4897611bcac6d4c6807bf8e143e2b3635307121e89fb8d",
+    "reboot-before-same-asid-delay1ms-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "reboot-after-same-asid-cold-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "chainload-after-same-asid-delay1ms-v2.log": "b9c9a4b9bd653519fc909dd58fec03347d2218fbeba0989d6537125fd8813440",
+    "reboot-after-same-asid-delay1ms-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "proxy-after-same-asid-live-scratch-v1.log": "d82c4c18754864d856393323fe2aa9d36b325b004558b1f16cd0dc280bcd894f",
+    "run-same-asid-live-scratch-v1.py": "2c27c47fde073586189ed1c1e0175232bde8a3b801ba9b2ce289dd9dc17b36a7",
+    "reboot-after-same-asid-live-scratch-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "chainload-after-same-asid-cold-v1.log": "2ae07ccb6bd006dcb96473307820cb78008b1ad4c765d6a05f699a96880f1e05",
+    "reboot-before-same-asid-delay1ms-v2.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "chainload-before-same-asid-namespace-start-v1.log": "6272bdd2c8e5ace5eac30a4945664157bd65be7e2bbc162f7954837e9ac7369d",
+    "reboot-after-same-asid-namespace-start-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "run-same-asid-global-start-v1.py": "642cf5d943bf69ca7d59077f1fd462cf48e77c7a24fe287b9fbda0448344ed11",
+    "replay-same-asid-live-scratch-v1.py": "c640ff4a377f44ac8f931cad392144c1cb9f695c6405e9e5480f2380528d6e31",
+    "replay-same-asid-shared-namespace-v1.py": "95e30a7fd5d46ef1f19fbc4f63156d2ecd5a349c0ce1fbf17f8105356884d896",
+    "proxy-before-same-asid-cold-v1.log": "66eba7b6b354105604ec37eb63d88344cae7a8e582455366dd29ee5fc0a208d2",
+    "run-same-asid-cold-v1.py": "8f6974ff511ba1f3f0fd1fc87009eb81c5d14ec5f7df3e5ab3e37747b3ff6997",
+    "chainload-after-same-asid-uapi40-v2.log": "9a844efc458ba4c5f5bc90b4e104cee070a9d61b678794f7372d8d0d33fb1be5",
+    "audit-same-asid-bisection-v1.py": "f9b69391e03cdbda6c975ac8e87baf360cf66658e93afbe928b22a81f995f6c5",
+    "replay-same-asid-live-delayed-v1.py": "9d11d451a7c43b37a98ef4e7f11235ebaf5d9e7d0df17b9279f9e4e052c55cf4",
+    "reboot-after-same-asid-uapi40-v2.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "proxy-before-same-asid-live-delayed-v1.log": "74dbaede81abb5faf8bf40c2c5bada8c536dc4000210fc5521ebfe624e1e9151",
+    "same-asid-global-start-replay-v1.log": "8d1cf9eb457c5c935cfe6908f3726748758544d12172bf9674a6e94ce924076a",
+    "reboot-after-same-asid-shared-namespace-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "proxy-before-same-asid-delay1ms-v1.log": "873dceb0a12c4c59e84ba2564d58843e9caccf9db8e41991bca455bfa64018d8",
+    "same-asid-live-leaves-replay-v1.log": "8d1cf9eb457c5c935cfe6908f3726748758544d12172bf9674a6e94ce924076a",
+    "chainload-after-same-asid-namespace-start-v1.log": "359f95e9e6fbcb8213ee5a4b116f1e743efe5544fbf80c63ac3efe68c1f69454",
+    "same-asid-live-delayed-replay-v1.log": "956e8be1a1f6a48fe7fb3d2aecb762476c211a701db66fd99238eb2200c0b30c",
+    "run-same-asid-delay1ms-v2.py": "26e6e0a6f2e8b2af3e14a02f231fd71e4757ca4a3acf4b62ff62ff29097b1a76",
+    "chainload-before-same-asid-global-start-v1.log": "07977773cce845218415d4bc1721636b790a0b48e585a85472b22f023caff06e",
+    "proxy-after-same-asid-uapi40-v2.log": "e3f76173c5430730ebae9c2ba4dcaa18114015f805689439febe7faec1b1bf31",
+    "proxy-before-same-asid-live-scratch-v1.log": "55b14588ae13477f9125b84416e8d21c819dc9653b45d550a3a33affc16537ef",
+    "reboot-before-same-asid-cold-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "prepare-same-asid-uapi40-v1.py": "c6f977a6485d41e82094ade845fcb7b200a68ebfcaa9cc0a222113cd12c246d0",
+    "same-asid-delay1ms-command-v1.json": "20a4043727ac1d27b0c892981531a826a270da0db8365dd04c1f46cbc112aadb",
+    "proxy-before-same-asid-delay1ms-v2.log": "6b0de935d9690e4cbf5fb94188b5ee7478a786a151445eaaa389407de208fc1f",
+    "same-asid-live-scratch-replay-v1.log": "8d1cf9eb457c5c935cfe6908f3726748758544d12172bf9674a6e94ce924076a",
+    "same-asid-live-leaves-command-v1.json": "de5fe45c7f2aa471e99e257ba712b047ef9feed318fd70813463563a9c08bb46",
+    "replay-same-asid-delay1ms-v1.py": "1355435677812e88d59693cc464b9994da512c44205afdd424d6829145e07ee2",
+    "reboot-before-same-asid-uapi40-v2.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "chainload-after-same-asid-live-leaves-v1.log": "6cac51943d6c45dea099c2fd45ca3b00359d0756be87baa858ff4c99e8b499b2",
+    "reboot-before-same-asid-live-leaves-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "proxy-before-same-asid-live-leaves-v1.log": "0eba1528a7bef28611c61db8e61967e55deed1b53589bf22059d6c1694bd623c",
+    "reboot-after-same-asid-live-leaves-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "same-asid-cold-command-v1.json": "00860ddd7b1df1fe4d0c8fdc57869157a0f27afe59c6944db0d581486df79a02",
+    "proxy-after-same-asid-global-start-v1.log": "7bf7698bf58ae67b0538b28ed2851d9f0b8d5558882c8eb3ed8144f5911d4035",
+    "same-asid-shared-namespace-replay-v1.log": "a458f36bf0f10d14ce0004480884f9ae9e9960e084dc530aa0ec0f92d7f7cf9f",
+    "reboot-after-same-asid-global-start-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "replay-same-asid-live-leaves-v1.py": "e26752dc6bad7d71ffc544d8c905a7061497f1513d89e5bafd429077078f888a",
+    "chainload-after-same-asid-live-delayed-v1.log": "b7bafe858b7c028bef7fb6f696de39759b9c62ddf3c47e79987d1250f7787b76",
+    "reboot-before-same-asid-global-start-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "replay-same-asid-cold-v1.py": "e47a54e439a8eab313e4a698e120e3b0f9ec62d5f96dcfb69da43aa93bf2d1c7",
+    "same-asid-cold-replay-v1.log": "a458f36bf0f10d14ce0004480884f9ae9e9960e084dc530aa0ec0f92d7f7cf9f",
+    "proxy-before-same-asid-shared-namespace-v1.log": "d9f0d7d7145d0d05bae6964a77146e6a701195e79b417d04c74bfa01ca02bb7b",
+    "proxy-after-same-asid-cold-v1.log": "03ded845f3336bde4132cf2afe63a7dfbd8c49930925981c7a51945b9e9cbb7d",
+    "same-asid-global-start-command-v1.json": "3cf01c7f03b0643cdd92f23f84beacfff01014ab2555e2ee1fef555314b3d39d",
+    "proxy-before-same-asid-namespace-start-v1.log": "0f0327c53d8c77da5430f87631d8d117dcb79563f6f87f7cf5f37fbae963168b",
+    "reboot-before-same-asid-shared-namespace-v1.log": "f34c4687b383856b2227c96c9f59e917ebccfcec18fca45350a68edcee82d886",
+    "chainload-after-same-asid-live-scratch-v1.log": "65781e1d87a2a5187bbba461180d38eb17caff9dd79ede0bc3e2cf9c90405716",
+    "proxy-before-same-asid-uapi40-v2.log": "4cc5c973183aa35f8625e71d685e1c4dc524591f02b6d5efcbe24ea213a6ec7a",
+    "replay-same-asid-namespace-start-v1.py": "efc7de6198718c0191760ac3b0507e6f426b828d94a23f80d8eca8a022eb239a",
+    "same-asid-shared-namespace-source-v1/variant.json": "dcffab0c56a1dd61147fa2ae8630a61750c9f63d3a018b5d72d4a5d2a6cdc93d",
+    "same-asid-shared-namespace-source-v1/source.rs": "769a268c0e93427b39d6e679d6e39c8cb7ec8dfcbad8c766c3a24d977dd50c6a",
+    "same-asid-uapi40-source-v2/variant.json": "3d02e1d9bd01735feb5988842ec287b40640b98d6503bafd29ed11c179abbdee",
+    "same-asid-uapi40-source-v2/source.rs": "86815f66a4718f759bb567ac18c578ace40ebdd67a63b1ade6bf18261d81f5bb",
+    "same-asid-delay1ms-replay-v1/result.json": "da0765abf81fda0770f75e957a6d8f2a1d3b55e92bd5bdfb22d7db638aad4b3c",
+    "kernel-restored-cold-guard-v1.json": "f10fa9850242b04523d49002df7a287fd07f57041904ec878046e3aba2782b5a"
+  }
+}
