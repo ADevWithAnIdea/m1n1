@@ -39,7 +39,8 @@ class Capture:
   return bytes(result)
 sha=lambda data:hashlib.sha256(data).hexdigest()
 code=['#![allow(dead_code)]\nuse std::path::Path;\n']
-for name,source in [('protocol','g17p_compute.rs'),('wire','scheduled_compute.rs'),('work','scheduled_work.rs'),('execution','scheduled_execution_g16c.rs')]:code.append(f'#[path={json.dumps(str(tests.parent/source))}] mod {name};\n')
+for name,source in [('protocol','g17p_compute.rs'),('wire','scheduled_compute.rs'),('execution','scheduled_execution_g16c.rs')]:code.append(f'#[path={json.dumps(str(tests.parent/source))}] mod {name};\n')
+code.append('use protocol::work;\n')
 code.append('fn main(){let d=std::env::args().nth(1).unwrap();let d=Path::new(&d);\n')
 manifest=dict(source_payload_bytes_copied=False,baseline=str(out/'cold-replay-v2/result.json'),baseline_sha256=sha((out/'cold-replay-v2/result.json').read_bytes()),phases={},source_sha256={str(p.relative_to(linux)):sha(p.read_bytes())for p in [tests.parent/'g17p_compute.rs',tests.parent/'scheduled_compute.rs',tests.parent/'scheduled_work.rs',tests.parent/'scheduled_execution_g16c.rs',linux/'rust/macros/versions.rs']});expected={};serial=0
 inventory=json.loads((out/'captured-backlog-inventory-v1.json').read_text())
@@ -67,7 +68,7 @@ for name in ['warm','late','resume']:
   fields=dict(ready=bool(struct.unpack_from('<I',raw,0x144)[0]),descriptor=address,queue=row['queue'],grid=grid,item=own[0],primary_count=h(0x1e)-2,timeout=dep>>48,retire_control=rq(0x138),flags=header&0xf000000000000000,control=(dep>>32)&0xffff,control_130=rq(0x130))
   filename=f'{name}-{serial:02d}-record.bin';serial+=1
   code.append('let p=work::RecordParametersG16C{'+','.join(f'{k}:{str(v).lower() if isinstance(v,bool) else v}'for k,v in fields.items())+f',header_grid:Some({(header>>42)&127}),header_count:Some({(header>>2)&0x3fffffff}),'+ '..Default::default()};\n')
-  code.append(f'let raw=work::WorkRecordG16C::for_compute_control_dependencies(&p,{fields["control"]},&['+','.join(f'({g},{v})'for g,v in points)+f']).unwrap();std::fs::write(d.join("{filename}"),raw.as_bytes()).unwrap();\n');expected[filename]=raw;phase['objects'].append(dict(kind='record',address=record_address,bytes=512,file=filename,inputs=fields,dependencies=points))
+  code.append(f'let mut raw=work::WorkRecordG16C::new(&p).unwrap();raw.append_dependencies(&['+','.join(f'({g},{v})'for g,v in points)+f']).unwrap();std::fs::write(d.join("{filename}"),raw.as_bytes()).unwrap();\n');expected[filename]=raw;phase['objects'].append(dict(kind='record',address=record_address,bytes=512,file=filename,inputs=fields,dependencies=points))
  for group in plan['submissions']:
   address=group['work'];raw=capture.read(address,0xc0);q=lambda at:struct.unpack_from('<Q',raw,at)[0];h=lambda at:struct.unpack_from('<H',raw,at)[0]
   fields=dict(scratch_low=q(8),scratch_high=q(0x10),support=q(0x36),queue_control=q(0x4a),grid=h(0x18),item=h(0x2a),ordinal=h(0x3e),context=h(0x32),support_id=h(0x56),uuid=h(0x5a),scheduler=h(0x1e),scheduler_hint=h(0x46),field_52=h(0x52),field_5e=h(0x5e),field_62=h(0x62))
