@@ -1,0 +1,186 @@
+{
+  "version": 75,
+  "date": "2026-10-25",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "61fbe0e151e3a88d1f257333986d5f4d74007285",
+  "current_native_kernel": 187,
+  "all164_current_local_remote_compiled_archive_sources_exact": true,
+  "additional_local_host_tests_not_remote_kernel_inputs": {
+    "drivers/gpu/drm/asahi/tests/check_scheduled_work.py": "620a4318480ee969753d1907397edaf0406679c99eea5a8b70a55eaa70871dd4",
+    "drivers/gpu/drm/asahi/tests/scheduled_work.rs": "67cb52cccf3de8f8513b943d8b463be4c801840cceb23dddb672c33e7b5ba297"
+  },
+  "production_change": "G16C scheduler work_id now receives existing per-owner compute ordinal, matching12 whole native256B scheduler DATA objects. SameDefaultconstants/layout; Neo constructor/bytes unchanged.",
+  "layout_gate": {
+    "baseline": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "Neo_whole_objects": 1024,
+    "Neo_identical_bytes": 376832,
+    "Max_whole_objects": 404,
+    "source_ComputeWork_prepare_cases": 64,
+    "independent_native_DATA_objects": 16,
+    "native_scheduler_whole_objects": 12,
+    "native_scheduler_owner_ordinals": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      0,
+      10
+    ],
+    "native_DATA_sha256": {
+      "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/uat-metal-before-producer/compute-1-record.bin": "8c3b074901307b48f516b3bcb03cfcfe233d1f830526764941f499f214831eb3",
+      "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/uat-metal-before-producer/compute-2-record.bin": "72c017a46688fa3334c5e9a4eba263c6fe8f062655a5fbce9f9001e97d8e10f6",
+      "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/python-native-compute-inputs/item-1-record.bin": "79b20d544cee456376c728133cfe054f2c2a447169f981083c37076c9018832b",
+      "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/uat-metal-before-producer/publication.json": "c885032876a04b0162869d57a5d6a7b4add52c6849b77ce853507ddeb3913b73",
+      "native-scheduler-warm-warm-00-descriptor.bin": "6517c944d2790440b2ea6d190bfa1ed180815dd955172fc511029b713e827741",
+      "native-scheduler-warm-warm-02-descriptor.bin": "9f82fe70a9bc8a8f9a523ac4f64300f64a7dfb89f4012df643b2dae69fc19aee",
+      "native-scheduler-late-late-06-descriptor.bin": "e4d00aee6e515b3328a5ddf74b6d40473deb447756081982a9c7d62f914a3a86",
+      "native-scheduler-late-late-08-descriptor.bin": "29f1323fd7b50f36aa06ac779604a856a5cd1b4ad515ff66e3537f56c69680c8",
+      "native-scheduler-late-late-10-descriptor.bin": "a153738ab09a3cb9c34e7e4c021b0586a3b862e9d8322d0a78e2edf43096dc00",
+      "native-scheduler-late-late-12-descriptor.bin": "4c4d250b48c803feac88c5c8da4cc2953457bf3aada86bb91f4d59aeaf95a053",
+      "native-scheduler-late-late-14-descriptor.bin": "4fa8f3062a5e5b2df15e3e1df27caf9a6b3b8868214f6633630c90b51fde315f",
+      "native-scheduler-late-late-16-descriptor.bin": "def9b54a4882df079a98cac537340f95e6589e1a6c430c3587713cbf44fb341f",
+      "native-scheduler-late-late-18-descriptor.bin": "0d7d2f230868eac6297e60a82dd52eb54e4f1c21e75a6abea4e45e3920d53442",
+      "native-scheduler-late-late-20-descriptor.bin": "a0560003687b4bc009ce900e38eca0b29a3bd98bb684579d648ec001fcf33cb0",
+      "native-scheduler-late-late-22-descriptor.bin": "5bd00552fb877f1be46702d3e6b7cccf720c9a96b1a05ff69bce660bacaa1ff0",
+      "native-scheduler-resume-resume-26-descriptor.bin": "33e66e023abe047243d949e50ebe8b78922d64c1ee2971c1caac7366bae5ec42"
+    },
+    "Neo_sha256": "fdda5e1be113c17e83e74d158c523bb1c8dee2e066bd5fe646257dbac320e5e1",
+    "Max_sha256": "570cadb2b7e99c14b885333fc6f8c3efc7bba32b8200fd79f019af044a8234fa",
+    "GPU_execution_tested": false,
+    "source_sha256": {
+      "/Users/user/gravity/linux-g16c-g17p/drivers/gpu/drm/asahi/g17p_compute.rs": "cedd09793c9c0c1c138f457e9e1f803beb6258794efd6f2a3a939d4a1b0e8e2c",
+      "/Users/user/gravity/linux-g16c-g17p/drivers/gpu/drm/asahi/scheduled_work.rs": "a438ea034858d7cf3bfe2dd845dd8d83fab7691f1fd210e3e971ffadfd876a23",
+      "/Users/user/gravity/bootloader-m4maxmbp/proxyclient/m1n1/g16c/compute.py": "841dded661389f94c19e42548a71f3cc927747c557621dd42f1de20387792a65",
+      "/Users/user/gravity/bootloader-m4maxmbp/proxyclient/m1n1/g16c/work.py": "308ae9e51254d46a269ac3adf579d0c3704a34d4f994581e4b0f77868e9db72e"
+    }
+  },
+  "native_positive": {
+    "version": "v781",
+    "kernel": 187,
+    "guest_hashes": 260,
+    "CPUs": 16,
+    "render_compute_dependency_close_private_recycling130": true,
+    "actual_producer_leases": true,
+    "production_Vulkan14_render_compute_transfers": true,
+    "memory_checks": 6313,
+    "clean_unbind_cold_proxy": true
+  },
+  "native_counter_boundary": {
+    "version": "v800",
+    "API_queues": 130,
+    "rounds": 2,
+    "commands": 260,
+    "full_outputs_and_guards_checks": 12782669,
+    "memory_checks": 6313,
+    "clean_unbind_cold_proxy": true
+  },
+  "actual_native_failure": {
+    "version": "v760",
+    "kernel": 187,
+    "jobs": 4,
+    "arrival_after": 1,
+    "guest_hashes": 305,
+    "CPUs": 16,
+    "round": 1,
+    "firmware_event4": true,
+    "old_fence_success_assertion_fails": true,
+    "numeric_fence_status_not_printed": true,
+    "bug_unfixed": true
+  },
+  "negative_candidate": "184 compiled header-last candidate;185 aligned64-bit variant actually fails first4-job test. Reverted exactly,186 compiled all164/object bit-identical183. Header publication-order candidate NOT retained. Only scheduler work-ID correction retained in187.",
+  "new_source_controls": [
+    {
+      "stem": "wrapper-item-index-replay-v1",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "result_sha256": "bc46bf60d82ba40a02a453c49c4e574ce40225793ae83c066b874216abd88019"
+    },
+    {
+      "stem": "delayed-old-resume100ms-replay-v1",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "result_sha256": "805f50c7a0e82c2484f7a03229df76bf9eee077b33901be34cdfa03451fd4653"
+    },
+    {
+      "stem": "split-workgroups-replay-v2",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "result_sha256": "c57df91a4215fb614a05aa82d8adb14c3a525d619a71b33bcb372b38abd153e6"
+    },
+    {
+      "stem": "live-record-append-replay-v1",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "result_sha256": "28373038a8ba031a55125336abd2f491bf4250e4fd4c54f864413849e6fedbd5"
+    },
+    {
+      "stem": "scheduler-work-id-zero-replay-v2",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "result_sha256": "592943955617d99a5e843740783fd7e7b7133220acb45e27f8fbed8ff3f53b4f"
+    }
+  ],
+  "new_source_outputs_bytes": 4000,
+  "new_source_GPU_intervals": 60,
+  "source_findings": "Wrapper item=ordinal,100ms delayed old resume,eight distinct old groups,live publication of7 old records and zero scheduler IDs all pass named outputs/intervals. Group splitting and ready publication alone do not reproduce Linux failure under this reference. Work-ID zero was not isolated as sole cause; production correction matches native ABI evidence.",
+  "live_append_limits": "7 complete512B records withheld, header-last published100ms after child kick; inner head4->18 and third outer message,7 resume tails,new channel kick. Final actual first/child overlap and subsequent old starts during child required. GPU START not live-visible; cursor/zeroEND alone is not execution proof. Surrounding AP graph remains partly opaque.",
+  "split_return": "Retain actual post-late192B queue header/128B pointers/256B queue control over referenceAPrestore; resume head20 and channel5->6 for live append. No guessed progress fields.",
+  "host_errors": "Scheduler host-v1 lacked wire module (compile only, no GPU); fixedv2. Split-v1 warm+late GPU pass then host wrong hardcoded qcontrol c07b0000 assertion, NOT FW failure; split-v2 derives actualc07b8000 from queue+9c and wrapper+4a and fullypasses. SystemPython3.9 annotation error before layout test; actual gate ranvenv3.14.",
+  "native_reference": "Two warm ASID Metal workload strictcompile remains NOT GPU-qualified. Nativev3 gotCPU12/device startup but no shell; safeSIGQUIT twice returns/monitoralive, explicitSIGINTtarget interrupt produced no shell/response; cancelled exact ownedmonitor29972 withSIGTERM after preserving diagnostics under prior operator stalled-capture authorization, controller terminal-15/console1 confirmed, exactRID0/raw recovery. NoCPU reduction or Apple disassembly.",
+  "remaining": [
+    "actual early cross-VM handoff timeout",
+    "complete shared admission/off-lock PreparationSeed/reconfiguration port",
+    "render/cross-generation ownership and actual render+compute overlap",
+    "asymmetric capacities/automatic demand",
+    "fault/uncertain publication, final sustained/active final file-close/combined production validation",
+    "Neo regression qualification; no live Neo hardware"
+  ],
+  "next": "Both source timing/group/live-record controls now work. Retained GPU-mutated incoming VM state still not covered: original reference warms two queues inASID1, lateASID2new. Diagnose single-user guest startup and capture native warmed-two-ASID workload, OR construct a source continuation preserving both warm VM states/roots/dispatch/support with new monotonic record counts. Do not repeat already-qualified priorities/IDs/groups or retain speculative flags. Also continue required shared PreparationSeed/admission and broader goal requirements.",
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "Apple_binary_disassembly": false,
+  "CPUs": "all16 always; no reduction",
+  "full_goal_complete": false,
+  "target_final": "v800 clean unbind, exactRID0/raw N01 Mac16,5/chip6041/nop restored; both ports unowned; no active GPU/monitor/controller jobs",
+  "key_artifact_sha256": {
+    "kernel-scheduler-owner-work-id-v1.json": "6ea3c615b2d401c5b1eecd9584a1ed5da986ddd4bace274384bf528fff6c4cfb",
+    "native-scheduler-owner-work-id187-v1.json": "8744dc1127cdca560a203ad1ccd93f98cdfd218907dab42a9de508f0b851b49a",
+    "native-scheduler-owner-work-id187-ordinary-v1.json": "93703b1e3928dc957771eb24b4881c5d31c7553c505fd9726331e66bac596cf6",
+    "native-scheduler-work-id-boundary187-v1.json": "6b9267b9413afb7cab8e552f90eeaf186b8a4a135c328a0201c59da1ff206bd0",
+    "probe-v760.log": "3fa924108467f9846897bcc18027ef2ebb5520057a3aeb67a41f2d47339eb5e8",
+    "probe-v781.log": "cc737c1223e5739e50b71bda6e461275d18a491079d96758997106bcd3c2e94f",
+    "probe-v800.log": "ea65d61d74f1dd03b8002ecb727af06b5e0000205e85421555b1d85d8f5b1aab",
+    "proxy-after-v800.log": "6dac38892b4a23a71aed583ebdfe617d2c81edbb299dbfa31acc2329a8bd9bad",
+    "record-publication-last185-negative-v1.json": "52394bbe82a939600bcfffe09276ad73d19b6de610c46f2c2c96ae975c8e2959",
+    "kernel-restore-command-owned-saves-v1.json": "3d477c3d6e23d4220abc1adf9887c79e1e10f062f01a869104edc09e55a76697",
+    "safe-host-diagnostic-test-v1.json": "0a5bd74932509b446e6513ae2ae68a05f90d7edb869ca47f594bd71e8b9fc19e",
+    "warmed-clients-v3-cancel-receipt.json": "6063bdf30b09c05947cd653b09b1a8103e6c8b7eb509005de7d357d12a8bfd12",
+    "native-warmed-clients-controller-v3.json": "043a33dfb08346bfc75febf571754ec668e6a55d79f34225c9af438da030c8ab",
+    "recovery-after-warmed-clients-v3.log": "8de63ebc34120a1095fa45fc60161cd88cd1fa1b6a07ce130618311cc68d3ae1"
+  }
+}
