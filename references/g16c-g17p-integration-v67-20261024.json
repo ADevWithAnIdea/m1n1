@@ -1,0 +1,155 @@
+{
+  "version": 67,
+  "date": "2026-10-24",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "af201cc05296e62dad7d10e9f0058999cef1d68a",
+  "qualified_native_kernel": 178,
+  "all164_current_local_remote_compiled_archive_sources_exact": true,
+  "production_change": "Max compute retains exact producer generations with the common consumer command completion fence through shared Generation.leases. Validate published grid/count, deduplicate producers, reserve2 metadata slots before packet staging, retain only AFTER transport takes ownership and BEFORE MMIO/producers. Preserve producer+consumer self-generation publication capacity. Queue/VM close, reassignment and recycling await consumer leases. Existing Neo lease methods and non-Max Schedule unchanged.",
+  "wire_structs_templates_or_version_axes_changed": false,
+  "default_regression": {
+    "version": "v450",
+    "all13_tests_pass": true,
+    "tests": [
+      "RAW_RENDER_FIRST",
+      "SAME_VM_TWO_BINDINGS_EARLY",
+      "ONE_QUEUE",
+      "CLOSE_PENDING",
+      "ARRIVAL32_RETURN",
+      "CROSS_VM_PRESSURE",
+      "CROSS_VM_RELOCATED",
+      "SAME_VM_TWO_BINDINGS",
+      "GENERATION_CAPACITY",
+      "MIXED",
+      "VULKAN_RENDER_AFTER_ROOTS",
+      "VULKAN_COMPUTE_AFTER_ROOTS",
+      "V450_MEMORY"
+    ],
+    "guest_hashes": 260,
+    "CPUs": 16,
+    "queue_capacity": "130 API queues /126 retained owners /390 dispatches, all complete outputs/guards",
+    "Vulkan_render_compute": true,
+    "memory_checks": 6313,
+    "unbind_cold_proxy": true
+  },
+  "focused_shared_lease_test": {
+    "version": "v462",
+    "first2_attempts_CPU0_PSCI_startup_stalls": "v460/v461, identical all16 retry, no GPU/userspace",
+    "actual_GPU_pipeline_producer_lease_publications": [
+      [
+        1,
+        1,
+        0,
+        512,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        0,
+        1024,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        0,
+        1536,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        0,
+        2048,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        0,
+        2560,
+        2,
+        1
+      ]
+    ],
+    "queue_pipeline_and_accepted_pending_destroy": true,
+    "memory_checks": 6313,
+    "unbind_cold_proxy": true
+  },
+  "known_early_handoff_failure": {
+    "candidate177_debug_v420": true,
+    "previous176_same_debug_v430": true,
+    "actual_event4_both": true,
+    "old_accepted_work_resumes_after_new_ASID2_publication_before_all32_staged": true,
+    "old_output_fences_before_failure": [
+      26,
+      30
+    ],
+    "conclusion": "Actual prior-kernel control reproduces same failure without lease patch. Not introduced by producer leases; remains an OPEN driver goal requirement. Default positive run does not qualify early handoff."
+  },
+  "intermediate177": "Normal v440 all13 tests/actual clean unbind passed. Host raw chainload recovery timed out afterward; fresh RID0/raw/exact identity independently recovered. No GPU failure inferred from that host recovery.",
+  "pre_hardware_host_errors": "First lease compile E0308 AllocError/Errno mismatch corrected with ? before hardware177. Neo projection checker initially mistook inline if-render inside Max for branch boundary; corrected to actual Max return, whole-file source projection always matched.",
+  "remaining": [
+    "early/new-VM admission and old-queue continuation under that actual interleaving",
+    "complete common generation admission/off-lock PreparationSeed/reconfiguration port",
+    "render/cross-generation producer retention and safe control lifetimes as concurrency expands",
+    "asymmetric live pool capacities and automatic demand",
+    "actual render/compute overlap",
+    "fault and uncertain publication paths, including unpublished lease metadata failure recovery",
+    "final sustained recycling/active final file-close and combined production graphics validation",
+    "Neo regression qualification; source/wire/compiled evidence present, no live Neo hardware test"
+  ],
+  "next": "Investigate actual fresh-owner handoff using paired176/177 debug controls and existing uninstrumented kernel173 UAT. Dynamic32-byte dispatch entry partial-cache-line publication is still an unproven coherency hypothesis; all previous successful late replays preseeded roots/dispatch. Keep common generation/lifetime implementation; do not substitute another Max manager or waive the failure.",
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "Apple_binary_disassembly": false,
+  "CPUs": "all16 always; no reduction",
+  "full_goal_complete": false,
+  "target_final": "178 focusedv462 clean unbind, RID0/raw/exact N01 Mac16,5 chip6041/nop; N01/N03 unowned/no monitor",
+  "artifact_root": "build/m4max-gpu/g16c-shared-generations-20261024",
+  "key_artifact_sha256": {
+    "kernel-producer-generation-leases-v3.json": "232b9b227e8b7f2aa8615496241636bf000843d4c7fa9f1b3535d5c21469f52a",
+    "tested-source-producer-generation-leases-v3.tar.gz": "7997d7cafa26d7376cab134df329c0a1f662eb5b77055041c3834a37f55d8c22",
+    "Image-producer-generation-leases-v3": "1f609757a2c0e04d92cf25baf57bc22676d2a7407f939e99606d6241fb0d4238",
+    "indexed-dispatch-producer-generation-leases-v3.patch": "4ab23892d945114c08dec7f511a0ff635899e27dae8d96933da4e1799e394b65",
+    "native-producer-generation-leases-v4.json": "9ad76b65d1546bf4812827aa1a80a3fa4a1f4b550ecc02c290205d27622c0aa0",
+    "probe-v450.log": "2ba42249550c77b8269330cb7ebb941b1f7903045643abeba01ae17da88bec0b",
+    "native-producer-generation-leases-targeted-v1.json": "029a053e8cb96dc7b5362a3939b8852fdb0a371aaf717ed50223d67cb1a5e63f",
+    "probe-v462.log": "34361fce23cd15d8be492b0f8e90c1910100370c78455755526c6e181d085c1f",
+    "neo-producer-lease-preservation-v1.json": "8d0c616c68190ce40098435803a837698dae01d31cef35b081dc77a2199b7d60",
+    "native-producer-generation-leases-v2.json": "007bc3f2cd4bebfc59734c3be7e016557f65a980d6037ee9725ab4bfdd51d85b",
+    "probe-v420.log": "0f95ca7b56283c8174399d9e8081824795c338ceb7652a7d71c0a52da31661e0",
+    "producer-leases-debug420-negative-v1.json": "67c99d5d7d0599a01bf4d46c223f4c62132c684160e3beb4b16defba547942a3",
+    "native-operand-state-guard-debug-v1.json": "e6e4cb87ca13695551f62f9447fc97d0fdfd72740f0e2f760b43da403f51e4d7",
+    "probe-v430.log": "b964003799bd85aeeb1c509ade1a2375fad002cf7dea824d6c07326724b32882",
+    "previous176-debug-control-v1.json": "255095c6b6307b9b4ba9bdb9e26277d84332ac7ab50498b692570aca6c495a02",
+    "native-producer-generation-leases-v3.json": "16c964380d6616aa6e94c2486f4bf1973decaa5f85b3bcbec7a1413046fc29ae",
+    "probe-v440.log": "d69b308764679539ba5cc2fd14ae9ac18ad3c2b1d5ddc5df2b25b086fa9c9ff3",
+    "proxy-after-native177-default-recovery-v1.log": "81d50a6d72a68a271409c0f04552445551a77ab0eaac1788277920b8b7124cc8",
+    "proxy-after-v462.log": "12e73496d54e273007c6600a0ee41405981405b9f85405f1d48485e7e73f4e29"
+  }
+}
