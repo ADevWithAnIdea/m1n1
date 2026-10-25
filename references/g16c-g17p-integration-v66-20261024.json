@@ -1,0 +1,140 @@
+{
+  "version": 66,
+  "date": "2026-10-24",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "64fb5eaa74f49d2555dc37af94010462f9a04bf0",
+  "qualified_native_kernel": 176,
+  "all164_local_remote_compiled_archive_paths_exact": true,
+  "production_change": "Reserve full0x80000 state extent:31 mapped16KiB state pages +one unmapped guard, after2 save pages; generation private span0x84000->0x88000. Verify guard absent on initial mapping, reuse and retirement. Cold admission barrier retained. No wire/layout/macro changes.",
+  "native176": {
+    "version": "v410",
+    "all16_CPUs": true,
+    "guest_hashes": 260,
+    "tests": [
+      "RAW_RENDER_FIRST",
+      "SAME_VM_TWO_BINDINGS_EARLY",
+      "ONE_QUEUE",
+      "CLOSE_PENDING",
+      "ARRIVAL32_RETURN",
+      "CROSS_VM_PRESSURE",
+      "CROSS_VM_RELOCATED",
+      "SAME_VM_TWO_BINDINGS",
+      "GENERATION_CAPACITY",
+      "MIXED",
+      "VULKAN_RENDER_AFTER_ROOTS",
+      "VULKAN_COMPUTE_AFTER_ROOTS",
+      "V410_MEMORY"
+    ],
+    "queue_capacity": "130 live API queues,126 retained physical owners,390 dispatches,19173343 complete output/guard checks; no temporary queue limit",
+    "memory_checks": 6313,
+    "unbind_and_cold_proxy": true,
+    "no_boot_retry": true
+  },
+  "native_guard_RE": [
+    {
+      "grid": 0,
+      "state": 481053245440,
+      "guard": 481053753344,
+      "guard_unmapped": true
+    },
+    {
+      "grid": 1,
+      "state": 481121140736,
+      "guard": 481121648640,
+      "guard_unmapped": true
+    }
+  ],
+  "unmodified_failure_snapshot": {
+    "kernel": 173,
+    "probe": "v390",
+    "capture": {
+      "chunks": 254,
+      "tables": 43,
+      "bytes": 210370560
+    },
+    "stable_tables": true,
+    "trigger": "Only AFTER actual firmware event4 and failed first fence; SIGINT monitor snapshot; driver/normal GPU path NOT instrumented",
+    "snapshot_is_NOT_working_replay_baseline": true,
+    "second_queue_GPU_retired": true,
+    "first_queue_no_published_timestamps_or_completion": true,
+    "zero_timestamps_do_not_prove_never_executed": true,
+    "source_roundtrip": "5 entire objects match (failed descriptor, both512B records, both192B wrappers); sixth completed descriptor has precisely observed timestamp results and consumed start pointer in named40B. All immutable constructor bytes match. All80 program register pairs match production constructors."
+  },
+  "negative175": "Same actual event4/fence failure even with DSB SY after every binding write; raw render passed, all260 payloads verified/all16. Candidate reverted; stronger barriers NOT retained.",
+  "new_replay_controls": [
+    {
+      "case": "owner-ordinal-replay-v1",
+      "pass_": true,
+      "full_buffers": 5,
+      "bytes": 800,
+      "GPU_intervals": 12,
+      "result_sha256": "f6be9802d98f11a03e681ecf8ba25604a55b49d13ff95c55ff1170e0927b3a46"
+    },
+    {
+      "case": "operand-guard-alias-replay-v1",
+      "pass_": true,
+      "full_buffers": 5,
+      "bytes": 800,
+      "GPU_intervals": 12,
+      "result_sha256": "a4d40d59dd2e1f866a5a7d30fac8391019e87a63c4f19b812a31002224150345"
+    }
+  ],
+  "causality": "Changing descriptor sequence/ordinal to actual owner-wide Linux policy passes full source replay; mapping operand guard to next save page also passes. Neither isolated difference proves cause of native failure. Guard is preserved to match RE geometry, not claimed to solve cold admission.",
+  "host_errors": "175 compilev1 unresolved module name fixed before hardware; post-failure roundtripv1/v2 initially tried to treat completed timestamp output slots as immutable sampler input bytes, rejected; v3 independently checks exact timestamp equalities and limits40B post-execution differences. No rejected constructor was sent to GPU.",
+  "remaining": [
+    "early new-VM admission and working live cold binding or equivalent safe eager ownership",
+    "complete shared generation/admission/off-lock preparation and producer-dependency retirement machinery",
+    "asymmetric live pool capacities and automatic demand",
+    "actual render/compute overlap",
+    "fault and uncertain publication paths",
+    "final sustained recycling/active file-close and combined production graphics regression",
+    "Neo regression qualification; current evidence is source/wire/compiled metadata only, no live Neo hardware"
+  ],
+  "next": "Continue one common generation/lease/preparation machinery. Cold/new-VM admission still unresolved; compare actual snapshot graph against source controls, not stale assumptions. Reserved identities2/3 vs0/1 and channel11/priority3 vs8/2 remain concrete unmatched reference inputs. No live Neo hardware test.",
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "Apple_binary_disassembly": false,
+  "full_goal_complete": false,
+  "target_final": "176 v410 clean unbind, RID0/raw/exact N01 Mac16,5 chip6041/nop; both ports unowned, no target process",
+  "artifact_root": "build/m4max-gpu/g16c-shared-generations-20261024",
+  "key_artifact_sha256": {
+    "kernel-operand-state-guard-v1.json": "d1585202da3a7c2612ab2205b01513a2b91762e3ae81979a7ca67cb83abf15d7",
+    "tested-source-operand-state-guard-v1.tar.gz": "8ca0168ea4fee6cc62fbc04d47c740a8a6819c1a1b097ba5f82b7bc7128e462d",
+    "Image-operand-state-guard-v1": "3bf7f8f1a0ac1ed999a41a9636ee2e2c7234ea397dad8be3ee29dd5b2fc7995f",
+    "native-operand-state-guard-v1.json": "bd4c924a47f63a69e4425f3878baaa7a11ca81b3f26fb0b0441728e6f396fb20",
+    "probe-v410.log": "f64a48113c0c099c59944e706d45fef9ee3a4e58fe6d10d406decb6e21506de2",
+    "probe-v390/capture-done.json": "fee7997de82882e21bc1b25117136782549ee9694b3b950c3d18fa1e7cdb996c",
+    "probe-v390/failed-kernel-uat/manifest.json": "25486d4828076bbe66fb6854281a1b1b1f9c26e9ba0042ac6f221bfc700a243b",
+    "native-failure-snapshot-v1.json": "68990da4c6bb5cf8700dba3fd0eb285515687c9c6bfc1e10695a0446c1071ff4",
+    "linux-failure-snapshot-probe-v1.py": "d5cb2bfd6ba9463426ddcacabcf437669124f3190a33ba6102403f7c980dc80c",
+    "run-linux-failure-snapshot-v1.py": "6efb9ca05792ab987c93def26428b6e90d5867d06a57f8dab2d4dcedbc177774",
+    "kernel173-packet-roundtrip-v3/manifest.json": "f9ac7bbcd55c25c1759b8e0075563e35bc4de2182077e01d368e3256532cce90",
+    "kernel173-packet-roundtrip-v3/source.rs": "622e7dd8e7dfd6266a39e650ac94860d3cf7e9f8a41d0ad8e87eaf13b07e7fca",
+    "failed-binding-completion-v2.json": "4a2e3531fa1672f8c0bd1017c7d7c502a764b671bb1df240d701b34f4f041d29",
+    "kernel-binding-completion-v2.json": "a8b8af682a774f721cbf86c5ad5b1c9cce8c703089375781fabbfc537c4b8a6c",
+    "tested-source-binding-completion-v2.tar.gz": "512e2cf3a4fcac11fe585b285bce08c80b5ebeb80123608f37c7b9552b99777c",
+    "probe-v400.log": "475068767ebc6f28d3677a4a2e856b1dffd439251adce5baf809b4923e053e62",
+    "owner-ordinal-source-v1/variant.json": "462345a6a4f660099af6e30e4bae892e698f27719af6429ef3fb88f2776cc6ea",
+    "operand-guard-alias-replay-v1/result.json": "a4d40d59dd2e1f866a5a7d30fac8391019e87a63c4f19b812a31002224150345",
+    "owner-ordinal-replay-v1/result.json": "f6be9802d98f11a03e681ecf8ba25604a55b49d13ff95c55ff1170e0927b3a46"
+  }
+}
