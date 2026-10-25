@@ -1,0 +1,162 @@
+{
+  "version": 76,
+  "date": "2026-10-25",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "61fbe0e151e3a88d1f257333986d5f4d74007285",
+  "current_native_kernel": 187,
+  "production_driver_changes_this_turn": false,
+  "all164_local_sources_still_exact_qualified187": true,
+  "prior_native_test_proof_sha256": "83043df4f933fa7940fd026f778b3a9713924c09e6a350bfc9254a01d672960e",
+  "correction": {
+    "kernel": 187,
+    "source_sha256": "818b6820b356df0dd78265945b827312bb4aab046d41683cc3c778ed9086209d",
+    "archive_source_exact": true,
+    "actual_log_lines": [
+      "CROSS_VM_ACCEPTED root=1 vm=1 queue=1",
+      "CROSS_VM_PHASE_PASS phase=0 actual_overlap=0 all_BOs_guards=1",
+      "CROSS_VM_PHASE phase=1 active_mask=2 warm=1",
+      "CROSS_VM_ACCEPTED root=1 vm=1 queue=1",
+      "CROSS_VM_PHASE_PASS phase=1 actual_overlap=0 all_BOs_guards=1"
+    ],
+    "source_mask": "unsigned mask=drain_arrival?2:phase<2?1u<<phase:3;",
+    "finding": "drain-arrival runs root1 twice, root0 never warms before incoming submit; correction to V74/V75 handoff assumption",
+    "actual_driver_boundary": "New owner initialization and cold SKSM binding guarded by idle(); incoming first use count1. Parent count3 fully retired before incoming publication in v760.",
+    "native_log_sha256": "3fa924108467f9846897bcc18027ef2ebb5520057a3aeb67a41f2d47339eb5e8",
+    "log_limit": "First phase declaration is absent/interleaved in log; two root1 accepted/fence and phase0/1 PASS rows exist. Source fixes mask2 in both iterations."
+  },
+  "new_source_controls": [
+    {
+      "name": "repeated-command-identity-replay-v3",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "first_old_overlaps_child": true,
+      "first_old_complete_before_child": false,
+      "later_old_start_during_child": true,
+      "all8markers_and_guards": true,
+      "parent_return": true,
+      "result_sha256": "7c493da54550db18a03f68a3806015f9687605d52714a4ce13d9a7c447c29df4",
+      "cold_identity_sha256": "588fea049e59c117efe797122c03e7654bd8f9612f2ff950f9dbd88f66232c60"
+    },
+    {
+      "name": "idle-old-resume-replay-v1",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "first_old_overlaps_child": false,
+      "first_old_complete_before_child": true,
+      "later_old_start_during_child": true,
+      "all8markers_and_guards": true,
+      "parent_return": true,
+      "result_sha256": "3b185ffbfa65d6be80729bc859327157e0fcce8860c9fd19cd4f421ecd570be8",
+      "cold_identity_sha256": "ee311f63cd248646f3d9c5e4eda1b41db7f71bb2175c29412488acfb6a82728f"
+    },
+    {
+      "name": "incremental-old-append-replay-v1",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "first_old_overlaps_child": false,
+      "first_old_complete_before_child": true,
+      "later_old_start_during_child": true,
+      "all8markers_and_guards": true,
+      "parent_return": true,
+      "result_sha256": "bd4e5df620bcd169928e5fdfb15236ef201f22f35074c2ae24591564a6328a4e",
+      "cold_identity_sha256": "7b2bdd430f002593e08ba5740cb74a81d1dc8d33a2ecd8e9199da84959ab1386"
+    },
+    {
+      "name": "incremental-old-tlbi-replay-v1",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "first_old_overlaps_child": false,
+      "first_old_complete_before_child": true,
+      "later_old_start_during_child": true,
+      "all8markers_and_guards": true,
+      "parent_return": true,
+      "result_sha256": "b4939a792c3d6851ee2f887fa2061b387fd06987befd2bfa110bee622ecef099",
+      "cold_identity_sha256": "d84a7858d309c05836b9b1341d117859822e69ff9f66c4426faeec21a79c169d"
+    },
+    {
+      "name": "paced-old-append-replay-v1",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "first_old_overlaps_child": false,
+      "first_old_complete_before_child": true,
+      "later_old_start_during_child": true,
+      "all8markers_and_guards": true,
+      "parent_return": true,
+      "result_sha256": "6afe8e46b70de19ea2cdb447fcad60122f187320363d7e58179c6e193a721a01",
+      "cold_identity_sha256": "5a5b1dcfc2eb7e22f4feccad0c481308419c1d811d75ccd4cf4d65e79709dc7f"
+    },
+    {
+      "name": "fresh-unused-child-replay-v2",
+      "full_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "first_old_overlaps_child": false,
+      "first_old_complete_before_child": true,
+      "later_old_start_during_child": true,
+      "all8markers_and_guards": true,
+      "parent_return": true,
+      "result_sha256": "54c497711bdd637d83c40ef22cead217ef7dee29b99b78f6b0f485f6168adade",
+      "cold_identity_sha256": "197dc192c9891abb0a51ac92dbe196fa953eda975640644f68974b24d3c075ba"
+    }
+  ],
+  "full_output_bytes": 4800,
+  "actual_GPU_intervals": 72,
+  "conclusions": [
+    "Repeated parent command identity alone passes the strong original overlap control.",
+    "First old GPU END plus completion stamp512 and both queue cursors4 are observed before incoming binding; later old work still overlaps incoming and all output guards pass.",
+    "Separate old notifications/inner heads, global TLBI before each,20ms inter-publication gaps all pass incrementally.",
+    "Combining the above with incoming first=true,count1,fresh scratch/stamp and12-write initial binding on UNUSED grid4 also passes. Warm source grids2/3 alreadyused; Linux cold3 unused. Previous retained child count2 was not identical to Linux cold count1.",
+    "V74/V75 claim that the actual failure warms BOTH VMs was incorrect: source/archive and native log prove root1 is warmed twice. Two-warmed-client capture is optional future coverage, not a prerequisite for this failure."
+  ],
+  "negative_source_scope": "Fresh-v2/v3 reset already-warm grid3 tocount1; both stop after firstold, child unchanged, no FWerror. Adding exactLinuxglobalstart alone does not fix. Changing all child graph/notification/MMIO identity toUNUSED4 qualifies. These are invalid genuinelycold-identity controls for Linux, whose3 is unused; not a reproduced Linux firmware error.",
+  "unchanged_native_failure": "Kernel187 v760 first4-job early-arrival still firmware event4 and old fence success assertion failure; no native kernel fix claimed. Current kernel is prior61fbe0e15, unchanged.",
+  "source_limits": "Reference warms two different queues2/3 in ASID1; failing Linux warms one old queue2 twice. Qualified fresh child uses unused4 to avoid resetting warm3, while Linux uses unused3. Surrounding init/AP graph and some support objects remain opaque. OwnMetal shader differs from ownMesa shader.20ms CPU delays do not alone prove GPU execution at publication. All final GPU intervals independently checked.",
+  "host_only_errors": [
+    "Repeated-identity preparation-v1 read packed primary_count as32bits instead of16; corrected-v2 independently checks all29 objects. No GPU.",
+    "Repeated-identity controller-v2 stopped on exclusive-open of existing artifact after clean reset. No overwrite/GPU; corrected-v3 fullypasses.",
+    "Fresh-child preparation-v1 expected queue_submission1 atf50, but descriptor encodes stamp256; corrected independent verifier-v2. No GPU.",
+    "Fresh-unused preparation-v1 omitted outer packet first=true; independent full24B comparison failed beforeGPU. Correctedv2 matches fullpacket."
+  ],
+  "remaining": [
+    "actual early cross-VM handoff timeout",
+    "complete shared admission/off-lock PreparationSeed/reconfiguration port",
+    "render/cross-generation ownership and actual render+compute overlap",
+    "asymmetric capacities/automatic demand",
+    "fault/uncertain publication, final sustained/active final file-close/combined production validation",
+    "Neo regression qualification; no live Neo hardware"
+  ],
+  "next": "Compare kernel-only runtime operations with these qualified fresh-child/idle/per-record controls: table/cache maintenance, client cache ownership/retirement, PTE/alias topology and same-queue warm state. Capture/match actual source-built Linux graph at a useful boundary if needed. Do not prioritize a warmed-incoming hypothesis unsupported by actual test. No more random flags or repetition of excluded controls.",
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "CPUs": "all16 always; no reduction",
+  "Apple_binary_disassembly": false,
+  "full_goal_complete": false,
+  "final_target": "Last source replay process terminated0; exactRID0/raw N01 Mac16,5/chip6041/nop recovery; both ports unowned.",
+  "key_artifact_sha256": {
+    "native-warm-mask-correction-v1.json": "72a0d15f4322d7f6ae0aafcae4145afc6a9268c3090d43410ef4d9fe5742222c",
+    "repeated-command-identity-preparation-v2.json": "0df8baa5e2dec595ef05abd772af282b1fd6960e2dce66cfd8c34271d4b5bcbe",
+    "idle-old-resume-preparation-v1.json": "69f5e635e42fb85244ce3649a1df3d1909afe10fd609350ad1907754f11b370e",
+    "incremental-old-append-preparation-v1.json": "2bf89c11dd898bf982612cba5a228c12f1ebe5ea5effc961a964c7d0ca5a9f91",
+    "incremental-old-tlbi-preparation-v1.json": "0a10f358d4d1451a332a24e0395636b9598f5ebfced3714d41765ae431ab2766",
+    "paced-old-append-preparation-v1.json": "84963964ac7c8730d76be0c3cf229d73792587bebd2a070628b0f651436fb3f7",
+    "fresh-unused-child-preparation-v2.json": "f60ffd5653caeeaf8d001d8ef21fb73c60cb48ed9d1dec0b37cc63110250486b"
+  }
+}
