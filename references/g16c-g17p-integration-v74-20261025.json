@@ -1,0 +1,294 @@
+{
+  "version": 74,
+  "date": "2026-10-25",
+  "goal_status": "active; not complete",
+  "Linux_HEAD": "0a608de7fa768740ecc3e8e50a637193a9e6d923",
+  "current_native_kernel": 183,
+  "all164_current_local_remote_compiled_archive_sources_exact": true,
+  "production_change": {
+    "file": "drivers/gpu/drm/asahi/scheduled_compute_runtime.rs",
+    "per_command_save_pages": true,
+    "per_command_64B_robustness": true,
+    "slots": 256,
+    "pool_bytes": 4210688,
+    "lease": "existing receipt fence includes CPU visibility",
+    "allocation": "pre-mapped per owner before root publication; backing retained over root recycling",
+    "backpressure_not_API_queue_or_lifetime_count_limit": true,
+    "common_scheduler_and_generation_unchanged": true,
+    "wire_layouts_Defaults_and_Neo_paths_unchanged": true
+  },
+  "source_controls": [
+    {
+      "mode": "distinct",
+      "result_sha256": "119499e558c1eeb32cd9a858ffc94e0473b0824b9af898042c08643ef51ffefe",
+      "complete_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "all_original_markers_guards_and_return": true
+    },
+    {
+      "mode": "shared",
+      "result_sha256": "816ccc8b284d8ca5fe52e71d89dd5ddf96c355d990dd4ae49e454e448813aaa0",
+      "complete_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "all_original_markers_guards_and_return": true
+    }
+  ],
+  "source_qualification": "Both distinct and shared save destination controls pass all original outputs,8 markers,guards,12 GPU intervals and original queue return. Shared includes both warm queues within ASID1, not just one queue. Only register1a510 + descriptor.ed8 change; original argument-slot addresses stay intact. Full surrounding graph remains partly opaque.",
+  "zero_input_control": "Whole-page zeroing erased three actual Metal buffer argument pointers; wrong output without FW crash. Not evidence that a new save destination needs those initial bytes.",
+  "native_positive": {
+    "version": "v720",
+    "kernel": 183,
+    "guest_hashes": 260,
+    "CPUs": 16,
+    "tests": [
+      "RAW_RENDER_FIRST",
+      "LEASED_QUEUE",
+      "LEASED_QUEUE_CLOSE",
+      "SAVE_RECYCLING",
+      "QUEUE_RECYCLING",
+      "V720_MEMORY",
+      "V720_UNBIND"
+    ],
+    "private_submissions": 4,
+    "private_checks": 213881,
+    "API_queues": 130,
+    "queue_commands": 130,
+    "queue_checks": 6391995,
+    "memory_checks": 6313,
+    "actual_producer_generation_leases": true,
+    "clean_unbind_cold_proxy": true
+  },
+  "native_negative": {
+    "version": "v702",
+    "kernel": 183,
+    "guest_hashes": 305,
+    "CPUs": 16,
+    "jobs": 4,
+    "arrival_after": 1,
+    "rounds1_and2": "all GPU output/fences/guards/return correct; strict temporal coverage rejected",
+    "round3": "actual FW event4 and old fence success assertion fails; numeric status not printed; cold recovery complete",
+    "ownership_change_does_not_fix_handoff_timeout": true
+  },
+  "build_note": "Initial candidate failed Rust grammar before link and was corrected; v2 build succeeded actual183, then expected-version184 assertion failed. Independent complete hash/UTS/ELF audit recorded actual183 before first native test. Prepared184 controller was never run.",
+  "Neo_regression": "35 source-projected Session/default/probe/scheduler paths and829440 address comparisons pass; no live Neo hardware test",
+  "previous_broad_baseline": "182/178 broad13/sustained and earlier Chromium/WebGPU evidence retained as prior evidence only, not repeated with183",
+  "next": "New warm-two-ASID own Metal workload compiles but has no native GPU evidence yet. Guest boot currently stops progressing after CPU6/startup on this attempt. Prior v1 actualUSBdisconnect before shell; v2 console observation expiry + host diagnostic exit. Next diagnose guest readiness with a fresh all16CPU single-user wrapper and a SAFE nonterminal diagnostic hook/control path; do not use default SIGQUIT as a nonterminal dump (it exits), reduce CPUs, disassemble Apple binaries or infer offline device. When reference completes, verify all3 full captures/native outputs then cold plain replay before source bisection. Kernel183 can still run its qualified positive subset; early handoff remains actual FW failure.",
+  "remaining": [
+    "actual early cross-VM handoff timeout",
+    "complete shared admission/off-lock PreparationSeed/reconfiguration port",
+    "render/cross-generation ownership and actual render+compute overlap",
+    "asymmetric capacities/automatic demand",
+    "fault/uncertain publication, final sustained/active final file-close/combined production validation",
+    "Neo regression qualification; no live Neo hardware"
+  ],
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "Apple_binary_disassembly": false,
+  "CPUs": "all16 always; no reduction",
+  "full_goal_complete": false,
+  "target_final": "No active capture/monitor/controller jobs; all3 exact v2 PIDs absent. RID0/raw/exact N01 identity reset PASS, N01/N03 unowned. Current native Linux driver183 unchanged and failure open.",
+  "key_artifact_sha256": {
+    "kernel-command-owned-saves-v2.json": "29ca1adbb9a936bafffd18d75dbb5c269eb425b55fc8cab94a5cf36b67db5bdb",
+    "indexed-dispatch-command-owned-saves-v2.patch": "8437df3e178b2687b90cc3975bfe64fdc17edaa1eb28da607b392f276594142c",
+    "save-destination-controls-v1.json": "5f3594e4da93d357019f2dec325080aa1dd4ab34a7ad68e6a9c29684813dc423",
+    "native-command-owned-saves183-v1.json": "1485d9513fa50f2730713a1917cf6a8b6ecafa22a1da7e9759490bd0332bf5a1",
+    "native-command-owned-saves183-ordinary-v1.json": "250aa3a60753daa43ff0f29e870b2c2abbdc670286a54d9795ce48a09457c698",
+    "probe-v702.log": "627c299ada58eefcade7a95cfdac8212123fd0fb8997dbff369eb06d4228cb46",
+    "probe-v720.log": "7352d6c31aea312460f557961a5f9ecdc6e4116214701538de6f36ab8fdeb387",
+    "proxy-after-v720.log": "4035479b929e93162eba0754eb55d59f99a584f3738bbd928d5ddbda8007ecea",
+    "zero-command-saves-replay-v1/result.json": "9cdeee3b290ab2ff7809576d80c9f6abe58a89615b8012f5354cf46d52343a19",
+    "before-first-completion-replay-v2/result.json": "a093747632e844746da0689a646900f7c45762913d9bdd661e3e3d063b36be90",
+    "live-long-incoming-replay-v1/result.json": "16365e1087e3fb28a7024418bda3063546a52ba5acffd5337188086a5c02cf64",
+    "live-long-incoming-preparation-v1.json": "cbaf1f42c7b20405c11474ab1fe9249529e4d51d209a80a8863303fff5ba2c2b",
+    "retained-live-long-incoming-replay-v1/result.json": "7f4617fb17e9dd5a4373b1282b96e6ad8e7418b5fd6625ca297add319db0c67e",
+    "retained-live-long-incoming-preparation-v1.json": "77e55040be8c510967d94042c51bc34cacfb924639cda5dbe8a987554c9b8bc6",
+    "replay-retained-live-long-incoming-v1.py": "6c4e1729993be80acb39fe4c69489115392de816e689e2586757e1621b5bc6a6",
+    "retained-linux-route-evidence-v1.json": "aeca87e49d9b3de8314f72ca95824833fa341e0f05267ffd3a627b0563ebed88",
+    "warmed-clients-preparation-v1.json": "4e86aa30184f70da999e01b3802787401d07b849f41e547e6e9b3cd114b29b0a",
+    "warmed-clients-startup-failure-v1.json": "8ba5aed3b9a6d3015f5940ab99015686edf54e7646ba20e4976f5f5fd7acab94",
+    "capture-warmed-clients-v1.py": "6a630a7f532fede57398269dc31b8f9775246afc4478a4338c42f38f809006e9",
+    "wrapper-warmed-clients-v1.py": "2038cb841be2629f1d5083b7b14cdf2155d62f88a33cdb3383dfb6affba4f5f4",
+    "console-warmed-clients-v1.py": "f23cde63da35620b7d4a2e3ae829cfb000550f7c83c7f863747e87a5e99625be",
+    "run-warmed-clients-capture-v2.py": "41f004aa1622241dc893e63ca9d6e6e4396a2ca71e6bfe6874c3df9e81e0e89a",
+    "hv-warmed-clients-v2.log": "cf678f08738dc427f7fbdd4f3110ccc13e800d5f2eebdda88e7c66d0101d14eb",
+    "console-warmed-clients-v2.log": "bf5196083ba620326d40b7e42cbc51c81120da757b1dd6d57e5656a7f4a14a09",
+    "controller-warmed-clients-capture-v2.log": "dd6499057cfc50d52841dd9769e6334591c01327d89fe88e423c46c050d2e41e",
+    "recovery-after-warmed-clients-v2-host-dump.log": "8de63ebc34120a1095fa45fc60161cd88cd1fa1b6a07ce130618311cc68d3ae1",
+    "proxy-after-warmed-clients-v2-host-dump.log": "10dc9acbee7ec0f8ce04c7f5d39ed19a35ceee35e03971f50b978b34a9125562"
+  },
+  "early_live_reference_controls": [
+    {
+      "name": "before-first-completion-v2",
+      "complete_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "target_first_end_zero_before_and_after_binding": true,
+      "first_GPU_start_not_yet_visible_at_binding": true,
+      "actual_first_parent_child_GPU_overlap": true,
+      "subsequent_old_starts_while_incoming_live": [],
+      "all8_markers_and_guards_and_original_queue_return": true,
+      "result_sha256": "a093747632e844746da0689a646900f7c45762913d9bdd661e3e3d063b36be90"
+    },
+    {
+      "name": "live-long-incoming-v1",
+      "complete_output_bytes": 800,
+      "actual_GPU_intervals": 12,
+      "target_first_end_zero_before_and_after_binding": true,
+      "first_GPU_start_not_yet_visible_at_binding": true,
+      "actual_first_parent_child_GPU_overlap": true,
+      "subsequent_old_starts_while_incoming_live": [
+        2,
+        3
+      ],
+      "all8_markers_and_guards_and_original_queue_return": true,
+      "result_sha256": "16365e1087e3fb28a7024418bda3063546a52ba5acffd5337188086a5c02cf64"
+    }
+  ],
+  "early_live_reference_limits": "Acceptance plus1ms target-counter delay, first END0 before/after root/dispatch/binding. START was also0: do not claim the CPU observed execution start at binding. Final GPU intervals independently prove overlap. Surrounding roots/AP graph remain partly opaque.",
+  "first_gate_v1": "Invalid coverage attempt: direct first START/END gate produced no incoming root/dispatch trace, warm only qualified, host assertion failed, no firmware crash. Target status was not saved before assertion in v1; do not invent its return code or infer exact visibility cause.",
+  "long_incoming": "Own Metal iterations uniform1->8M, independent Rust CPU oracle first verified against all5 original native output prefixes. Full160B child oracle explicitly updated, all markers/guards preserved. Original shader/CDM/all29 packet objects/72MMIO/kicks unchanged. First and subsequent old commands overlap incoming; parent commands2 and3 start before incoming finishes.",
+  "retained_early_long_incoming_control": {
+    "name": "retained-live-long-incoming-v1",
+    "full_outputs_bytes": 800,
+    "actual_GPU_intervals": 12,
+    "grid": 1,
+    "retained_count": 2,
+    "driver_stamp": 512,
+    "child_resume_writes": 4,
+    "late_total_writes": 36,
+    "incoming_iterations": 8000000,
+    "subsequent_old_commands_starting_while_incoming_runs": [
+      2,
+      3
+    ],
+    "all_markers_guards_and_old_return": true,
+    "actual_marker_two_changed_scalar_bytes": [
+      4,
+      6
+    ],
+    "close_controls_injected": false
+  },
+  "new_source_controls_total": {
+    "runs": 5,
+    "full_output_bytes": 4000,
+    "actual_GPU_intervals": 60
+  },
+  "production_runtime_changed_this_turn": false,
+  "new_source_topology_controls": {
+    "qualified_source_controls": [
+      {
+        "name": "retained-grid23",
+        "version": "v1",
+        "complete_output_bytes": 800,
+        "actual_GPU_intervals": 12,
+        "old_grid": 2,
+        "new_grid": 3,
+        "subsequent_old_starts_while_incoming": [
+          2,
+          3
+        ],
+        "complete_outer_message_grid_match": false,
+        "priority3_channel11_match": false,
+        "result_sha256": "2986d5950317ef6218ca36af660e5328a3f062d5e9b7c770b5da8c5cf36dfe47"
+      },
+      {
+        "name": "retained-grid23",
+        "version": "v2",
+        "complete_output_bytes": 800,
+        "actual_GPU_intervals": 12,
+        "old_grid": 2,
+        "new_grid": 3,
+        "subsequent_old_starts_while_incoming": [
+          2,
+          3
+        ],
+        "complete_outer_message_grid_match": true,
+        "priority3_channel11_match": false,
+        "result_sha256": "7d64e61b7e00f9fb5db40512575a05274d09bc5350d87ad27f9c78f9238b5458"
+      },
+      {
+        "name": "retained-linux-route",
+        "version": "v2",
+        "complete_output_bytes": 800,
+        "actual_GPU_intervals": 12,
+        "old_grid": 2,
+        "new_grid": 3,
+        "subsequent_old_starts_while_incoming": [
+          2,
+          3
+        ],
+        "complete_outer_message_grid_match": true,
+        "priority3_channel11_match": true,
+        "result_sha256": "d6d2188999d05984abc5e868df5fac8264d297292f7e7178b5af1f1a1f34b8e9"
+      }
+    ],
+    "all_workload_outputs_markers_guards_and_return_preserved": true,
+    "partial_v1": "Descriptor/record/wrapper/markers/MMIO grid2/3 passed, but outer24B retained old grid0/1/2. Positive partial control; not a complete Linux identity match.",
+    "route_v1": "Preparation preflight rejected unused warm third queue: its whole192B record is zero, not a priority2 record. No hardware run. Corrected v2 leaves it untouched until late initialization.",
+    "interpretation": "Full Linux grid2/3 and priority3/channel11 cohort still passes this reference. Native Linux early handoff remains unresolved. Warm reference still uses only one ASID, unlike Linux warming both. Do not infer complete graph/lifetime equivalence.",
+    "runtime_driver_changed": false,
+    "Apple_disassembly": false
+  },
+  "matched_Linux_source_cohort": {
+    "old_grid": 2,
+    "incoming_grid": 3,
+    "firmware_priority": 3,
+    "channel": 11,
+    "doorbell": "0x008300000000000e",
+    "all5_outer24B_messages_verified": true,
+    "full29_typed_objects_verified": true,
+    "retained_count2": true,
+    "long_incoming8M": true,
+    "early_live_roots_dispatch": true,
+    "subsequent_old_starts_while_incoming_live": true,
+    "full_outputs_markers_guards_return_pass": true
+  },
+  "remaining_lifecycle_difference": "All existing reference warm queues use ASID1; late incoming ASID2 is new, even when reusing a warm SKSM identity. Linux warms both VMs before handoff. Resident GPU-mutated VM state/count/cache ownership is not covered by those source controls.",
+  "new_native_workload": {
+    "source": "proxyclient/experiments/metal_g16c_compute_warmed_clients.m",
+    "source_sha256": "28f327b2a74cfafd05429b9a89f4c46cb62ea50535d3505135a066eafe7be433",
+    "strict_arm64_compile": true,
+    "warm_iterations": [
+      1000000,
+      1000001
+    ],
+    "late_iterations": [
+      4000000,
+      8000000
+    ],
+    "warm_contexts": 2,
+    "late_contexts": 2,
+    "full_output_bytes_per_buffer": 160,
+    "role_identity": "own uniform DATA distinguishes contexts without PID/ASID-order assumptions",
+    "workload_hardware_output_verified": false,
+    "plain_replay_qualified": false
+  },
+  "startup_attempt_v1": "Actual USB disconnect during guest CPU/device startup; both HV and console terminal exit1 before shell/workload. Logs preserved. No observed panic/fault instruction; cause unproven. Identical all16CPU retry follows exact RID0/raw recovery.",
+  "reference_capture_v2": {
+    "artifact": "native-warmed-clients-v2",
+    "guest_shell_or_workload_reached": false,
+    "console_exit": 1,
+    "console_error": "180s shell observation expired; this was not proof of target termination",
+    "host_diagnostic": "Sent SIGQUIT expecting nonterminal stack dump, but installed utils.dumpstacks ends with sys.exit(1). Host stack was waiting in initial P_HV_START serial receive, not inside CPU-start callback. Host diagnostic caused monitor exit; NOT a guest crash. No Apple instructions decoded.",
+    "controller_metadata_caveat": "monitor_exit:null remained stale in controller JSON: else loop saved old dict without refreshing poll. All3 exact PIDs29538,29555,29484 independently absent after terminal exec session40824 exit1. Never interpret that old null as a live handle.",
+    "recovery": "Exact RID0/raw/N01 Mac16,5/chip6041/nop restored after terminal host diagnostic; ports unowned"
+  }
+}
