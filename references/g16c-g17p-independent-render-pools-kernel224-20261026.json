@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-26",
+  "linux_branch": "integration/g16c-g17p",
+  "linux_commit": "5f75cbef9f4a5b0cc40631af1760ab3ef447f538",
+  "kernel": 224,
+  "qualification": {
+    "kernel": 224,
+    "exact_declared_sources": 180,
+    "Image_sha256": "a43b608fce1d47b8e841c2e806280f7bfa5ef50a97885a25975a33620e055fe5",
+    "object_sha256": "879a01f3c87a244bbf1f0430a2fe28b502a26a57da6824c5b0534a3df24ecbd1",
+    "host_exact_packet_cases": 576,
+    "host_common_plan_cases": 480,
+    "retained_scratch_bytes": 1572864,
+    "Neo_defaults_preserved": 35,
+    "native": [
+      {
+        "receipt": "native-minimal-pool-rebind224-v2.json",
+        "version": "v1138",
+        "log_sha256": "d191cd82c4f737bfc32e8004e2dd62a4b5011c277c8f84f968f1b5c39af85cb9"
+      },
+      {
+        "receipt": "native-pool-leases224-v1.json",
+        "version": "v1140",
+        "log_sha256": "13b99b55f79bfdc6d46951c16e110d0d29bf485000d28473c2d52c4e391f5947"
+      }
+    ],
+    "scope": "Pool-local admission, all15 physical render pools and grids, private moves, Vulkan render/compute and retained return, independent CPU leases. Actual simultaneous GPU render intervals, queued same-pool leases and full parity remain unqualified.",
+    "full_goal_complete": false
+  },
+  "evidence": {
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/qualified-independent-render-pools-v1.json": "8f4d30aef958fccd4e12f8af08cae52886bcc5c8c1b9fef643d4347c567930a8",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/audit-independent-render-pools-v1.py": "1dcd62085061d867a0a04b2ec5903de31b6ee3931d9a01f328b44e74f570c8e1",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/kernel-neo-lifecycle-v33.json": "31af39d4440b39b3e76397f7aaae6b3cb02e28deb1e78091aec83b9a1cf4fceb",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/tested-source-neo-lifecycle-v33.tar.gz": "37ee93e2f47a831480bdae85903da570e6f7934ee68981b71bb6d0187c407ee6",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-minimal-pool-rebind224-v2.json": "d1afb44b316740388e538622fa0f61ce3cdcb186f735816b72be715c210b3aa1",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-pool-leases224-v1.json": "47b3b4460d54c4d6f04d5d6464abc0a07047e7544e2636c9622bd4f586492fd3",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/Neo-projection-v30/summary.json": "bf259ddae77ed4379742054243f5757f6eb2838a8c2ec9d1fb29230fbbf3c772",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/retirement-reference-replay-v1.json": "f7c93d27b5807ff2eb3aa4b5cbe4f548a6564e4d870d08bbf76309c8890cd422",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/retirement-reference-replay-v2.json": "76434d2c90df95a2e8407278bc3bf4340a3489528049122876bfa45c49665a7d",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/retirement-shared-dispatch-offline-v1.json": "ba939449ea248f50673a3ab0e06060a279f80f72c1cf779ae29d760d2e99ae87",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-minimal-pool-rebind220-v1.json": "c3804dd33bf80046cd2a929c253c1186b783de719e6d3ad61676fc53ea28c90e",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-minimal-pool-rebind221-v1.json": "733c379950b74882cff2b39076895a88de7a989203b36b4434db146af358851f",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-minimal-pool-rebind221-v2.json": "62bfb69fd766487a01e17a363e0baaaf11afd53a27c548d9d83e95b5f39b7728",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-minimal-pool-rebind222-v2.json": "007a613c64e032270ac99ebc6992b084c046337f583677bf5053887865b2b737"
+  },
+  "production_change": [
+    "Actual shared Neo pool/generation admission, pool-local leases instead of global render drain",
+    "Per-pool ASID/root/scratch/grids/milestones and retained firmware scratch",
+    "Metadata heap skips bootstrap scratch reservation",
+    "Shared render operand directory follows selected private origin; address-only update preserves firmware cursors/counts"
+  ],
+  "negative_hypotheses_disproved": [
+    "kernel218: sending six maintenance controls with other roots retained does not fix re-registration",
+    "kernel220: fresh FList support/auxiliary and new tag do not fix it"
+  ],
+  "incremental_native_evidence": [
+    "kernel219: original one-pixel changed-window renderer fails inside FList registration before publication",
+    "kernel221/v1131: address-only shared entry0 directory update fixes minimal nonzero-pool move; full output/timestamp oracles and clean cold recovery",
+    "kernel221/v1132: Vulkan publishes work then source EIO during retirement; preserved, not independently root-caused",
+    "kernel222/v1134: Vulkan render+compute pass, returning to old retained pool fails after publication with FW kind4/grid14",
+    "kernel223/v1136 and final224/v1138: refresh directory on every render activation; all15 pools, changed private origin, Vulkan and all retained returns pass",
+    "final224/v1140: different-private-origin peer fully finishes while bootstrap pool CPU visibility paused; both original output oracles and clean cold recovery"
+  ],
+  "not_qualified": [
+    "Actual simultaneous GPU render intervals, especially distinct private origins",
+    "Queued same-pool geometry/scene/status leases",
+    "Common off-lock cold render pool construction",
+    "Context firmware-byte preservation through all wraps",
+    "Fault/error attribution, sustained and actual Neo hardware full parity"
+  ],
+  "full_goal_complete": false,
+  "pushed": false,
+  "device_released_to_verified_cold_plain_proxy": true,
+  "Apple_binary_instructions_decoded": false
+}
