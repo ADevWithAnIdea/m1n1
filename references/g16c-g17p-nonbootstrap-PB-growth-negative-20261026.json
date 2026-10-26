@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-26",
+  "linux_commit": "5f75cbef9f4a5b0cc40631af1760ab3ef447f538",
+  "production_source_restored_to_kernel224": true,
+  "kernel225_global_invalidation_experiment_disproved_and_reverted": true,
+  "current_dirty_Linux_files": [
+    "drivers/gpu/drm/asahi/tests/g16c_drm_parameter_growth.c"
+  ],
+  "evidence": {
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-render-pressure-overlap224-v1.json": "84b3dd3309f6b78b01818bdcf4a6359e51c51559c64406bb8bb02f44dca1d715",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-nonbootstrap-growth224-v1.json": "f765c5a9f5dedab55b4da4e27e8410fe6c0ed9918619a797633794d0a00297eb",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-nonbootstrap-growth225-v1.json": "9312f31836b932d9999624aca9ee09bf6fca75125e75f2e1b133b03ef507e21e",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/kernel-neo-lifecycle-v34.json": "d3f8f11015349a0c94d934844af202bc003abe5034233f8d5709a00979295bd1",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/pressure-overlap-preparation-v2.json": "2033bf9fe0dbc278aaa751a61e5bfce64cddd09ce963ecfb15b2d3f5b42ef6eb",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/metal-indirect-pressure-two-clients-build-v1.json": "30f3931953d98cbe795c6aa2d4082be44f4247aa3dc5a130345f3cf10146c51a",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-reference-indirect-pressure-two-clients-v1.json": "7180ed02c312488828da4fa9ce1c3a10ce4402482ea8ea868e655136a2d98dce",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-reference-indirect-pressure-two-clients-v2.json": "8e4a1152d6cde6d425839bbb85b18c84e6677be25bce9f3bd4ee439ac9d6158c"
+  },
+  "finding": "Original200000-instance PB pressure fails at non-bootstrap context63 pools1 and2 after two successful growth replies23->33->43; sequential reproduction requires no overlapping GPU work.",
+  "actual_overlap_qualified": false,
+  "new_Metal_reproducer": "proxyclient/experiments/metal_g16c_indirect_pressure_two_clients.m",
+  "capture_state": "Second single-user/all16 native reference attempt running; inspect actual PIDs and outputs before device access.",
+  "capture_HV_pid": 69815,
+  "capture_console_pid": 69816,
+  "capture_controller_pid": 69756,
+  "full_goal_complete": false,
+  "Apple_binary_disassembly_performed": false
+}
