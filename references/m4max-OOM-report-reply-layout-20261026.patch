@@ -1,0 +1,37 @@
+--- a/proxyclient/m1n1/g16c/parameter_errors.py
++++ b/proxyclient/m1n1/g16c/parameter_errors.py
+@@ -14,7 +14,7 @@
+     if type(stamp) is not int or not 0 <= stamp < 1 << 32:
+         raise ValueError('invalid completion stamp')
+     message = bytearray(64)
+-    struct.pack_into('<IIQI', message, 0, 9, context, queue, stamp)
++    struct.pack_into('<IIQI', message, 0, 9, 1, queue, stamp)
+     return bytes(message)
+ 
+ @dataclass(frozen=True)
+@@ -50,7 +50,7 @@
+         try:
+             if b.firmware.read(self.receive_state,4)!=struct.pack('<I',(self.receive_slot+1)%256):raise OSError(errno.EIO,'owned error consumer was not advanced')
+             self.before_driver=tuple(b.read32(c.driver.address)for c in p.work.completions)
+-            self.reply=error_reply(struct.unpack_from('<I',self.raw,8)[0],struct.unpack_from('<Q',self.raw,0x38)[0],struct.unpack_from('<I',self.raw,0x10)[0])
++            self.reply=error_reply(struct.unpack_from('<I',self.raw,24)[0],struct.unpack_from('<Q',self.raw,0x38)[0],struct.unpack_from('<I',self.raw,0x10)[0])
+             self.state='publishing'
+             self.control_producer=d._live_retirement_controls((self.reply,),'owned parameter-error9')
+             self.state='acknowledged';d.pending_parameter_error=None
+@@ -63,12 +63,13 @@
+ def accept_parameter_error(device,raw):
+     device._ready()
+     if len(raw)!=72:raise ValueError('incomplete parameter error event')
+-    kind,slot,context,event,stamp=struct.unpack_from('<5I',raw)
++    kind,reserved,status,event,stamp=struct.unpack_from('<5I',raw)
++    context=struct.unpack_from('<I',raw,24)[0]
+     p=device.active_prepared
+-    if(kind!=7 or p is None or p.render is None or not p.published or p not in device.retained or p.parameter_error is not None
++    if(kind!=7 or reserved!=0 or status!=1 or p is None or p.render is None or not p.published or p not in device.retained or p.parameter_error is not None
+         or device.pending_parameter_error is not None or device.pending_parameter_growth is not None
+         or p.queue not in device.queues or p.queue.closed or not p.queue.vm.published or p.queue.vm.identifier!=context
+-        or p.render is not device.render_resources.get(context)or not p.render.admitted or p.render.parameter.slot!=slot
++        or p.render is not device.render_resources.get(context)or not p.render.admitted
+         or p.work.queues is not p.queue.queues or p.work.states[1].event!=event or p.work.states[1].stamp!=stamp
+         or struct.unpack_from('<Q',raw,0x28)[0]!=p.work.descriptors[1]
+         or struct.unpack_from('<Q',raw,0x30)[0]!=p.render.links.manager
