@@ -1,0 +1,169 @@
+{
+  "qualified_scope": "Max bulk parameter-pool construction uses the original common Neo render template preparation/commit phase",
+  "goal_complete": false,
+  "kernel": 239,
+  "linux_commit": "d138dcd9c810547a7f5a99ae5c1cebaf77c97f6a",
+  "all180_current_archive_remote_tested_sources_match": true,
+  "Image_sha256": "1de6672017f930b19aedb1342449868e54d376313bd817de712b512344fedc7e",
+  "manifest": "kernel-neo-lifecycle-v49b.json",
+  "host_test_only_refresh": "drivers/gpu/drm/asahi/tests/check_scheduled_render_allocation.py",
+  "proofs": {
+    "native-nonbootstrap-OOM239-v1.json": {
+      "sha256": "b70526c0d751d315d61a40411c2b912f234e67075f5bd08eddd56fb2875c1c19",
+      "native": {
+        "version": "v1190",
+        "stage": 0,
+        "monitor_pid": 82066,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v49",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=1",
+          "--bootarg",
+          "asahi_neo.g16c_parameter_oom_test=2",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1190"
+        ],
+        "guest_hashes_verified": 359,
+        "high_context_OOM_error_dependency_recovery_passed": true,
+        "tests_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      },
+      "log_sha256": "947692accd2767bc14e48357595400db0443d04ee4bae8e7ebb598367c45c095",
+      "startup_stalls": []
+    },
+    "native-cold-template239-v1.json": {
+      "sha256": "6a9e34c3acc33d288b6545c4fe22317a5aa52677d8f6bbb8fc2974971af294e5",
+      "native": {
+        "version": "v1193",
+        "stage": 0,
+        "monitor_pid": 82275,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v49",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=1",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1193"
+        ],
+        "guest_hashes_verified": 359,
+        "sequential_nonbootstrap_pressure_passed": true,
+        "tests_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      },
+      "log_sha256": "c17794997753dcc059c6d39790cb29d127924fe5bb6c35cc53993ee92bb68a5d",
+      "startup_stalls": [
+        {
+          "version": "v1192",
+          "stage": 0,
+          "monitor_pid": 82161,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v49",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1192"
+          ],
+          "startup_stall": {
+            "log_unchanged_seconds": 15.302780628204346,
+            "CPUs": 16,
+            "no_userspace_or_GPU": true
+          },
+          "recovery": {
+            "reason": "startup_stall",
+            "monitor_exit": -15,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          },
+          "identical_retry": "v1193"
+        }
+      ]
+    }
+  },
+  "host_resource_gate": {
+    "source_RenderResources_allocate_executed": true,
+    "detached_build_without_live_vm_or_root": true,
+    "detached_allocation_failure_cases": 4,
+    "detached_geometry_allocation_failure_boundaries": 3,
+    "geometry_failure_preserves_all_leaves_and_addresses": true,
+    "failure_installs_no_resource_leaves_or_descriptor": true,
+    "same_reservation_retry_after_failures": true,
+    "production_Rust_allocator_executed": true,
+    "complete_virtual_pages": 31230,
+    "relocated_rebind_and_physical_reuse": true,
+    "mapped_rebind_preserves_physical_root_and_all_PTEs": true,
+    "PB_metadata_mutations_preserved": true,
+    "zero_new_backing_allocations_on_rebind": true,
+    "geometry_guard_and_last_metadata_foreign_mapping_rejected_before_clear": true,
+    "all_virtual_DATA_bytes_and_flags_match": true,
+    "whole_bytes": 512296920,
+    "whole_sha256": "1db59ccfc197b2aba34518b3cf9cff8f88935acb400bbe1d1fc1a167c58cd70d",
+    "owned_FList_request_matches": true,
+    "one_idempotent_admission": true,
+    "admission_lifetimes": 2,
+    "last_alias_and_installed_root_mismatches_reject_before_control": true,
+    "models": "RAM, low/root PTE APIs, receipt reply and cache primitives; not native CPU/GPU",
+    "native_GPU_execution": false,
+    "source_sha256": {
+      "scheduled_render_runtime.rs": "189dbd4593368bb5f557a315516e73362b5451a9b091cd0c9b9d55289080e85d",
+      "scheduled_compute_runtime.rs": "19ab26fce217e48b2950adcfadedc75126460e3b418989337df9966568a4f351",
+      "scheduled_render_resources.rs": "0a69ad8da90a5857ab4878224d4457c8e3aa77ad70e725544b522bf47d310272",
+      "scheduled_render_admission.rs": "a45d78ec301b296cc29699d21709541f5078d6355235b65580a7a587f199fb29",
+      "scheduled_operands.rs": "1229c216bf74ecc14483d6ef12101e31c8e7ac83e62075e7edfe7c8ef20bbc18"
+    }
+  },
+  "artifacts_sha256": {
+    "kernel-neo-lifecycle-v49b.json": "697c08e980c049cc205e5142139e3388cbcc4504ec447b6cde7281ca7dbc21af",
+    "tested-source-neo-lifecycle-v49b.tar.gz": "3f6d7f2cc9d80de2a86157288e5d638ad439ec574875ce692bfd08c8f2b2581e",
+    "offlock-PB-resource-bytes-v3/summary.json": "c2ff1bb858a3f5f013bbb0631c43c034b0133e04c89f4de6d6e75380981b8f29",
+    "offlock-PB-Neo-shape-v1/summary.json": "1c3326df20e178cfdaa7c8158102f820a3a641430de82c0a4c4df1ff1ab0566e",
+    "native-nonbootstrap-OOM238-v1.json": "b1d190fb845ced337de25b0ccccf24e6584ee6dcc4ed994dfebfc8a53b014a0d",
+    "offlock-PB-resource-bytes-v1.log": "c13169753a16ac55f78ed92fa74055012cd2c3ee80af3ab76a846a780064741e"
+  },
+  "protected_refs": {
+    "neo-known-good-2026-10-21": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "snapshot/max-before-neo-lifecycle-20261025": "569a3e80ec4424a5954b903d99f8208ade032f6b",
+    "PUBLIC_wip_m4_max_agx": "a0934325187a66cf6f91817e3d2a3874606f9e10"
+  },
+  "negative": "Kernel238 created PB backing correctly, then returned EINVAL before GPU publication because geometry was not initialized before descriptor preparation; corrected in239. Negative, clean unbind and cold recovery preserved.",
+  "remaining": [
+    "Move base Owner/operand backing, geometry and transport/work-page construction through common preparation",
+    "Actual GPU render overlap; current paired237 test measured zero",
+    "Queued same-pool producer/scene/status leases and firmware-owned context preservation across wraps",
+    "Broader errors/recovery/sustained/live-Neo/current Chromium/WebGPU parity qualification"
+  ],
+  "no_claims": [
+    "Full cold render allocation moved off-lock",
+    "Actual GPU overlap on239",
+    "All15physicalpool regression on239 (previous237 qualified all15)",
+    "Full goal or checklist completion"
+  ]
+}
