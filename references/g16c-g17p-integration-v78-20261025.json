@@ -1,0 +1,1045 @@
+{
+  "version": 78,
+  "date": "2026-10-25",
+  "goal_status": "active; not complete",
+  "previous_turn_classification": "progress: V77 isolated exact sourceLinux failure outsideLinux",
+  "Linux_HEAD": "61fbe0e151e3a88d1f257333986d5f4d74007285",
+  "current_native_kernel": 189,
+  "production_changes_retained": false,
+  "new_kernel_built": false,
+  "all164_current_local_remote_archive_compiled_sources_exact": true,
+  "qualified187_object_identical_to189": true,
+  "cold_replays": [
+    {
+      "version": 13,
+      "control": "Extra16MiB incomingdirectoryalias at oldDVA, samePA, original mappings retained",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "f85e33220a2f51559ef4de200b4f1a6c6a7eb9248c6a5a87ee36f294d4cd4d13",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            777467956,
+            793515788
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            777468391,
+            785423782
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            785423812,
+            793447794
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "892bfe070adc92b1d0663b1f409d6dcb9bcbbb938a363f54517812891919ad74",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 60,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "a80195c1292eb3379a8356e9d4ba22f5966bce56bec6ea49811fae68aaf85517"
+      }
+    },
+    {
+      "version": 14,
+      "control": "Nativepacked4B schedulercredit spacing+4, all7 typed256B originals exact",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "2f84bf3f2c2c88e875e48efbd70fab4c616fba36a4381d23d65168c63fe5deb1",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            738090658,
+            754138464
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            738091075,
+            746046436
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            746046458,
+            754070444
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "8696ca22bf935ed36c3346389979fa6fbc3ec702b6954d777f6131195f3b8bef",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "ecc1a9819957d57874f2bf3f77dc0e38dd875e5a741cd03b5e64bc91cdcc91a7"
+      }
+    },
+    {
+      "version": 15,
+      "control": "Unqualifiedcoalescing prototype: changedgroupclosingcounter6/head8; childonly executes, noFW4; NOTvalidABIexclusion",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "16eb802e8f7040f3261ac7004147c37743a2c23eebe4b38150ba621191ecc68c",
+      "actual_firmware_event4": false,
+      "event4_words": [],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            742016215,
+            758063943
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 768,
+          "expected_stamp": 1024,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1024,
+          "expected_stamp": 1280,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "7a1d060fccadd105f9d16fd1298e7a9f069e23074b3e6d5a75ad7bed592a457f",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "face03c93414ea775a7640c0d2f75d346a495a3105895af0b9d8d32ae97099c7"
+      }
+    },
+    {
+      "version": 17,
+      "control": "Only incomingUBOu32=500k and ownCPUoracle; originalshaderandpackets",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "2d3898a7d99b256bc485227268a1890c33646ca8ba82e0a20227363b2f607f25",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            736914899,
+            740927142
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 768,
+          "expected_stamp": 1024,
+          "scheduler_phase": 0,
+          "timestamps": [
+            736915328,
+            736938151
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1024,
+          "expected_stamp": 1280,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "81fdb67fb72a23f20a4265bc217df0fcfa5249cf40438d2297d490affbc36ed5",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "394962c001321cddb3be3e9de30fad8f555eca6f69f500cc04f320379f060fa2"
+      }
+    },
+    {
+      "version": 18,
+      "control": "Onlyincominggrid3->4 consistent descriptor/record/wrapper/marker/outer notification +12typedbindingwrites",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "8b8215e4fef672151ff5e7114e0860b96c6611c9ba06e3df78e466041a6c614d",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            738858475,
+            754906310
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            738858905,
+            746814216
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            746814238,
+            754838194
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "5ade357fa624d2413303e73e829c08dfd38c3d2ba0a0eccf6111a44a6f975902",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "b1c440f888cd827ce4343db66b350fa6742bfec96de60082b38eec9089402b7c"
+      }
+    },
+    {
+      "version": 19,
+      "control": "Onlyincominggate14028=0 vs1; differentincominggrid3 FW4, invalid for this concurrentprofile",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "92e8e8cdad5e0fe0183014938381a357a69280cbf4fe8cad54dfb1455382aaae",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          3
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 0,
+          "expected_stamp": 256,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 768,
+          "expected_stamp": 1024,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1024,
+          "expected_stamp": 1280,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "ba82d8b15eb88f6ee762c1a65bb11ff985a78a109961b5c141a0837953e41748",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "0be909d6924184d54df1831dce49a57bc8f64bee84cc30ba16417d860f041146"
+      }
+    },
+    {
+      "version": 20,
+      "control": "CoherentallQueueRecordandWrapperUUID497/498, originalProgramIDs1/2",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "6354d4e3c1037ecbe4bd23afc19af5c87c06dc423d1971547a85f7129de53ae8",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            731006474,
+            747054299
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            731006920,
+            738962424
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            738962453,
+            746986438
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "59d9f38db8f92d765f06e94a8a90cb2af6b14687a993c287e1acadfab733e8e1",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "031d5524beca09741a62604a32c4975dc4cc0a615dc6f32a8e2b91ebc77ae0f1"
+      }
+    },
+    {
+      "version": 21,
+      "control": "OnlyincomingUBOu32=4M and ownCPUoracle; fullpositiveconcurrentgraph, childoutlastsallold",
+      "pass_": true,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "ed288f0733da8fee159f9ead0c7b52c33300487c55d1f7cacb6d08987a3d4c44",
+      "GPU_intervals": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "start": 727316196,
+          "end": 759411485,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "start": 727316650,
+          "end": 735271788,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "start": 735271817,
+          "end": 743295800,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "start": 743295830,
+          "end": 751319802,
+          "driver_stamp": 1536,
+          "expected_stamp": 1536,
+          "scheduler_phase": 1
+        }
+      ],
+      "actual_GPU_overlap": true,
+      "child_outlasts_all_old": true,
+      "early_handoff_qualified": false,
+      "native_Linux_CPU_qualified_by_this_replay": false,
+      "total_full_BO_bytes": 61112320,
+      "total_timestampguard_bytes": 81920
+    },
+    {
+      "version": 22,
+      "control": "Onlyperqueue sharedmonotonicdriverstamp destination (livequalifiedcounter carriedacrosssnapshots)",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "f1ae4193f6957dee190fec086ce781e3cfaad32b72f8ff6c18c158cb475f540b",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            727582922,
+            743630739
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1280,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            727583367,
+            735538527
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            735538556,
+            743562553
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "79573aa6c2db51d89f00fb1c46376a0884f91a449e044767c5bbf57969d60ef4",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "f76798d5315a6e77fd722f96b457415a30ea6e7954831084c5e15326b12e4654"
+      }
+    },
+    {
+      "version": 23,
+      "control": "OnlyoperandstateVA128KiBaligned, same31zeroPAs+guard and10correspondingregrefs",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "5d22387fbeb4386627ee88a37cd7e3c04c1976f442bdf2d6362083887499677a",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            737992402,
+            754040218
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            737992843,
+            745948085
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            745948114,
+            753972097
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "6200585cf6532980402d3b07f1bf984b594f461138ef58ae27af00b7a20e6627",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 59,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "d8eb04239fb7aa4bb9883a51f24816c0d7fdf564265e847dac824213b2e11eb8"
+      }
+    },
+    {
+      "version": 24,
+      "control": "Onlysupport+auxVAsaliasedbelow4GiB canonicalfc20, samePAsandattrs",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "381f69da44036105e22e72e1e96cfee8fcd4e82527c0542253b800baca93ca77",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            735049538,
+            751097362
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            735049937,
+            743005361
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            743005391,
+            751029388
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "9fe2d49843ca76a6dd7f1bb13f1ceda14cb43a35d30c30e9623ea54775331038",
+      "full_failure_UAT_omitted": null,
+      "full_failure_UAT": {
+        "complete": true,
+        "bytes": 415989760,
+        "tables": 60,
+        "known_good_replay_capture": false,
+        "hypervisor_used": false,
+        "manifest_sha256": "6c71cae304d129e03a7bcd590d0085a2fe8ae284002f46ae75ceb6a4ff948144"
+      }
+    },
+    {
+      "version": 25,
+      "control": "Onlydrainknownkind1completionnotifications asnative; boundedfailureDATA, nofullrepeatedUAT",
+      "pass_": false,
+      "first3phases_full_BO_bytes": 36667392,
+      "first3phases_timestampguard_bytes": 49152,
+      "result_sha256": "dc9c57d9defe9ed4126098efb6255e716529be3cf77eeba5eee6cf59de1e23f6",
+      "actual_firmware_event4": true,
+      "event4_words": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "commands": [
+        {
+          "context": 2,
+          "ordinal": 0,
+          "driver_stamp": 256,
+          "expected_stamp": 256,
+          "scheduler_phase": 1,
+          "timestamps": [
+            736346718,
+            752394578
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 3,
+          "driver_stamp": 1024,
+          "expected_stamp": 1024,
+          "scheduler_phase": 1,
+          "timestamps": [
+            736347168,
+            744302310
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 4,
+          "driver_stamp": 1280,
+          "expected_stamp": 1280,
+          "scheduler_phase": 1,
+          "timestamps": [
+            744302347,
+            752326337
+          ]
+        },
+        {
+          "context": 1,
+          "ordinal": 5,
+          "driver_stamp": 1280,
+          "expected_stamp": 1536,
+          "scheduler_phase": 0,
+          "timestamps": [
+            0,
+            0
+          ]
+        }
+      ],
+      "bounded_failure_DATA_sha256": "f4d3c409c747bffd60274e7ae6c22525ff7d67b2d8882d76c33e9335593d1df9",
+      "full_failure_UAT_omitted": "Repeated control: exact full baseline already saved at replay-v3; bounded all4 descriptor/record/stamp/scheduler/timestamp/event DATA retained.",
+      "full_failure_UAT": null
+    }
+  ],
+  "native_long_child_contrast": {
+    "kernel": 189,
+    "all16_CPUs": true,
+    "actual_guest_hashes_verified": 305,
+    "unchanged_test_client": true,
+    "only_fixture_UBO_oracle_provenance_overrides": true,
+    "all_workload_fences_positive": true,
+    "all_caller_BO_and_timestamp_guards_checked_before_failure": true,
+    "old_GPU_intervals": [
+      {
+        "job": 0,
+        "start": 173851899208,
+        "end": 173923524916
+      },
+      {
+        "job": 1,
+        "start": 173923529000,
+        "end": 173995148375
+      },
+      {
+        "job": 2,
+        "start": 174143995500,
+        "end": 174217035750
+      },
+      {
+        "job": 3,
+        "start": 174217038333,
+        "end": 174289489666
+      }
+    ],
+    "incoming_GPU_interval": [
+      174077753958,
+      174373682541
+    ],
+    "actual_GPU_overlap": true,
+    "old_queue_return_interval": [
+      174411151625,
+      174482772125
+    ],
+    "early_handoff_qualified": false,
+    "actual_firmware_failure": false,
+    "test_RC": 1,
+    "exact_failing_assert": "line231 incoming[1]<last[0], coverage not execution",
+    "memory_checks": 6313,
+    "clean_unbind": true,
+    "exact_cold_proxy_recovered": true
+  },
+  "conclusion": "Unchanged189 graph and native driver perform concurrent GPU work and oldqueue return when incoming4M outlasts old1M backlog. Original2M and shorter500k failwitholdpending at incoming completion; duration changes stalledoldcommand. This is a completion-order-dependent defect; causal firmware/data mechanism not proved. No serial workaround or reduced objective.",
+  "limits": [
+    "Longchild PASS does not qualify required earlyhandoff or fixnative2M failure.",
+    "v15 grouping prototype never executed oldwork; not a validcoalescing ABI exclusion.",
+    "v19 gate0 changesfailuretoincominggrid3; not samefailure and notproofallgatepolicieswrong.",
+    "Untouched incoming dispatchentry alone doesnot provewrongpoolbank: nonpreemptedchildmaynotallocateoperandstorage.",
+    "Namednegative controls do not exclude arbitrary combinations; do notinfer an inherent firmwareABI limitation.",
+    "No newproductionVulkan/Chromium/sustained/liveNeo run this turn; existingqualified evidence unchanged."
+  ],
+  "host_only_errors": [
+    "v12 rawchainloadNOP timeout beforeGPU; identicalv13RID0/raw success",
+    "shortpreparev1 assumed16KiB UBO; actual1MiB, correctedv2 preserveswholeUBOguard",
+    "grid4preparev1 comparedMMIOannotationkeys too, correctedcoretriplecomparisonv2",
+    "gatepreparev1 readpackedcountsas32bit; correctedlower16v2",
+    "queueUUIDpreparev1 syntaxspacing theninfallibleconstructorunwrap; correctedv2",
+    "operandpreparev1 equalitycaught4secondaryregistercopies; correctedall10refs v2"
+  ],
+  "next": "Inspect exactfirmwarejoblist/queuecontext/scratch retirement state aroundincoming END with oldpending. Usepositive4Mgraph, negative2M/500kgraph, boundedknownobject/register snapshots; keep actualearlyhandoff/output/fence criterion. SharedPreparationSeed/admission/render/lifetimes/asymmetric/fault/finalsustained/liveNeo stillopen.",
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "Apple_binary_disassembly": false,
+  "full_goal_complete": false,
+  "final_target": "All controllers terminal; exactRID0/raw/N01 identity recovered; N01/N03 unowned",
+  "key_artifact_sha256": {
+    "audit-v78.py": "4f479d257ecb2a2c99ad05a928ccf826f8f9fe148d2d674030440ff1e476e577",
+    "native-long-incoming-preparation-v1.json": "c322fee14adc633e4a579c70ba98fbc29f850b0baac2343064b812a386557ad3",
+    "prepare-native-long-incoming-v1.py": "ead8e589a6c66bbee800998c9ace464322117dfef012793bee4567e45bcf975b",
+    "run-native-long-incoming189-v1.py": "88945f36cde3dce703270021f8f0e7a176376b91bd969493f52eb753f26b816b",
+    "verify-guest-long-incoming189-v1.py": "01f70b8f7cf21d2cab9de154b167babd60eac1ba24d9c88109d417cc57f549d9",
+    "native-long-incoming189-v1.json": "ac72485dc482c4da218c623707b63645cb563bb1a2b64c0b5be04e6e2ea745e7",
+    "guest-v980-verified.json": "2665d0533d46864a5c1306e4e049bc19e281adfa7157dd26e34f37c34711c522",
+    "probe-v980.log": "919f4b9507e7dfd8d3343dc5cbce2419c51123f34e0f9317add5712e4984a0a3",
+    "controller-native-long-incoming189-v1.log": "65aab9291ac2569e4ac52672711b36e33d608736dc5478e4f051185f66d13ec5",
+    "kernel-restore-qualified-owner-work-id-v1.json": "3d7c0d45eb408aacb045a4dd13e59ed5fc34327d9de2a8edc607e373423a506d",
+    "linux-prefix-phases-v13.json": "30cefb4a3ad87be8bd7aec5baeff620f422916620ebf7621d106816bf6ed167e",
+    "replay-own-linux-prefix-v13.py": "ea4ed042a82bc352865deffddc4ebfe4c2bc5369dd86561b53240a42698cb474",
+    "run-own-linux-prefix-v13.py": "938f48175ef96c6a6cde7a8d2382ab8b856a9198cf4ee4dce259d12765c9a71a",
+    "own-linux-prefix-replay-v13/result.json": "f85e33220a2f51559ef4de200b4f1a6c6a7eb9248c6a5a87ee36f294d4cd4d13",
+    "controller-own-linux-prefix-v13.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v14.json": "f8a51a7ad091e422f3ea835d6b7afcf16e3ed37c59e42085dd74810c346f5683",
+    "replay-own-linux-prefix-v14.py": "9b2acde2f22a9840bb1a220545cf9a34bb3580a921ef42ca74b776b724f74f55",
+    "run-own-linux-prefix-v14.py": "6ad10aaaf17f26b2124c5b5a5785bf0de10ea8cf785190905de52c4067230b39",
+    "own-linux-prefix-replay-v14/result.json": "2f84bf3f2c2c88e875e48efbd70fab4c616fba36a4381d23d65168c63fe5deb1",
+    "controller-own-linux-prefix-v14.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v15.json": "d9e9993aeae0e5ec91f70604c1d2036bf6e6273d9d46c44b7dd37a72b9d86fdc",
+    "replay-own-linux-prefix-v15.py": "f37986a79054a2f89813875a4c4d4ee6c868656137aaf27a6d5567f65d4a2afc",
+    "run-own-linux-prefix-v15.py": "1c986ca90e6089cd588c74f7ab22067cc0c74592e821e14f737ff6062372e65d",
+    "own-linux-prefix-replay-v15/result.json": "16eb802e8f7040f3261ac7004147c37743a2c23eebe4b38150ba621191ecc68c",
+    "controller-own-linux-prefix-v15.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v17.json": "f2bd82559199374a34f974e7dd14b4c5ad97b42ef76dee812e7319d006774df2",
+    "replay-own-linux-prefix-v17.py": "1047af052d814953150f4b990ac3bdd7033cbb7d22042d7cb04f2a6a6730f194",
+    "run-own-linux-prefix-v17.py": "45ce73c9c89a8f0d35c9ab9bca78bf9a27a3b070dc16d4385aaf9b6f47230b57",
+    "own-linux-prefix-replay-v17/result.json": "2d3898a7d99b256bc485227268a1890c33646ca8ba82e0a20227363b2f607f25",
+    "controller-own-linux-prefix-v17.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v18.json": "1cea720f4e611a9dc528b817a4ccf5402fed0d7eafec8a8b6ed33c1c40b9a3ad",
+    "replay-own-linux-prefix-v18.py": "c8509ad437c5f404082e4c53c35cc5b7dbc29ddef921e33aa628d69e77854b32",
+    "run-own-linux-prefix-v18.py": "9bbc36ebbc86df70ef161cc6840c9f44b5392225e28bd176a9888ffdb5540139",
+    "own-linux-prefix-replay-v18/result.json": "8b8215e4fef672151ff5e7114e0860b96c6611c9ba06e3df78e466041a6c614d",
+    "controller-own-linux-prefix-v18.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v19.json": "827a3bb7f0796c0364c9a501924834135b7c2d9b7f650bb04369627138e151f2",
+    "replay-own-linux-prefix-v19.py": "265d2384c6df7a309f821625890f26ec31a3afe75891e2b8ceb98fdd125191ec",
+    "run-own-linux-prefix-v19.py": "0d2f0fd591761b12c8720cb42c563c56ff846c27c5f4e2a7eb73fc451f107a29",
+    "own-linux-prefix-replay-v19/result.json": "92e8e8cdad5e0fe0183014938381a357a69280cbf4fe8cad54dfb1455382aaae",
+    "controller-own-linux-prefix-v19.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v20.json": "d8ccd37f8d0901485d8732e6e23086ba62893a013903991999830cc59c78d3a0",
+    "replay-own-linux-prefix-v20.py": "f0367222f7786be0df33e547487c0dd95e3ef8cb474d106cba7785554ed50a52",
+    "run-own-linux-prefix-v20.py": "baf9248ce41b295b6e3da8885c8ca9bfdc6cdaa6b809e33ff476d67b29d97a80",
+    "own-linux-prefix-replay-v20/result.json": "6354d4e3c1037ecbe4bd23afc19af5c87c06dc423d1971547a85f7129de53ae8",
+    "controller-own-linux-prefix-v20.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v21.json": "0a22d81fb1decac042e707cf96263e6428067673aabf1e49e349ac542efeab8e",
+    "replay-own-linux-prefix-v21.py": "5fb161e73ff1420207d0e6a1f3f853595728d403766e71daa1012c9fc8e34963",
+    "run-own-linux-prefix-v21.py": "8a4d118c57d810bffc58702a7f5e4fd649e9d0362a8c3b0eb10a8c7df139f930",
+    "own-linux-prefix-replay-v21/result.json": "ed288f0733da8fee159f9ead0c7b52c33300487c55d1f7cacb6d08987a3d4c44",
+    "controller-own-linux-prefix-v21.log": "0f190ab09ef71af8fa2a970e054107f5106e22016c6f3ca24275d9fa34435f83",
+    "linux-prefix-phases-v22.json": "7de9b3f5324c35615ce3dd1c5be26cd94aa8062d12685d5f2e968749dcf07d68",
+    "replay-own-linux-prefix-v22.py": "e0c6baaaae7649d96824c5f433374be13b2724e57725c3c435aade600d44cc10",
+    "run-own-linux-prefix-v22.py": "79c7d55a6c2f1afaae3e872228061208f149d86c99d638031777b0856befbd0d",
+    "own-linux-prefix-replay-v22/result.json": "f1ae4193f6957dee190fec086ce781e3cfaad32b72f8ff6c18c158cb475f540b",
+    "controller-own-linux-prefix-v22.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v23.json": "e2b049106c2286e408a1282e571ea0f453200c82bca22dea90bc85ccce4042fb",
+    "replay-own-linux-prefix-v23.py": "29fdd21298128b9d5980990f83da751845f0a7b0ed7a607c079dec40b3751779",
+    "run-own-linux-prefix-v23.py": "9349c19efe9cf34d6fe45f35fc1763a87c641d7a062b7100406e8819b425ef0a",
+    "own-linux-prefix-replay-v23/result.json": "5d22387fbeb4386627ee88a37cd7e3c04c1976f442bdf2d6362083887499677a",
+    "controller-own-linux-prefix-v23.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v24.json": "a86c69689e17694940767fe1ae9f95f828ccb77f29450d06905fdba4169b487c",
+    "replay-own-linux-prefix-v24.py": "49b5853dee6dab5ba52721501f9f03a9ff3b7da49eb11ea67360e3a0a5ba3fa9",
+    "run-own-linux-prefix-v24.py": "795863d191265f118a3c442d685e8bbf3d77551488a0b1cbc6bbf6b642040d81",
+    "own-linux-prefix-replay-v24/result.json": "381f69da44036105e22e72e1e96cfee8fcd4e82527c0542253b800baca93ca77",
+    "controller-own-linux-prefix-v24.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-phases-v25.json": "83d32ffdb6d62e8a1e9b9f056398bcee16f90626cef9777ea4625db7da0145fa",
+    "replay-own-linux-prefix-v25.py": "0d7770cf3f00c5416f38aa54a29b9eb11351f1ddc529b044b07c19d9cbdff8cf",
+    "run-own-linux-prefix-v25.py": "6ae3f72a26ae05773fa1ec5b7e053631e056b9ad31180abfe0a4006c761ebb5f",
+    "own-linux-prefix-replay-v25/result.json": "dc9c57d9defe9ed4126098efb6255e716529be3cf77eeba5eee6cf59de1e23f6",
+    "controller-own-linux-prefix-v25.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "linux-prefix-replay-phases-v9.py": "d6d407c8b5a3446fface264fe4a89f6416a70ed175549365d021b1b8fc4f6a7a",
+    "linux-prefix-replay-phases-v10.py": "2e4230c9e963e3a240447020b86e9a09fdb1dd1c47734b4499232e10232c1d8c",
+    "linux-prefix-replay-phases-v11.py": "fcb4db211a64793b4db87586c92259fa5c7ee2edeacd6859a6087701cc62c98c",
+    "linux-prefix-replay-phases-v13.py": "759bfb14f52c8d4a7dd6765bfd0d05ab6147665d0d5424ec57c174faaf06787e",
+    "linux-prefix-replay-phases-v14.py": "b77e5a708cdb5509d2f2347b9acd9a70d755e75e428400479e50353005704528",
+    "linux-prefix-replay-phases-v15.py": "f9f6b05b249df03b9c83bf8585810a01b0124017bab7f01ee213211e1491b7ff",
+    "linux-prefix-replay-phases-v16.py": "a6b35d2dc0ea5ad3ed36f3e4a500fb3433ed23c237e1614a2043e9acff3d666a",
+    "linux-prefix-replay-phases-v17.py": "5d54d1c065cb46385284d032b0e67554e74a64ab3c91159b40a3208d4cf027e4",
+    "linux-prefix-replay-phases-v18.py": "88277fca21a5d87e1cb74551b08004fc68cc4aa35054ea1cbca916eea46b531a",
+    "linux-prefix-replay-phases-v19.py": "434bac50f283a1a7389b5790c830323b6ff053dd541b12a457972b648c6c2eae",
+    "linux-prefix-replay-phases-v20.py": "238b4cff4d20cac28edafa9ca2bfcf2f4f41cdab066f44c46298c9ca7b880f33",
+    "linux-prefix-replay-phases-v21.py": "dd056a704cf48c270a817841d6b86d6aeb7186d20913b3709527dc7c803133d3",
+    "prepare-linux-directory-alias-v1.py": "478cb2e6ae9913fac876be2fd0df95a0827c2c4509bd39fbae0722ade2e60805",
+    "prepare-linux-packed-slots-v1.py": "347ae18b0dbb80d21c22c293eb6958a280a4586e783854726e2e7a5298a84a2f",
+    "prepare-linux-coalesced-v1.py": "412c364bf4ea2c5abd114d764aea1a7cd92cfc8c3ab4e9b7e2bacb969505f175",
+    "prepare-linux-short-incoming-v1.py": "1c78754704e5b35b86bf22b496eec75c3fad75f4a266256b820b6881c70b1a35",
+    "prepare-linux-short-incoming-v2.py": "34c8240a9b3a8eedebeed620b95e6b9db95b207d1f9801430ec88ac6babff9fd",
+    "prepare-linux-child-grid4-v1.py": "6e48b63742963073ce4eda1ecefeff09b973c44d562bda8a673dad0c99bae90b",
+    "prepare-linux-child-grid4-v2.py": "e5eb98abc305065e163f982d46740d08d0c0c71e52b239d0f391c58d88872b5b",
+    "prepare-linux-child-gate-zero-v1.py": "bf134b2693c778bd7ccde557d4475176ec82ea4345ce0ddf5ab18c3add603105",
+    "prepare-linux-child-gate-zero-v2.py": "456d400beb1522d83b466e5b252cae79c224481434193f9d9850ad371ff49c83",
+    "prepare-linux-full-queue-uuid-v1.py": "5b440c181a39962928ac74761e2a711fe770cb19717fe10800c73abf2f185ef6",
+    "prepare-linux-full-queue-uuid-v2.py": "f9c61babe658cf4ab1b791098f681dce349b9bf57efdfeee6aec03609b99c84f",
+    "prepare-linux-long-incoming-v1.py": "a1f5460d092c55dfe449fa8d59b691ed5c49ef00623ab15e2847c46b0e5601f2",
+    "prepare-linux-shared-stamp-v1.py": "0e5ee832012b372c89654e1a39202fc79d42ff19076e1118fc73b03af6c1f8fc",
+    "prepare-linux-aligned-operands-v1.py": "65e097e0b0a7ee73304442914aa2d39509f9e381892c90c94ac2a7bb23c38da4",
+    "prepare-linux-aligned-operands-v2.py": "8d8092d6520e57eeda8b9899d1219f36332fb5b100b950916521c7b4768fa881",
+    "prepare-linux-low-support-v1.py": "156bab3dce0c5bca1f00cc6fde947e1748a02218de11c9d2bd37523b1749e9ce",
+    "prepare-linux-event-drain-v1.py": "9d3b2f6e19624f6c1e7f426a1eebdbe7e936f2587a69ea52d5e971a9751530c8"
+  }
+}
