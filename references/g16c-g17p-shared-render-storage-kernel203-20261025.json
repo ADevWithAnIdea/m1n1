@@ -1,0 +1,154 @@
+{
+  "kernel": 203,
+  "Linux_HEAD": "ccfde3724206ae1d075edd9f7421f0ea5442ce6b",
+  "all177_declared_sources_local_remote_archive_match": true,
+  "ARM64_object_and_actual_launched_Images_match": true,
+  "protected_refs_unchanged": true,
+  "native": {
+    "normal": {
+      "version": "v1076",
+      "log_sha256": "b1247c8c32b577c48e23ad79a9c0f01e3f322d9bf0d542cacefb14e223e69484",
+      "receipt": {
+        "version": "v1076",
+        "stage": 0,
+        "monitor_pid": 58589,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v14",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-unplug-v2.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=3",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1076"
+        ],
+        "mode": "debug",
+        "guest_hashes_verified": 261,
+        "tests_passed": true,
+        "accepted_unpublished_unplug_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      }
+    },
+    "wrap": {
+      "version": "v1083",
+      "log_sha256": "0ae9ef3b2ba57dbf4db6c6a5eda2562ef3f32b7c96b2239a349f293e52907966",
+      "receipt": {
+        "version": "v1083",
+        "stage": 0,
+        "monitor_pid": 59227,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v14",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-common-storage-wrap-v1.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=3",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1083"
+        ],
+        "guest_hashes_verified": 284,
+        "tests_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      }
+    },
+    "errors": {
+      "version": "v1087",
+      "log_sha256": "cc9e7dbec83846ea377dd353a4f3cc6a6c9e3f023b33c3b77e5fbe9f57b7a5c8",
+      "receipt": {
+        "version": "v1087",
+        "stage": 0,
+        "monitor_pid": 59465,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v14",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-common-storage-errors-v1.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=3",
+          "--bootarg",
+          "asahi_neo.g16c_parameter_oom_test=2",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1087"
+        ],
+        "guest_hashes_verified": 95,
+        "tests_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      }
+    }
+  },
+  "shared_storage_wave_host_gate": {
+    "source_sha256": "613744f2eb2e8c9463ba837aadf7c7bc02640fef7d7438a0dd496c073edc5662",
+    "cases": 11,
+    "result": "PASS 11 shared-wave ownership cases: out-of-order retirement, CPU leases, fresh control, allocation/cache/release failure, synchronous completion, error preservation and retired prefix",
+    "actual_production_wave_compiled": true,
+    "GPU_execution": false
+  },
+  "wire_projection": {
+    "cases": 576,
+    "full_images_per_case": 10,
+    "all_packet_bytes_and_addresses_match": true,
+    "reference_allows_only_coherent_body_relocation": true,
+    "reference_revision": "900762872a930a8c5f7677893d459baacf821ae1",
+    "reference_source_sha256": "9c900386321ed06bba8ad41250f3d1fed474bf818f338bd7ab37f2b1153e7a84",
+    "current_source_sha256": "069431c2828b803d951a89b8bc19ffbe591237618ae7340db7233c355886a800",
+    "actual_GPU_execution": false
+  },
+  "Neo_projection": {
+    "baseline": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "identical_Session_initializer_fields": 35,
+    "Neo_probe_body_preserved": true,
+    "GPU_execution_tested": false,
+    "Neo_CPU_scheduler_preserved_excluding_G16C_only_branches": true,
+    "Neo_GET_PARAMS_and_identity_checks_preserved": true,
+    "Neo_submit_admission_preserved_except_Max_gate": true,
+    "Neo_parameter_parser_and_sampler_limit_preserved": true,
+    "Neo_permanent_BO_retention_preserved": true,
+    "Neo_queue_create_destroy_preserved_except_Max_activity_owner": true,
+    "Neo_entire_async_worker_preserved_except_Max_only_hooks_and_common_GEM_drop_order": true,
+    "source_sha256": {
+      "asahi_neo.rs": "48215cf1a39f58b3fb5358e613ff650b383b35dbb8c63741d0921146dd15692d",
+      "g17p_boot.rs": "26938b637743dae4aa9311504796db1fc55277b15afd0d59dcec9257d71d82e1",
+      "g17p_drm.rs": "4894f188d919cfae0a806f2fd2d549c9ef2f50c6b6b8af7807b7bccff0c59f38",
+      "g17p_schedule.rs": "9f5c08dcdfbe8520f4528c831ed03c4d8d4c704ad1c342308208882578d0c96a",
+      "g17p_async.rs": "9130faed52eaa466fc56f62777b8fbb7291edc2bf80cb90ff46949165520e457"
+    }
+  },
+  "original_C_oracles_unchanged": true,
+  "physical_storage_and_simple_context_wrap_tested": true,
+  "concurrent_render_admission": false,
+  "arbitrary_firmware_context_byte_preservation_qualified": false,
+  "goal_complete": false,
+  "remaining": [
+    "Common render pool/root/queue selection and admission, including independent pools and queued leases",
+    "Common prepared relocation for different private reservations",
+    "Multiple-live-owner growth/error routing and compute operand-growth/error hooks",
+    "Broader context byte preservation, asymmetric/fault/sustained/live-Neo/full-workload qualification"
+  ]
+}
