@@ -1,0 +1,90 @@
+{
+  "kernel": 200,
+  "Linux_HEAD": "bd12c67af34b11f8a19769bcecd40484969173de",
+  "all175_declared_sources_local_remote_archive_equal": true,
+  "ARM64_object_and_launched_Image_match_build": true,
+  "protected_refs_unchanged": true,
+  "native": {
+    "kernel": 200,
+    "records": [
+      {
+        "version": "v1068",
+        "stage": 0,
+        "monitor_pid": 57188,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v11b",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-unplug-v2.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=3",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1068"
+        ],
+        "mode": "debug",
+        "guest_hashes_verified": 261,
+        "tests_passed": true,
+        "accepted_unpublished_unplug_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      }
+    ]
+  },
+  "render_root_rebind": {
+    "context": 1,
+    "root": "0x10085080000",
+    "pool": 0,
+    "same_private_reservation": true,
+    "complete_BO_and_timestamp_checks": true
+  },
+  "host_fault_test_source_sha256": "a299286f1a56a035d165903c1b2f688f8dddd39fee9828a92d6488c91d910511",
+  "host_rebind_log_sha256": "a99ac8836616f18fe08352ca0e1b842a78d9011373d64b16926abdfbbf678228",
+  "Neo_projection": {
+    "baseline": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "identical_Session_initializer_fields": 35,
+    "Neo_probe_body_preserved": true,
+    "GPU_execution_tested": false,
+    "Neo_CPU_scheduler_preserved_excluding_G16C_only_branches": true,
+    "Neo_GET_PARAMS_and_identity_checks_preserved": true,
+    "Neo_submit_admission_preserved_except_Max_gate": true,
+    "Neo_parameter_parser_and_sampler_limit_preserved": true,
+    "Neo_permanent_BO_retention_preserved": true,
+    "Neo_queue_create_destroy_preserved_except_Max_activity_owner": true,
+    "Neo_entire_async_worker_preserved_except_Max_only_hooks_and_common_GEM_drop_order": true,
+    "source_sha256": {
+      "asahi_neo.rs": "48215cf1a39f58b3fb5358e613ff650b383b35dbb8c63741d0921146dd15692d",
+      "g17p_boot.rs": "a4c5131b45277bc3926de7da90c359ce720b9133dc89fd35618375833be2814f",
+      "g17p_drm.rs": "4894f188d919cfae0a806f2fd2d549c9ef2f50c6b6b8af7807b7bccff0c59f38",
+      "g17p_schedule.rs": "9f5c08dcdfbe8520f4528c831ed03c4d8d4c704ad1c342308208882578d0c96a",
+      "g17p_async.rs": "9130faed52eaa466fc56f62777b8fbb7291edc2bf80cb90ff46949165520e457"
+    }
+  },
+  "render_wire_projection": {
+    "cases": 144,
+    "full_images_per_case": 10,
+    "all_packet_bytes_and_addresses_match": true,
+    "reference_revision": "900762872a930a8c5f7677893d459baacf821ae1",
+    "reference_source_sha256": "9c900386321ed06bba8ad41250f3d1fed474bf818f338bd7ab37f2b1153e7a84",
+    "current_source_sha256": "d10c97637897c1542535bf9b5984845129c62a0d5856c2f663c30ee102df523f",
+    "actual_GPU_execution": false
+  },
+  "prior_negative": "native-render198-negative-and-recovery-v1.json",
+  "goal_complete": false,
+  "remaining": [
+    "Render still has a separate owner/queue/pending manager and global idle/single-body storage; migrate to existing Neo render generations",
+    "Different private reservations still detach/reattach instead of retained-root relocation",
+    "Finish common growth/error owner lookup, context record preservation on wrap, asymmetric/fault/sustained/live-Neo qualification",
+    "Accepted input-blocked unplug now passes with ENODEV; in-flight GPU/fault teardown still needs final qualification"
+  ],
+  "native_log_sha256": "94bf133294c9db6b8b481208e32879dbb7079c804031b808117f31be77ccdb74",
+  "cold_identity_log_sha256": "142e5f73465ed4b0612074dfac9ec8c8f8082a87ca086a4a0c28d6c6ff7c7640",
+  "comparison_file": "drivers/gpu/drm/asahi/NEO-MAX-ABI-COMPARISON.txt"
+}
