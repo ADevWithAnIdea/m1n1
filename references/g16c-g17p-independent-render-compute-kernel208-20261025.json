@@ -1,0 +1,180 @@
+{
+  "kernel": 208,
+  "Linux_HEAD": "c4bdc911cdf601ab84fb1c25c348c371dd3d512f",
+  "all178_declared_sources_local_remote_archive_match": true,
+  "ARM64_object_and_actual_launched_Image_match": true,
+  "protected_refs_unchanged": true,
+  "native": [
+    {
+      "version": "v1098",
+      "log_sha256": "4d2dd5713c9647ac199bf5459424b6f9809dcc71340d04f6f96131f17719e433",
+      "receipt": {
+        "version": "v1098",
+        "stage": 0,
+        "monitor_pid": 61416,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v19",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/compute-render-overlap-preparation-v3/initramfs.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=0",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1098"
+        ],
+        "guest_hashes_verified": 358,
+        "tests_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      },
+      "compute_intervals": [
+        [
+          303623974625,
+          303695592458
+        ],
+        [
+          303587325291,
+          303659703541
+        ]
+      ],
+      "tiling_interval": [
+        303591322083,
+        303591336375
+      ],
+      "fragment_interval": [
+        303591336500,
+        303591350250
+      ]
+    }
+  ],
+  "original_compute_render_C_oracles_independently_reconstructed_exact": true,
+  "Neo_projection": {
+    "baseline": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "identical_Session_initializer_fields": 35,
+    "Neo_probe_body_preserved": true,
+    "GPU_execution_tested": false,
+    "Neo_CPU_scheduler_preserved_excluding_G16C_only_branches": true,
+    "Neo_GET_PARAMS_and_identity_checks_preserved": true,
+    "Neo_submit_admission_preserved_except_Max_gate": true,
+    "Neo_parameter_parser_and_sampler_limit_preserved": true,
+    "Neo_permanent_BO_retention_preserved": true,
+    "Neo_queue_create_destroy_preserved_except_Max_activity_owner": true,
+    "Neo_entire_async_worker_preserved_except_Max_only_hooks_and_common_GEM_drop_order": true,
+    "source_sha256": {
+      "asahi_neo.rs": "48215cf1a39f58b3fb5358e613ff650b383b35dbb8c63741d0921146dd15692d",
+      "g17p_boot.rs": "2fc75b9dd3c817131b1e861b20e772256eae7f3d0fea5aba0ef305efdfbe7d99",
+      "g17p_drm.rs": "4894f188d919cfae0a806f2fd2d549c9ef2f50c6b6b8af7807b7bccff0c59f38",
+      "g17p_schedule.rs": "846ce3bc4ade968e1cc024a57d46d9cea22ee4b436e7a9d99ff74dced0601865",
+      "g17p_async.rs": "9130faed52eaa466fc56f62777b8fbb7291edc2bf80cb90ff46949165520e457"
+    }
+  },
+  "wire_templates_layouts_SGX_transactions_unchanged": true,
+  "cross_engine_global_drain_gates_removed": true,
+  "explicit_render_dependencies_wait_via_common_Point_retirement": true,
+  "external_render_GPU_wait_vector_lowering_complete": false,
+  "cold_compute_during_live_render_qualified": false,
+  "concurrent_render_pools_qualified": false,
+  "negative_provenance": {
+    "native-common-engine206-v1.json": [
+      {
+        "version": "v1092",
+        "stage": 0,
+        "monitor_pid": 60842,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v17b",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/compute-render-overlap-preparation-v2/initramfs.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=3",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1092"
+        ],
+        "startup_stall": {
+          "log_unchanged_seconds": 15.308738231658936,
+          "CPUs": 16,
+          "no_userspace_or_GPU": true
+        },
+        "recovery": {
+          "reason": "startup_stall",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "identical_retry": "v1093"
+      },
+      {
+        "version": "v1093",
+        "stage": 0,
+        "monitor_pid": 60937,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v17b",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/compute-render-overlap-preparation-v2/initramfs.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=3",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1093"
+        ],
+        "guest_hashes_verified": 358,
+        "orchestration_error": "CPU timestamp polling observed completion before R kick; concurrent render was never requested. Client and child exited with explicit CHECK failures; interleaved VUART obscured RC line.",
+        "recovery": {
+          "reason": "confirmed_orchestration_client_failure_before_render_request",
+          "SIGTERM_sent_and_monitor_gone": true,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        }
+      }
+    ],
+    "native-common-engine206-v2.json": [
+      {
+        "version": "v1094",
+        "stage": 0,
+        "monitor_pid": 61141,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v17c",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/compute-render-overlap-preparation-v3/initramfs.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=0",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1094"
+        ],
+        "guest_hashes_verified": 358,
+        "admission_negative": "Original compute/render outputs and guards passed, but render did not overlap. Actual remaining can_stage_render() Max branch still required independent_compute.pending()==false; found and removed for next kernel. New timing assertion remains unchanged.",
+        "recovery": {
+          "reason": "confirmed_client_timing_negative_with_remaining_CPU_admission_gate",
+          "SIGTERM_sent_and_monitor_gone": true,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        }
+      }
+    ]
+  },
+  "goal_complete": false,
+  "remaining": [
+    "Lower wrapped render GPU wait vectors with the common Neo dependency planner; publish render milestones and retain exact producer leases",
+    "Complete common physical render pool/root/queue/private ownership; remove remaining global render idle using disjoint grid/scratch/scene leases",
+    "Prepared private-window relocation and pool-scoped growth tokens for same-pool queued work",
+    "Compute operand-growth/error hooks; asymmetric/cold/fault/sustained/live-Neo/full-workload parity"
+  ]
+}
