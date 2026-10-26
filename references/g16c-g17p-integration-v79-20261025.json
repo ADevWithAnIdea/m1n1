@@ -1,0 +1,668 @@
+{
+  "version": 79,
+  "date": "2026-10-25",
+  "goal_status": "active; not complete",
+  "previous_turn_classification": "progress: V78 output-qualified actualnative longchild overlap+return and source duration boundary",
+  "Linux_HEAD": "61fbe0e151e3a88d1f257333986d5f4d74007285",
+  "current_native_kernel": 189,
+  "new_kernel_built": false,
+  "production_changes_retained": false,
+  "all164_current_local_remote_archive_compiled_sources_and_object_187_189_exact": true,
+  "bounded_retirement_traces": [
+    {
+      "version": 26,
+      "pass_": false,
+      "samples": 393,
+      "elapsed_seconds": 1.18544078,
+      "before_child_completion_coverage": true,
+      "first_child_timestamps": [
+        0,
+        0
+      ],
+      "first_old_timestamps": [
+        724684549,
+        724707120
+      ],
+      "completed_child_timestamps": [
+        724684084,
+        740731929
+      ],
+      "zero_timestamps_do_not_prove_not_started": true,
+      "joblists_constant_empty": {
+        "ctx1-joblist": [
+          0,
+          18446739821826162944,
+          0,
+          0
+        ],
+        "ctx2-joblist": [
+          0,
+          18446739821826703616,
+          0,
+          0
+        ]
+      },
+      "transitions": [
+        {
+          "sample": 0,
+          "seconds": 0.0,
+          "driver_stamps": [
+            0,
+            768,
+            1024,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 33,
+          "seconds": 0.099782397,
+          "driver_stamps": [
+            0,
+            1024,
+            1024,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 143,
+          "seconds": 0.432463266,
+          "driver_stamps": [
+            0,
+            1024,
+            1280,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            1,
+            1,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            1,
+            1,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 144,
+          "seconds": 0.435492798,
+          "driver_stamps": [
+            256,
+            1024,
+            1280,
+            1280
+          ],
+          "scheduler_phases": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "scheduler_contexts": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 392,
+          "seconds": 1.18544078,
+          "driver_stamps": [
+            256,
+            1024,
+            1280,
+            1280
+          ],
+          "scheduler_phases": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "scheduler_contexts": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "flags": 2,
+          "last_RX_kind": 4
+        }
+      ],
+      "trace_sha256": "dce1c4f4cd60b14ea5172eb85a323a871515198baead86c1b145a92d07733c84",
+      "scope": "Bounded non-atomic physical DATA snapshots after original Python publication/kicks; original graph and execution/output guards retained."
+    },
+    {
+      "version": 28,
+      "pass_": false,
+      "samples": 468,
+      "elapsed_seconds": 1.412229695,
+      "before_child_completion_coverage": true,
+      "first_child_timestamps": [
+        0,
+        0
+      ],
+      "first_old_timestamps": [
+        730110978,
+        730133542
+      ],
+      "completed_child_timestamps": [
+        730110516,
+        746158333
+      ],
+      "zero_timestamps_do_not_prove_not_started": true,
+      "joblists_constant_empty": {
+        "ctx1-joblist": [
+          0,
+          18446739821826162944,
+          0,
+          0
+        ],
+        "ctx2-joblist": [
+          0,
+          18446739821826703616,
+          0,
+          0
+        ]
+      },
+      "transitions": [
+        {
+          "sample": 0,
+          "seconds": 0.0,
+          "driver_stamps": [
+            0,
+            768,
+            1024,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 108,
+          "seconds": 0.326607954,
+          "driver_stamps": [
+            0,
+            1024,
+            1024,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 218,
+          "seconds": 0.659270698,
+          "driver_stamps": [
+            0,
+            1024,
+            1280,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            1,
+            1,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            1,
+            1,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 219,
+          "seconds": 0.662296896,
+          "driver_stamps": [
+            256,
+            1024,
+            1280,
+            1280
+          ],
+          "scheduler_phases": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "scheduler_contexts": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 467,
+          "seconds": 1.412229695,
+          "driver_stamps": [
+            256,
+            1024,
+            1280,
+            1280
+          ],
+          "scheduler_phases": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "scheduler_contexts": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "flags": 2,
+          "last_RX_kind": 4
+        }
+      ],
+      "trace_sha256": "3388e8de06e37df231e280bf02eb694b6c4cde3bc5b7af6e1538384d25428ee5",
+      "scope": "Bounded non-atomic physical DATA snapshots after original Python publication/kicks; original graph and execution/output guards retained."
+    },
+    {
+      "version": 29,
+      "pass_": true,
+      "samples": 441,
+      "elapsed_seconds": 1.330659584,
+      "before_child_completion_coverage": true,
+      "first_child_timestamps": [
+        0,
+        0
+      ],
+      "first_old_timestamps": [
+        732487364,
+        732509733
+      ],
+      "completed_child_timestamps": [
+        732486869,
+        764582127
+      ],
+      "zero_timestamps_do_not_prove_not_started": true,
+      "joblists_constant_empty": {
+        "ctx1-joblist": [
+          0,
+          18446739821826162944,
+          0,
+          0
+        ],
+        "ctx2-joblist": [
+          0,
+          18446739821826703616,
+          0,
+          0
+        ]
+      },
+      "transitions": [
+        {
+          "sample": 0,
+          "seconds": 0.0,
+          "driver_stamps": [
+            0,
+            768,
+            1024,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 108,
+          "seconds": 0.326597121,
+          "driver_stamps": [
+            0,
+            1024,
+            1024,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 218,
+          "seconds": 0.659282716,
+          "driver_stamps": [
+            0,
+            1024,
+            1280,
+            1280
+          ],
+          "scheduler_phases": [
+            0,
+            1,
+            1,
+            0
+          ],
+          "scheduler_contexts": [
+            0,
+            1,
+            1,
+            0
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 329,
+          "seconds": 0.994964475,
+          "driver_stamps": [
+            0,
+            1024,
+            1280,
+            1536
+          ],
+          "scheduler_phases": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "scheduler_contexts": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "flags": 0,
+          "last_RX_kind": 1
+        },
+        {
+          "sample": 440,
+          "seconds": 1.330659584,
+          "driver_stamps": [
+            256,
+            1024,
+            1280,
+            1536
+          ],
+          "scheduler_phases": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "scheduler_contexts": [
+            2,
+            1,
+            1,
+            1
+          ],
+          "flags": 1,
+          "last_RX_kind": 1
+        }
+      ],
+      "trace_sha256": "980d32bbd7b7d9546248354367c8a133714311528ab3ba3e7479284ed9b78134",
+      "scope": "Bounded non-atomic physical DATA snapshots after original Python publication/kicks; original graph and execution/output guards retained."
+    }
+  ],
+  "negative_completion_controls": [
+    {
+      "version": 30,
+      "control": "Exactly one typedoldresume tail after childGPUdone, no newgraph/producers",
+      "actual_firmware_event4": true,
+      "stamps": [
+        256,
+        1024,
+        1280,
+        1280
+      ],
+      "scheduler_phases": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "result_sha256": "9f0082cca74d97cf17651d5d44543fe436f495219c20d7608c5403a510741e71"
+    },
+    {
+      "version": 31,
+      "control": "Exactly one originalkickpair after childGPUdone, no newgraph/producers",
+      "actual_firmware_event4": true,
+      "stamps": [
+        256,
+        1024,
+        1280,
+        1280
+      ],
+      "scheduler_phases": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "result_sha256": "7d5714d5315c181ee775f3d440ea0f59c20fbf65c18c52d6e817ae7242203219"
+    },
+    {
+      "version": 32,
+      "control": "Only old4/5 robustness register pointers match warm/old3 stable address",
+      "actual_firmware_event4": true,
+      "stamps": [
+        256,
+        1024,
+        1280,
+        1280
+      ],
+      "scheduler_phases": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "result_sha256": "85b9db13754b2aa9e6f3deee624e7efbdeac7d4da5d50bcaf6f4d0d67d5c0e43"
+    },
+    {
+      "version": 34,
+      "control": "Onlyqueuecontext/joblist/self pointers below4GiB, samePAs/attrs, alltypedoriginals verified",
+      "actual_firmware_event4": true,
+      "stamps": [
+        256,
+        1024,
+        1280,
+        1280
+      ],
+      "scheduler_phases": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "result_sha256": "eb597fe691332d22bd6c08f12a4305200d12375419c6718e77e13295d655e4e4"
+    }
+  ],
+  "correction": "Earlier wording that the final old command neverstarted was stronger than the evidence. The incoming completed command demonstrably began before a visible oldSTART while its own timestampcells were stillzero. Timestamp/scheduler/driverflag visibility indicates completion, not reliable liveexecutionstart. Oldunfinishedcommand may have begun or beenpreempted; do not restrict diagnosis to firmwarepre-GPU scheduling.",
+  "findings": [
+    "Negative2M and positive4M both preserve original outcomes with the SAMEpreprepared3ms target-side DATA sampler.",
+    "FW4 arrives about750ms after observed childcompletion in negative2M; positive4M old3/4/5 finishbeforechild.",
+    "Known old/child joblists stay empty-self-linked throughout sampledexecution; no listunlink corruption observed in those24B heads.",
+    "One originaloldresume or kickafterchildcompletion doesnotrecover the unfinishedcommand.",
+    "Stable robustness pointer and lowqueuecontext/joblist pointeraliases do notfix original2M case; no newplacement ABIrestriction inferred."
+  ],
+  "limits": [
+    "Snapshots are bounded non-atomic DATA observations; noApplecode disassembly.",
+    "Sourcepositive4M is not an earlyhandoff qualification or nativefix.",
+    "v26 initiallyprepares sampler afterkicks but actualfirstsamplebeforechildcomplete is independentlyproved; v28/v29 preparebeforepublication.",
+    "Preparedv27 andv33 wereNOTexecuted and areNOTqualificationevidence.",
+    "No newactualLinuxkernelworkload orproductionVulkan/Chromium/sustained/liveNeo run this turn; priornative189 proofs unchanged."
+  ],
+  "next": "Investigate GPU execution/preemption/restore state, using timestampvisibility correction and outputqualified4M versus failing2M graph; compare owned Mesa CDM/preemption state with native Metal reference, or bounded privateoperand/save snapshots. Keep full nativeearlyhandoff/output/fence qualification and broadercommonadmission/render/asymmetric/fault/finalsustained/Neo validation open.",
+  "protected_sha256": {
+    "AGENTS.md": "58705bf29ef7fcdc77e7b3caf9e202c14d2d759d7c159112e08eee21ca3d537b",
+    "DRM-SHIM-CHECKLIST.md": "f170df86c1a51fb9cf8b7e0a38e6165e9626d4bedecf4d41567bcfdd1a012e46",
+    "proxyclient/m1n1/hv/__init__.py": "c87e59c03b7edf34a4770e2c8f17408fca075adc17a08f456ee0af911b7b83d1",
+    "proxyclient/m1n1/malloc.py": "e0041fc4e14a8b08d5102b7f3afe56a86d02507ab518dd3ee999517e34c66daa",
+    "proxyclient/m1n1/proxy.py": "3e8a6a6ac914478cc0b80cdf8b7d5a5900952e6293980a57c7066cfabf4b48f9",
+    "proxyclient/m1n1/proxyutils.py": "64d1ae34be0479b1758757323d01357bbeaaaff3981d31a99a458586d6a3eeab",
+    "src/hv_exc.c": "aeb311b7f74163895a11f71f5fa18da603e8565fa3c64d638fccb0b26f95e219",
+    "src/hv_sptm.h": "ffcb42be19589bf1322c1be69891bf35f6e3224f86a460c4505466c8a3fc69fd",
+    "src/hv_sptm_boot.c": "5c9eb2f2dc6cd2f2a17a57cfd3c198bf9d3eda20af22435cb6e0ddbbdf31c872",
+    "src/hv_sptm_dart_power.c": "ae952c71072d759adae913d8341560208fd3da2c8b49bd9d3717a262555c5961",
+    "src/hv_sptm_internal.h": "26457ec4244adc08ec8663686fc7a473abd04a4733b237cc736f9d63640512d2",
+    "src/hv_sptm_nvme.c": "427ba6588396e2076dc0a0788b9f725910f22bcc061081a442e35085ee1403f0",
+    "src/hv_sptm_uat.c": "9fc9c87045b3223fc59e2a2fb63dd78c8c9cc81fea271cfae3a606cdb2efd199",
+    "src/hv_t8140_t8132.c": "9f90fb64c2ab3474ea8f04c7316391c440fa99af98efa85e1da100cadc46e2c5",
+    "src/proxy.c": "ea42a63abac39adf9a50d97836aafb616614c866835670bb93e3b93433bb9aa7",
+    "src/proxy.h": "b0dab75b2ac97aa42efb957816fbaf122e17a89a68cd4f208a83a3e0baa21620"
+  },
+  "public_snapshot_unchanged": "a0934325187a66cf6f91817e3d2a3874606f9e10",
+  "Neo_known_good_peeled_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+  "no_new_push": true,
+  "CPUs": 16,
+  "Apple_binary_disassembly": false,
+  "full_goal_complete": false,
+  "final_target": "All controllers terminal, exactRID0/raw/N01 identity recoveryPASS, N01/N03unowned",
+  "key_artifact_sha256": {
+    "audit-v79.py": "0ba0ba110185b9faf4f49c57ca429cfa676d6917e6706b13d384cf4d87cfd43b",
+    "linux-retirement-sampler-v1.py": "04d7ae18b03f0a99d543f26b016bd055f3354b1a0396ff68ca2ab95ac36d76e4",
+    "linux-retirement-sampler-v2.py": "03bb1dc0de91853512280fbb442283d0cc214b2ad744711dbd67a57743df9b4b",
+    "prepare-linux-retirement-trace-v1.py": "47352db97d48949bfcc7d5d7511903fa929f837abf738d38323756c84b57eede",
+    "prepare-linux-retirement-trace-v2.py": "1387735231684772adeef64442fff14ebf155fdf719d5e8e260022a8e629802f",
+    "analyze-retirement-trace-v1.py": "82c306e5d503d0dc820adb4913254490dfed8c0bd8405d48a48fd92f3501f099",
+    "prepare-linux-retirement-wakeup-v1.py": "a89dcf830a2dfee5b7387f7cbfd5d5f74690c92b90688e69d3b27bdd2f118d75",
+    "prepare-linux-stable-robustness-v1.py": "2ab3633f0b2ee21dfaa2dd62efe6deb7c69fca28ab0d61631a1dfe9a85f3acea",
+    "prepare-linux-low-queue-context-v1.py": "a714d901008e528269bc1a2f6adbdc20981725d18b2fa781901acf4f93cfc8d8",
+    "linux-stable-robustness-source-v1/qualification.json": "079ebeb251ed29460d813fdaec508467638e80bf708571c7d85019a49ce011a0",
+    "linux-low-queue-context-source-v1/qualification.json": "11a2e74111bd07b0fe8f93f9d1dd4d9497c4b50d29713ca8a4b3c9fc67fe34a3",
+    "replay-own-linux-prefix-v26.py": "65e11ab66c9d140bcdac10e11597fc69d404ea3c3f524123eebca894199fae7f",
+    "run-own-linux-prefix-v26.py": "9e606deee165b663e9ac5ca5a9a10731c367acd8f6cdbf116ce60527beb96501",
+    "linux-prefix-phases-v26.json": "16449a3ff27144a39aca72b70a8768c732d352d86dfd13fabc66380f2c7d9501",
+    "own-linux-prefix-replay-v26/result.json": "84e835e8b9ee721771894668f0b4db1d0bbd7361dd8294fff132a34d17631ceb",
+    "controller-own-linux-prefix-v26.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "replay-own-linux-prefix-v28.py": "b1018ab3ecb87186e54eb457d0015fcf576927a47395de85ba28afbce4007b4f",
+    "run-own-linux-prefix-v28.py": "ba008849396e7e87098faac1675cc86a5cf644f2cc2202a4902b9a36f49dce29",
+    "linux-prefix-phases-v28.json": "57c0d70f615e0b372ecbbe36b3bd34a0876d65aad9f2dfb62f611ee95ce050e4",
+    "own-linux-prefix-replay-v28/result.json": "ebf2d72f5ed008294edefde09d00c15755851954c74e4ce6264d45d8fe315c8e",
+    "controller-own-linux-prefix-v28.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "replay-own-linux-prefix-v29.py": "b1018ab3ecb87186e54eb457d0015fcf576927a47395de85ba28afbce4007b4f",
+    "run-own-linux-prefix-v29.py": "182ab6f2116b463d5b413cf0ea75bfbae574ae0eddd3cebcaab83687a954ee81",
+    "linux-prefix-phases-v29.json": "95c695cc791df9c8ca4213dc635cf55d9005dda45b01235c956d954f38b4f2b2",
+    "own-linux-prefix-replay-v29/result.json": "2f7a9e366085877c2acf08d495fc92e79502c6e65f21c1a92edbf76275a55fb8",
+    "controller-own-linux-prefix-v29.log": "0f190ab09ef71af8fa2a970e054107f5106e22016c6f3ca24275d9fa34435f83",
+    "replay-own-linux-prefix-v30.py": "551c7e96448b0396cc1c06516bb95a5b2dcf6d24a53b6f10ce185be0e4344876",
+    "run-own-linux-prefix-v30.py": "4410b7500382712307cca75f4d818553a490fa778a84a56df403ed695fbbf166",
+    "linux-prefix-phases-v30.json": "5658d997ac125314a968e9927a243ff0b0991a263aca80e3ddc669ba2ca6e307",
+    "own-linux-prefix-replay-v30/result.json": "9f0082cca74d97cf17651d5d44543fe436f495219c20d7608c5403a510741e71",
+    "controller-own-linux-prefix-v30.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "replay-own-linux-prefix-v31.py": "cec3c2e08f5b1db67cf19e7b386a91a15695027e99a0175d8c6b3e0c25d86b89",
+    "run-own-linux-prefix-v31.py": "b089dc6bfb7d4d4044affc70ae8a49d7b2c4f6af623703e5f64544c4f4924656",
+    "linux-prefix-phases-v31.json": "3145d96662c8be25249ffcb6a84029a147c81ce2a538eea793e7860d6041db3d",
+    "own-linux-prefix-replay-v31/result.json": "7d5714d5315c181ee775f3d440ea0f59c20fbf65c18c52d6e817ae7242203219",
+    "controller-own-linux-prefix-v31.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "replay-own-linux-prefix-v32.py": "908ba3c43e30e1429966af8087c281e6b675af47e1c53581f9cd4ec629d3b311",
+    "run-own-linux-prefix-v32.py": "d4735dcbb31bc3c62be0d3f435235fe02abbd2aa4223968542bf741048537f5d",
+    "linux-prefix-phases-v32.json": "38f83bb57bd0f90a479ec51b3e9ce3ccd5db4f406144ac42f441511f1d45079d",
+    "own-linux-prefix-replay-v32/result.json": "85b9db13754b2aa9e6f3deee624e7efbdeac7d4da5d50bcaf6f4d0d67d5c0e43",
+    "controller-own-linux-prefix-v32.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "replay-own-linux-prefix-v34.py": "1e7776ad5c26528642ee90368dd90bed5773474d0b931bbcfea3dfcc421cc5e5",
+    "run-own-linux-prefix-v34.py": "c4480cde9ba9b4e446fe1fa6b9c8e9bb968f70972e041804aecfc9f1cd9c4ad8",
+    "linux-prefix-phases-v34.json": "9ab7eea3f00e30b799ae55e7cfcc18cc691abd14cf19231706038e3184ef3f04",
+    "own-linux-prefix-replay-v34/result.json": "eb597fe691332d22bd6c08f12a4305200d12375419c6718e77e13295d655e4e4",
+    "controller-own-linux-prefix-v34.log": "0868d03e119e7669bdc02b5951179b3c97af77b9f92f332678304c422780ce0d",
+    "own-linux-prefix-replay-v26/retirement-trace.json": "b2057f24f61d697f847ffa9997dd554c81e17cb2c25b1e59aa926e379a1f6304",
+    "own-linux-prefix-replay-v26/retirement-transitions.json": "fe71cfe0eddb3dacb64a457aff136c2379733f804cba02d55f55c07f6203a96f",
+    "own-linux-prefix-replay-v26/retirement-sampler.S": "2e8b7adb8db9aebee592f09f68c1abe60ae4f1db75eb9c549569c2c14b43f668",
+    "own-linux-prefix-replay-v26/retirement-sampler.bin": "402bddde2df979142e4b94d734b221aee75206914a1fb7b259b2487e7485ca11",
+    "own-linux-prefix-replay-v28/retirement-trace.json": "4c04bd9f433189c660deb1f9c89297e6643ed93f28ab54db056479a8db9aa73d",
+    "own-linux-prefix-replay-v28/retirement-transitions.json": "9f7b5d4ab33cf0b8c73f1567d476334d2d9a96e5c670707049f679becb9be3d7",
+    "own-linux-prefix-replay-v28/retirement-sampler.S": "2e8b7adb8db9aebee592f09f68c1abe60ae4f1db75eb9c549569c2c14b43f668",
+    "own-linux-prefix-replay-v28/retirement-sampler.bin": "402bddde2df979142e4b94d734b221aee75206914a1fb7b259b2487e7485ca11",
+    "own-linux-prefix-replay-v29/retirement-trace.json": "07bed53272893c475bc3f7474bad2af97556d8cc6c4205454ec5b0879e676e72",
+    "own-linux-prefix-replay-v29/retirement-transitions.json": "516aaa3e41d839203c834d3dee7148c0e3eb46babff6260a2eaac76dddeeb459",
+    "own-linux-prefix-replay-v29/retirement-sampler.S": "2e8b7adb8db9aebee592f09f68c1abe60ae4f1db75eb9c549569c2c14b43f668",
+    "own-linux-prefix-replay-v29/retirement-sampler.bin": "402bddde2df979142e4b94d734b221aee75206914a1fb7b259b2487e7485ca11",
+    "linux-prefix-replay-phases-v22.py": "6326264f52efeaf6d089d4c365d36c5351f3fc76c7c5dede822b4aa4f37ab8f9",
+    "linux-prefix-replay-phases-v23.py": "4ddf8550087cea9890e4ff7093c349d6e8b0e985e6e825ccf9a59a907bbefc83",
+    "linux-prefix-replay-phases-v24.py": "5733c38f59db011803ff32cac91ce45de4255932b2593461210a6ff2337a4024",
+    "linux-prefix-replay-phases-v25.py": "b474229539d61772cb55f2f267c8204014e087e5cc4d901b78ce67ec138635a6",
+    "linux-prefix-replay-phases-v26.py": "af4f596bc2c7276bb333b09f8a4d576003d18b2c3129599c616c84a5c48d1668",
+    "linux-prefix-replay-phases-v27.py": "5178b31ae242351cf83bd39af39be18b6abe53af7942bc4607a6b392a25a7a70"
+  }
+}
