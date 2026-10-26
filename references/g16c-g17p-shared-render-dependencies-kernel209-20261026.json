@@ -1,0 +1,300 @@
+{
+  "kernel": 209,
+  "Linux_HEAD": "2556f67cfd28aebbf43f7ef8d37998ada20a350d",
+  "all180_declared_sources_local_remote_archive_match": true,
+  "ARM64_object_and_actual_launched_Image_match": true,
+  "protected_refs_unchanged": true,
+  "native": [
+    {
+      "version": "v1104",
+      "log_sha256": "18bce6975587a4b1449588d22426c6c162c6a42ce5afc7ab394fef9a1697c226",
+      "receipt": {
+        "version": "v1104",
+        "stage": 0,
+        "monitor_pid": 62843,
+        "command": [
+          "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+          "-u",
+          "proxyclient/experiments/g16c_linux_probe.py",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v20c",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/render-dependency-preparation-v4/initramfs.cpio.gz",
+          "--enable-gpu",
+          "--bootarg",
+          "asahi_neo.submission_log=0",
+          "--bootarg",
+          "asahi_neo.cpu_cache_pause_grid=32",
+          "--evidence",
+          "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1104"
+        ],
+        "guest_hashes_verified": 359,
+        "tests_passed": true,
+        "recovery": {
+          "reason": "unbind",
+          "monitor_exit": -15,
+          "RID": 0,
+          "raw_chainload_and_identity": true
+        },
+        "unbind_passed": true
+      },
+      "consumer_fragment_end_before_producer_public_fence": 82348641875,
+      "CPU_visibility_pause_seconds": 2.034502,
+      "compute_intervals": [
+        [
+          85930109833,
+          86001727250
+        ],
+        [
+          85897746750,
+          85969782208
+        ]
+      ],
+      "tiling_interval": [
+        85901032000,
+        85901048666
+      ],
+      "fragment_interval": [
+        85901048833,
+        85901062708
+      ]
+    }
+  ],
+  "one_Neo_render_dependency_planner_for_both_ABIs": true,
+  "one_versioned_dependency_vector_serializer": true,
+  "render_milestones_and_exact_receipt_pool_identity": true,
+  "consumer_producer_leases_use_actual_receipt_identity": true,
+  "default_Max_render_CPU_dependency_wait_removed": true,
+  "host": {
+    "plans": {
+      "cases": 480,
+      "whole_Max_record_bytes": 512,
+      "original_Neo_instruction_projection": true,
+      "original_Neo_revision": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+      "non_dependency_bytes_preserved": true,
+      "invalid_vectors_leave_record_unchanged": true,
+      "GPU_execution": false,
+      "result": "PASS 480 original Neo plans and complete Max dependency records; invalid/oversized vectors preserve staging",
+      "source_sha256": {
+        "g17p_render_graph.rs": "43a20e1f3501a628bd8fe58d33521c20dc76d9d52948eec7f210e6586317065e",
+        "g17p_render_lifecycle.rs": "5e288e1adf5bc01a70d69cf8872cd478ae82dc9a32fd093b8897a3db9c224b78",
+        "g17p_compute.rs": "f00ed869325f8b569daab0b1c3c2dcf876b7b61bab6d8a02de3a9291ce8223a4",
+        "scheduled_work.rs": "a438ea034858d7cf3bfe2dd845dd8d83fab7691f1fd210e3e971ffadfd876a23"
+      }
+    },
+    "wire": {
+      "cases": 576,
+      "full_images_per_case": 10,
+      "all_packet_bytes_and_addresses_match": true,
+      "reference_allows_only_coherent_body_relocation": true,
+      "reference_revision": "900762872a930a8c5f7677893d459baacf821ae1",
+      "reference_source_sha256": "9c900386321ed06bba8ad41250f3d1fed474bf818f338bd7ab37f2b1153e7a84",
+      "current_source_sha256": "a0fbd0f2ebac33381f178818042aadb9d7bf94a8ec8db8894b7b876aff0a7fe8",
+      "actual_GPU_execution": false
+    },
+    "records": {
+      "tagged_Neo": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+      "Neo_comparisons": 1158,
+      "reverse_grid_Max_cases": 4,
+      "native_Max_records": [
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/single-user-compute-four-queues-20261010/submission-0-record.bin",
+          "sha256": "18bf06fca2917b4b43498bc444acd062ed67b0d13728dc38e2d006a6ac2cd6ab",
+          "bytes": 512,
+          "receiver_last": true
+        },
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/single-user-compute-four-queues-20261010/submission-1-record.bin",
+          "sha256": "0f9c77281e34074ac4ef1933fe2cf8982f6db93fe947bc077f05e3179c6ecce1",
+          "bytes": 512,
+          "receiver_last": true
+        },
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/single-user-compute-four-queues-20261010/submission-2-record.bin",
+          "sha256": "734610ce874805aa1c79d03092c8ce9528b1ec00ba851c8632552a32d4740a8a",
+          "bytes": 512,
+          "receiver_last": true
+        },
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/single-user-compute-four-queues-20261010/submission-3-record.bin",
+          "sha256": "9be016dfd24ced5216ba22b42214e8546087a6fdb9389093010f651ecf46f7ee",
+          "bytes": 512,
+          "receiver_last": true
+        },
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/g16c-native-queued-dependencies-20261022/single-user-same-queue-v2/submission-0-record.bin",
+          "sha256": "18bf06fca2917b4b43498bc444acd062ed67b0d13728dc38e2d006a6ac2cd6ab",
+          "bytes": 512,
+          "receiver_last": true
+        },
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/g16c-native-queued-dependencies-20261022/single-user-same-queue-v2/submission-1-record.bin",
+          "sha256": "724f0b7995053fb6ac608f145281758146dc4e56b7f50969f925c183f08cfd8d",
+          "bytes": 512,
+          "receiver_last": true
+        },
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/g16c-native-queued-dependencies-20261022/single-user-long-pair-v3/submission-0-record.bin",
+          "sha256": "18bf06fca2917b4b43498bc444acd062ed67b0d13728dc38e2d006a6ac2cd6ab",
+          "bytes": 512,
+          "receiver_last": true
+        },
+        {
+          "path": "/Users/user/gravity/bootloader-m4maxmbp/build/m4max-gpu/g16c-native-queued-dependencies-20261022/single-user-long-pair-v3/submission-1-record.bin",
+          "sha256": "724f0b7995053fb6ac608f145281758146dc4e56b7f50969f925c183f08cfd8d",
+          "bytes": 512,
+          "receiver_last": true
+        }
+      ],
+      "all_bytes_match": true,
+      "hardware_execution_tested": false,
+      "source_sha256": {
+        "/Users/user/gravity/linux-g16c-g17p/drivers/gpu/drm/asahi/g17p_compute.rs": "f00ed869325f8b569daab0b1c3c2dcf876b7b61bab6d8a02de3a9291ce8223a4",
+        "/Users/user/gravity/linux-g16c-g17p/drivers/gpu/drm/asahi/scheduled_work.rs": "a438ea034858d7cf3bfe2dd845dd8d83fab7691f1fd210e3e971ffadfd876a23",
+        "/Users/user/gravity/linux-g16c-g17p/rust/macros/versions.rs": "020f739dffcdee7d3172814e492f3c4244d370475205c85accb8d77a527bcb5d"
+      }
+    },
+    "leases": {
+      "cases": 7,
+      "actual_production_lookup_and_receipt_getters_compiled": true,
+      "bounded_fence_and_session_standins": true,
+      "GPU_execution": false,
+      "runner_sha256": "8011871dfff5840cc33d3b2c24672e529f9f4054dbc9c60e04f2167ed843ea2f",
+      "result": "PASS 7 actual producer lease lookup/getter cases; physical pool, skipped history, deduplication, compute fallback and invalid/unpublished metadata",
+      "source_sha256": {
+        "g17p_schedule.rs": "cfe6f5ee7af2b5ccf48b69bc9fc15c92a507cf0d69c70180721e99ec96512658",
+        "g17p_boot.rs": "0953111310bc0db177cf9d784b24ab449d1487dda6926d35e36823a208838da8"
+      }
+    },
+    "Neo_projection": {
+      "baseline": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+      "identical_Session_initializer_fields": 35,
+      "Neo_probe_body_preserved": true,
+      "GPU_execution_tested": false,
+      "Neo_CPU_scheduler_preserved_excluding_G16C_only_branches_and_common_dependency_lease_lookup": true,
+      "Neo_GET_PARAMS_and_identity_checks_preserved": true,
+      "Neo_submit_admission_preserved_except_Max_gate": true,
+      "Neo_parameter_parser_and_sampler_limit_preserved": true,
+      "Neo_permanent_BO_retention_preserved": true,
+      "Neo_queue_create_destroy_preserved_except_Max_activity_owner": true,
+      "Neo_entire_async_worker_preserved_except_Max_only_hooks_and_common_GEM_drop_order": true,
+      "source_sha256": {
+        "asahi_neo.rs": "48215cf1a39f58b3fb5358e613ff650b383b35dbb8c63741d0921146dd15692d",
+        "g17p_boot.rs": "0953111310bc0db177cf9d784b24ab449d1487dda6926d35e36823a208838da8",
+        "g17p_drm.rs": "4894f188d919cfae0a806f2fd2d549c9ef2f50c6b6b8af7807b7bccff0c59f38",
+        "g17p_schedule.rs": "cfe6f5ee7af2b5ccf48b69bc9fc15c92a507cf0d69c70180721e99ec96512658",
+        "g17p_async.rs": "9130faed52eaa466fc56f62777b8fbb7291edc2bf80cb90ff46949165520e457"
+      }
+    }
+  },
+  "original_growth_oracle_independently_reconstructed_exact": true,
+  "actual_struct_layouts_and_SGX_transactions_unchanged": true,
+  "native_wait_on_unreached_producer_GPU_counter_qualified": false,
+  "concurrent_render_pools_qualified": false,
+  "negative_provenance": {
+    "native-common-render-dependency209-v1.json": {
+      "kernel": 209,
+      "records": [
+        {
+          "version": "v1100",
+          "stage": 0,
+          "monitor_pid": 62368,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v20",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/render-dependency-preparation-v2/initramfs.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=0",
+            "--bootarg",
+            "asahi_neo.cpu_cache_pause_grid=32",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1100"
+          ],
+          "guest_hashes_verified": 359,
+          "test_setup_error": "Probe assumed render immediately follows compute; original fixture has intervening CMD3 metadata. Assertion occurred before either GPU submit. Probe now preserves metadata and explicitly finds render; original oracle untouched.",
+          "recovery": {
+            "reason": "confirmed_probe_topology_assert_before_any_GPU_submit",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-common-render-dependency209-v2.json": {
+      "kernel": 209,
+      "records": [
+        {
+          "version": "v1102",
+          "stage": 0,
+          "monitor_pid": 62578,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v20b",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/render-dependency-preparation-v3/initramfs.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=0",
+            "--bootarg",
+            "asahi_neo.cpu_cache_pause_grid=32",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1102"
+          ],
+          "startup_stall": {
+            "log_unchanged_seconds": 15.32269835472107,
+            "CPUs": 16,
+            "no_userspace_or_GPU": true
+          },
+          "recovery": {
+            "reason": "startup_stall",
+            "monitor_exit": -15,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          },
+          "identical_retry": "v1103"
+        },
+        {
+          "version": "v1103",
+          "stage": 0,
+          "monitor_pid": 62661,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v20b",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/render-dependency-preparation-v3/initramfs.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=0",
+            "--bootarg",
+            "asahi_neo.cpu_cache_pause_grid=32",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1103"
+          ],
+          "guest_hashes_verified": 359,
+          "test_poll_error": "Repeated SYNC_IOC_FILE_INFO reused kernel-populated num_fences while sync_fence_info pointer stayed NULL. Linux source confirms next call attempts copy to NULL. Probe now resets struct per query and prints errno. Both submits accepted; no oracle qualification claimed.",
+          "recovery": {
+            "reason": "confirmed_client_poll_assert_after_two_accepted_submissions",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    }
+  },
+  "goal_complete": false,
+  "remaining": [
+    "Qualify long-running/unreached render GPU waits and delayed producer error attribution",
+    "Complete shared physical render pool/root/queue/private ownership and remove global render idle with disjoint per-pool scratch/grids/counters/scene leases",
+    "Common prepared private-window relocation and pool-scoped growth tokens for queued same-pool work",
+    "Compute operand-growth/error hooks and wider FW-context preservation/asymmetric/fault/sustained/live-Neo/full-workload parity"
+  ]
+}
