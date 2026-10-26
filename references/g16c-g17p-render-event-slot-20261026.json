@@ -1,0 +1,724 @@
+{
+  "status": "kernel235_growth_VM_routing_qualified",
+  "goal_complete": false,
+  "qualified_linux_revision": "c0c10493d",
+  "description": "Max render WorkRecord control omitted physical event slot, which the original Neo points builder supplies from layout.pair.",
+  "capture_root": "build/m4max-gpu/neo-lifecycle-restoration-20261025/single-user-indirect-pressure-two-clients-v4",
+  "native_control_words": {
+    "child_pool0": {
+      "TA": "0x0c00",
+      "FR": "0x1800"
+    },
+    "parent_pool1": {
+      "TA": "0x0c01",
+      "FR": "0x1801"
+    }
+  },
+  "pre_fix_assertion": "native Max event slot follows render pool: pool=1 stage=0; actual3072 expected3073",
+  "host_after": {
+    "whole_packet_cases": 576,
+    "images_per_case": 10,
+    "native_lifecycle_cases": 2,
+    "native_event_slot_cases": 4,
+    "native_UUID_context_cases": 4,
+    "native_lifecycle_register_context_cases": 12
+  },
+  "diagnostics": {
+    "native-nonbootstrap-growth226-v1.json": {
+      "sha256": "d95949a3dd557578c3feb1d0570147f6a2065761447da33aebe6d3a980e9ad17",
+      "records": [
+        {
+          "version": "v1150",
+          "stage": 0,
+          "monitor_pid": 76295,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v35",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1150"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "global_lifecycle_candidate_did_not_fix_growth": true,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Sequential original raw renderer pool0 PASS, then original200000-instance pressure at private origin7100004000/pool2/context63 grows23->33->43 and FW kind4/grid6, output remains poison. No concurrent GPU work is needed to reproduce this failure.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth227-v1.json": {
+      "sha256": "a0edc1fbe611dae4d238cf47a563d4b80bb9dd930871459c56e9b1eabb104222",
+      "records": [
+        {
+          "version": "v1152",
+          "stage": 0,
+          "monitor_pid": 76685,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v36",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1152"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "high_ASID_hypothesis_disproved": true,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Sequential original raw renderer pool0 PASS, then original200000-instance pressure at private origin7100004000/pool2/context5 grows23->33->43 and FW kind4/grid6, output remains poison. No concurrent GPU work is needed to reproduce this failure.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth226-same-origin-v1.json": {
+      "sha256": "5b66d61b740175a2616e861272b9805afaa4cc84d40d6c0b1da55220d76325f4",
+      "records": [
+        {
+          "version": "v1154",
+          "stage": 0,
+          "monitor_pid": 76829,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v35",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1154"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "private_origin_move_required_for_failure": false,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Sequential original raw renderer pool0 PASS, then original200000-instance pressure at private origin7000000000/pool2/context63 grows23->33->43 and FW kind4/grid6, output remains poison. No concurrent GPU work is needed to reproduce this failure.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth228-v1.json": {
+      "sha256": "ca76bbf519da0a61edbc1b9a56ab7ff4e02210b94a6e4eee21f3ef022ac21053",
+      "records": [
+        {
+          "version": "v1156",
+          "stage": 0,
+          "monitor_pid": 76969,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v37",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1156"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "request_growth_disabled_still_fails": true,
+          "host_growth_callbacks_observed": 0,
+          "MMU_registers_d8c0_d8c8_17030": [
+            0,
+            0,
+            0
+          ],
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Sequential original raw renderer pool0 PASS, then pressure200000 pool2/context63 with request_growth=false; no growth callback or FWkind4 observed. Submission fails EIO after five seconds, output stays poison. Read-only known MMU fault registers zero. Disabling host requests is not a workaround; does not isolate exact partial failure.",
+          "recovery": {
+            "reason": "confirmed_submission_EIO_poison_after_5sec_no_growth_diagnostic",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth229-v1.json": {
+      "sha256": "eb4a4d150bdc69b2e938bc9a6cdb2d1cae01d63a3674881a9793d168b682234c",
+      "records": [
+        {
+          "version": "v1158",
+          "stage": 0,
+          "monitor_pid": 77359,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v38",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1158"
+          ],
+          "startup_stall": {
+            "log_unchanged_seconds": 15.226574420928955,
+            "CPUs": 16,
+            "no_userspace_or_GPU": true
+          },
+          "recovery": {
+            "reason": "startup_stall",
+            "monitor_exit": -15,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          },
+          "identical_retry": "v1159"
+        },
+        {
+          "version": "v1159",
+          "stage": 0,
+          "monitor_pid": 77445,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v38",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1159"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "captured_event_slot_candidate_did_not_fix_growth": true,
+          "userspace_owned_UAT_dump_unavailable": "CONFIG_STRICT_DEVMEM denies DRAM mmap; no policy bypass attempted",
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Sequential original raw renderer pool0 PASS, then original200000-instance pressure at private origin7100004000/pool2/context63 grows23->33->43 and FW kind4/grid6, output remains poison. No concurrent GPU work is needed to reproduce this failure.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth230-v1.json": {
+      "sha256": "d29596465931336b3d1f45fe8193c2ff197fcb8f9114ea421a38770ee9a14e89",
+      "records": [
+        {
+          "version": "v1160",
+          "stage": 0,
+          "monitor_pid": 77654,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v39",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1160"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "captured_event_slot_candidate_did_not_fix_growth": true,
+          "failure_dump": "kernel230-failure-data-v1/summary.json",
+          "both_inner_queues_consumed_but_output_poison": true,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Sequential original raw renderer pool0 PASS, then original200000-instance pressure at private origin7100004000/pool2/context63 grows23->33->43 and FW kind4/grid6, output remains poison. No concurrent GPU work is needed to reproduce this failure.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth231-v1.json": {
+      "sha256": "c02e69afab86000c067a74734dcdeb052403c1c85b0c293417ec53304c631dd5",
+      "records": [
+        {
+          "version": "v1162",
+          "stage": 0,
+          "monitor_pid": 77889,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v40",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1162"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "earlier_render_required_for_failure": false,
+          "fresh_pool2_first_render_failed": true,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Fresh firmware; render ordinal starts2 only as diagnostic, so pool2/context63 is FIRST render with no prior render retained state. Same original pressure/growth/FWkind4/grid6 and poison. Earlier render count accumulation is not required. Diagnostic initial ordinal will be reverted.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth232-v1.json": {
+      "sha256": "6b5d7b8bb0c4d6e3eca77c2b2bc090d2a1013c606ba23dfc4a689c867e11729e",
+      "records": [
+        {
+          "version": "v1164",
+          "stage": 0,
+          "monitor_pid": 78047,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v41",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1164"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "first_generation_pool2_ASID1_passed": true,
+          "second_generation_pool3_ASID63_failed": true,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Diagnostic fresh ordinal2 with first retained owner ASID1/pool2/grids6,7 passes first full original200000-instance generation, all3 outputs/294884guards/6timestamps and four growth replies23->63. Generation2 selects normal ASID63/pool3/grids8,9 and fails same FWkind4 after two retired growth replies. No ASID policy fix/cap is proposed.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth233-v1.json": {
+      "sha256": "7ba3ca213f7ce36ff6f21e76e09ef21aaa1c74253bb5d6480f2f05571bf626d9",
+      "records": [
+        {
+          "version": "v1166",
+          "stage": 0,
+          "monitor_pid": 78213,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v42",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1166"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "fresh_pool2_ASID2_failed": true,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Fresh firmware; render ordinal starts2 only as diagnostic, so pool2/context2 is FIRST render with no prior render retained state. Same original pressure/growth/FWkind4/grid6 and poison. Earlier render count accumulation is not required. Diagnostic initial ordinal will be reverted.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    },
+    "native-nonbootstrap-growth234-v1.json": {
+      "sha256": "9377183dab564e25629d8ece10fc4d52f5b5234ec8f97c3e9082b52bb249b17b",
+      "records": [
+        {
+          "version": "v1168",
+          "stage": 0,
+          "monitor_pid": 78409,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v43",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1168"
+          ],
+          "startup_stall": {
+            "log_unchanged_seconds": 15.292446613311768,
+            "CPUs": 16,
+            "no_userspace_or_GPU": true
+          },
+          "recovery": {
+            "reason": "startup_stall",
+            "monitor_exit": -15,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          },
+          "identical_retry": "v1169"
+        },
+        {
+          "version": "v1169",
+          "stage": 0,
+          "monitor_pid": 78490,
+          "command": [
+            "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+            "-u",
+            "proxyclient/experiments/g16c_linux_probe.py",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v43",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v2.cpio.gz",
+            "--enable-gpu",
+            "--bootarg",
+            "asahi_neo.submission_log=1",
+            "--evidence",
+            "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1169"
+          ],
+          "guest_hashes_verified": 359,
+          "sequential_nonbootstrap_pressure_passed": false,
+          "native_context_identity_candidate_did_not_fix_growth": true,
+          "GPU_render_overlap_proven": false,
+          "tests_passed": false,
+          "unbind_passed": false,
+          "failure": "Sequential original raw renderer pool0 PASS, then original200000-instance pressure at private origin7100004000/pool2/context63 grows23->33->43 and FW kind4/grid6, output remains poison. No concurrent GPU work is needed to reproduce this failure.",
+          "recovery": {
+            "reason": "confirmed_firmware_kind4_grid6_during_nonbootstrap_PB_growth",
+            "SIGTERM_sent_and_monitor_gone": true,
+            "RID": 0,
+            "raw_chainload_and_identity": true
+          }
+        }
+      ]
+    }
+  },
+  "diagnostic_sources_reverted": [
+    "global UAT invalidation225",
+    "low-ASID allocator227",
+    "disabled request_growth228",
+    "initial render ordinal2 in231-233",
+    "forced initial owner ASID1/2 in232/233"
+  ],
+  "caveats": [
+    "Kernel235 growth routing is qualified only for the recorded native scope; full Neo parity remains incomplete.",
+    "Original Neo scheduler/default/probe/UAPI shape35 checks pass; physical Neo not tested this turn.",
+    "Four guarded pressure generations pass but actual simultaneous render GPU intervals remain unproven.",
+    "High-context OOM/error9 and independent recovery is the current native test; no result claimed yet.",
+    "The original unmodified native reference request-growth flag was0; host growth proof comes from explicitly recorded controlled-data/source-reply experiments and native kernel tests."
+  ],
+  "Apple_binary_disassembly": false,
+  "snapshot": {
+    "snapshot_ref": "refs/heads/snapshot/render-context-binding-investigation-20261026",
+    "snapshot_commit": "ca9acc79ed46c2507081a31e568b7491ea48f355",
+    "stable_HEAD_unchanged": "5f75cbef9f4a5b0cc40631af1760ab3ef447f538",
+    "working_tree_and_normal_index_unchanged": true,
+    "source_sha256": {
+      "drivers/gpu/drm/asahi/scheduled_compute_runtime.rs": "afd8df8dd888bbee4be65042eb106ca758f3306ce5afdb579809b6e07c89d54a",
+      "drivers/gpu/drm/asahi/scheduled_render_preparation.rs": "0f97883054c86801a643fe51b3659217a0d677075deec6eaa54d9b53eacc51c1",
+      "drivers/gpu/drm/asahi/tests/check_scheduled_render_preparation.py": "2c5c4edc7a0b59b8d4efa8c1307e53f3b614b798aa48cb03de4b4e7fa613e364",
+      "drivers/gpu/drm/asahi/tests/g16c_drm_parameter_growth.c": "58feb02fe90d5a72b5cb4e697496b26988f22073fe5e03e3cbab288f83f38338"
+    },
+    "qualified": false
+  },
+  "latest_kernel": 234,
+  "latest_native_version": "v1169",
+  "all_allocator_diagnostics_reverted": true,
+  "native_identity_observations": [
+    {
+      "path": "build/m4max-gpu/neo-lifecycle-restoration-20261025/single-user-indirect-pressure-two-clients-v4/child/stage-0-descriptor.bin",
+      "sha256": "b3d1ff4488f037582e2e5d485eb7216f440f495be904cf70ef65be4249f8040a",
+      "context": 1,
+      "UUID": "0x1000103",
+      "lifecycle_registers": {
+        "0x1ca10": "0xbe01000103",
+        "0x14a1": "0xbe01000103",
+        "0xa349": "0xbe01000103"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/neo-lifecycle-restoration-20261025/single-user-indirect-pressure-two-clients-v4/child/stage-1-descriptor.bin",
+      "sha256": "18ffba0aaa716c25730536fae48569f73577d3d906c72840ca2b46c8f6142d37",
+      "context": 1,
+      "UUID": "0x1000102",
+      "lifecycle_registers": {
+        "0x160e0": "0xbe01000102",
+        "0x1499": "0xbe01000102",
+        "0xa341": "0xbe01000102"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/neo-lifecycle-restoration-20261025/single-user-indirect-pressure-two-clients-v4/parent/stage-0-descriptor.bin",
+      "sha256": "2bd3f6cb8ed40c0161a12aa3d4752d95ec8ed0fbdebe4e3e805f34f995c1c356",
+      "context": 2,
+      "UUID": "0x200018f",
+      "lifecycle_registers": {
+        "0x1ca10": "0x10001480200018f",
+        "0x14a1": "0x10001480200018f",
+        "0xa349": "0x10001480200018f"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/neo-lifecycle-restoration-20261025/single-user-indirect-pressure-two-clients-v4/parent/stage-1-descriptor.bin",
+      "sha256": "aceaabeda1ffcf2a2b44f67d7ec9bb5b8386678c11d4d2952e13742b142018ec",
+      "context": 2,
+      "UUID": "0x200018e",
+      "lifecycle_registers": {
+        "0x160e0": "0x10001480200018e",
+        "0x1499": "0x10001480200018e",
+        "0xa341": "0x10001480200018e"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/single-user-render-two-clients-three-phases-fullcpu-retry1-20261015/child/stage-0-descriptor.bin",
+      "sha256": "fa2b9fd758d4fb78c57f5e2e521fbe19646a5ce57c234616e9637f2dbd8c6752",
+      "context": 1,
+      "UUID": "0x10000e1",
+      "lifecycle_registers": {
+        "0x1ca10": "0xbc010000e1",
+        "0x14a1": "0xbc010000e1",
+        "0xa349": "0xbc010000e1"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/single-user-render-two-clients-three-phases-fullcpu-retry1-20261015/child/stage-1-descriptor.bin",
+      "sha256": "f989d197f8ddc82a823d99758eb4ecf10e62d8924fb6eb6d6b10c09e365b4ce6",
+      "context": 1,
+      "UUID": "0x10000e0",
+      "lifecycle_registers": {
+        "0x160e0": "0xbc010000e0",
+        "0x1499": "0xbc010000e0",
+        "0xa341": "0xbc010000e0"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/single-user-render-two-clients-three-phases-fullcpu-retry1-20261015/warmup/stage-0-descriptor.bin",
+      "sha256": "8d2246842aa53665fcbe67e026756e04e816d70485274e3f9e3cd57c09514db6",
+      "context": 2,
+      "UUID": "0x2000147",
+      "lifecycle_registers": {
+        "0x1ca10": "0x100012002000147",
+        "0x14a1": "0x100012002000147",
+        "0xa349": "0x100012002000147"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/single-user-render-two-clients-three-phases-fullcpu-retry1-20261015/warmup/stage-1-descriptor.bin",
+      "sha256": "f7b9d5c3719539567dbaa6fa8bcd8283128deaeeaaed53a1cbde1ad9d7367868",
+      "context": 2,
+      "UUID": "0x2000146",
+      "lifecycle_registers": {
+        "0x160e0": "0x100012002000146",
+        "0x1499": "0x100012002000146",
+        "0xa341": "0x100012002000146"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/single-user-render-two-clients-three-phases-fullcpu-retry1-20261015/after-close/stage-0-descriptor.bin",
+      "sha256": "da52f8957c0c0c41ff6608ff42a893fc3b6e1825412e3d8e436a6c1573755fc4",
+      "context": 2,
+      "UUID": "0x200016b",
+      "lifecycle_registers": {
+        "0x1ca10": "0x10001220200016b",
+        "0x14a1": "0x10001220200016b",
+        "0xa349": "0x10001220200016b"
+      },
+      "identity_byte_matches_context": true
+    },
+    {
+      "path": "build/m4max-gpu/single-user-render-two-clients-three-phases-fullcpu-retry1-20261015/after-close/stage-1-descriptor.bin",
+      "sha256": "d8e35550588e1cbbd6564365321742f52a527f7246d6b3fd13dd96b64a6890cf",
+      "context": 2,
+      "UUID": "0x200016a",
+      "lifecycle_registers": {
+        "0x160e0": "0x10001220200016a",
+        "0x1499": "0x10001220200016a",
+        "0xa341": "0x10001220200016a"
+      },
+      "identity_byte_matches_context": true
+    }
+  ],
+  "bounded_conclusions": [
+    "Same pool2/grids6,7 pressure succeeds first full generation with ASID1, fails with ASID2 or63 before identity-field correction. Low ASID5 likewise fails; no magnitude cap fixes it.",
+    "With normal original ASID policy and corrected UUID/lifecycle context bytes, kernel234 still reproduces high-context pressure fault. These two native field corrections are not the timeout fix.",
+    "Native child/parent dispatch entries0/1 exchange whole32-byte records; root-private kernel window contains26663 pages at same VAs but entirely different PAs across the two client captures. Do not assume shared backing or ASID-indexed render allocator slots from this.",
+    "Source234 original raw renderer passes. Original200000 pressure fails, outputs poison. Both inner queue consumers equal2; driver stamps remain0x200 rather than expected0x300. Queue consumption is not execution.",
+    "Known read-only MMU d8c0/d8c8/17030 zero in228; strict devmem denied DRAM read in229. Added opt-in bounded owner-only failure DATA instead of changing access policy.",
+    "Capture macros/layouts unchanged; host actual immutable preparation gate576 whole packet cases plus native event/lifecycle/context identity projections PASS; before-change assertions fail on native pool1 control and native context2 UUID.",
+    "Captured native pointer graph, high-ASID retarget, controlled source growth and corrected Neo reply ordering now isolate the cause. Kernel235 verifies the correction without scheduler/allocator restrictions."
+  ],
+  "single_qword_native_replay_bisection": {
+    "receipt": "build/m4max-gpu/neo-lifecycle-restoration-20261025/pressure-retained-reference-dispatch-bisect-v1.json",
+    "sha256": "0573d403eb80ee1cce170feb4d3f2c5c441d4e4033a45e2ef00e6f7c07c732fa",
+    "both_full_outputs_passed": true,
+    "guard_bytes": 1000,
+    "all_six_stage_completions": true,
+    "mutation": {
+      "address": 18446739813124341760,
+      "before": "002816e000000040000000000010020000080100000000000000000000000000000000e000000040000000000040010000a00000000000000000000000000000",
+      "after": "000000e000000040000000000010020000080100000000000000000000000000000000e000000040000000000040010000a00000000000000000000000000000",
+      "changed_bytes": 2,
+      "only_first_directory_qword_replaced": true,
+      "replacement": "captured second allocator directory; all cursors/counts/other bytes preserved",
+      "context": 2,
+      "hypervisor_used": false
+    },
+    "exact_cold_recovery": true,
+    "scope_limit": "Captured Metal parent with200000 instances and no host growth; does not prove source-kernel pressure correct."
+  },
+  "next_experiment": "High-context OOM/error9, failed dependency and independent same-queue recovery on committed kernel235. run-native-nonbootstrap-OOM235-v1.py session92965; actual PID/receipt native-nonbootstrap-OOM235-v1.json. No claim until native result.",
+  "named_ASID63_native_replay": {
+    "pass_": true,
+    "actual_parent_context": 63,
+    "old_context2_both_roots_invalid": true,
+    "old_context1_retained": true,
+    "all6stage_stamps_and_inner_outer_queues_retired": true,
+    "expected_changed_outputs": 2,
+    "guards": 1000,
+    "fresh_FList63_reply_verified": true,
+    "hypervisor": false,
+    "host_PB_growth_exercised": false,
+    "source_pages_replaced": "named context/identity fields + re-encoded TTBR63; captured graph/backing otherwise retained",
+    "receipt_sha256": "74c365d103aa871953b302737ebd6f2ce570c61f8f3987fa779a8540e41ff613",
+    "result_sha256": "5598e513b9d5c598bdf72bbecf26888499f8c7526723e1fefd7fff29c4d2695a",
+    "exact_cold_recovery": {
+      "reason": "completed_named_ASID63_retarget_experiment",
+      "monitor_exit": 0,
+      "RID": 0,
+      "raw_chainload_and_identity": true
+    },
+    "receipt": "build/m4max-gpu/neo-lifecycle-restoration-20261025/pressure-retained-reference-ASID63-only-bisect-v3.json"
+  },
+  "growth_reply_order_root_cause": {
+    "negative_receipt": "build/m4max-gpu/neo-lifecycle-restoration-20261025/pressure-retained-reference-ASID63-source-growth-v1.json",
+    "positive_receipt": "build/m4max-gpu/neo-lifecycle-restoration-20261025/pressure-retained-reference-ASID63-reply-order-v2.json",
+    "same_native_graph_and_unchanged_ActiveGrowth_except_serializer": true,
+    "negative_retired_replies": 2,
+    "positive_retired_replies": 3,
+    "positive_reply_words": [
+      "0800000001000000010000003f000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "0800000001000000010000003f000000010000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "0800000001000000010000003f000000020000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    ],
+    "source_old_first6": "[8,context,slot,generation,token,opaque]",
+    "corrected_first6": "[8,1,slot,context,token,opaque]",
+    "original_Neo_first5": "[8,success,pool,VM,counter]",
+    "both_changed_correct_outputs": true,
+    "guard_bytes": 1000,
+    "all6stage_and_transport_retired": true,
+    "original2_roots_invalid": true,
+    "parent_context": 63,
+    "macro_struct_size_alignment_and_all_reply_offsets_checked": true,
+    "host128_prefixes_compared_to_original_Neo": true,
+    "native_kernel235_qualified": true
+  },
+  "python_reply_patch": {
+    "path": "references/m4max-growth-reply-vm-order-20261026.patch",
+    "sha256": "95cccdf7224a92c8c6259a2466f9b017138234765bc0b5df39835eb03fc56c79",
+    "before_source_sha256": "cd60e376495f8a8239d2a301a3bac02b9f8dbc61986ddf4c3d24042a7bdcb37d",
+    "after_source_sha256": "f658a0787173a8c0b8122f037172c043dfe1d33a175cbe195419909106337820"
+  },
+  "native_kernel235_qualification": {
+    "audit": "build/m4max-gpu/neo-lifecycle-restoration-20261025/qualified-growth-vm-routing-kernel235-v1.json",
+    "sha256": "7512421a880647656dd41e97a573e1940ddba6691260455e56bd40da7c96f2f0",
+    "pressure_ASIDs": [
+      63,
+      62
+    ],
+    "pressure_pool_slots": [
+      2,
+      3
+    ],
+    "retired_growth_replies": 8,
+    "two_complete_200000_instance_generations": true,
+    "three_outputs_294884_guards_six_timestamps_prior_poison": true,
+    "three_native_boots_clean_unbind_and_exact_cold": true,
+    "all15_physical_pools_all_ASIDs_and_grids": true,
+    "retained_reuse_private_window_move": true,
+    "Vulkan_bindless_sampler_and_compute_transfers": true,
+    "dependent_compute_render": true,
+    "memory_checks": 6313
+  },
+  "different_origin_pressure_pair": {
+    "receipt": "build/m4max-gpu/neo-lifecycle-restoration-20261025/native-render-pressure-overlap235-v1.json",
+    "both_clients_generations": 4,
+    "all_original_oracles_passed": true,
+    "origins": [
+      "0x7000000000",
+      "0x7100004000"
+    ],
+    "measured_GPU_render_overlaps": 0,
+    "GPU_render_overlap_proven": false
+  }
+}

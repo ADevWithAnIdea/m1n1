@@ -1,0 +1,15 @@
+--- a/proxyclient/m1n1/g16c/parameter_requests.py
++++ b/proxyclient/m1n1/g16c/parameter_requests.py
+@@ -22,7 +22,11 @@
+             or type(token) is not int or not 0 <= token < 1 << 32
+             or type(context_word) is not int or not 0 <= context_word < 1 << 32):
+         raise ValueError('invalid owned parameter growth reply')
+-    return struct.pack('<6I', 8, context, slot, generation, token, context_word) + bytes(40)
++    # Keep Neo's first five reply words: opcode, success, pool, VM, counter.
++    # The old first-context captures had context==generation==success==1;
++    # those values alone could not identify the VM word. Generation remains
++    # an ownership check, independently of the reply's selected VM.
++    return struct.pack('<6I', 8, 1, slot, context, token, context_word) + bytes(40)
+ 
+ 
+ def _owned_metadata(device, resources):
