@@ -1,0 +1,55 @@
+{
+  "scope": "Neo native render and cold Vulkan control comparison; compression remains unqualified",
+  "comparison_passed": true,
+  "full_Vulkan_qualification": false,
+  "protected_kernel": {
+    "source_tag": "neo-known-good-2026-10-21",
+    "source_commit": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "source_worktree_clean": true,
+    "Image_sha256": "9754a43526a7c375bc98508115130fc004b1d57f315f3d584b71df36f9e6debd",
+    "config_sha256": "0f4d39862ddd5e12ffa215460a1dc70320c05ca4b2ca4f62e5a6a74761bec645",
+    "uts_version": "#define UTS_VERSION \"#248 SMP PREEMPT Tue Oct 27 04:13:44 UTC 2026\"",
+    "build_root": "/home/lab/linux-neo-control-a6883c3",
+    "build_log": "/home/lab/neo-control-a6883c3-build.log",
+    "current_247_preserved": true
+  },
+  "current_kernel": {
+    "commit": "ea8c2e772",
+    "kernel": 247,
+    "Image_sha256": "385cfb425bb14160b89c970f10c896781a5201a13554040b123612b6a0881b37"
+  },
+  "all_six_CPUs": true,
+  "same_DTB_bootloader_monitor_initrd_and_runtime": true,
+  "actual_guest_hashes": 64,
+  "no_native_warmup_for_cold_Vulkan": true,
+  "results": {
+    "native_render": "both PASS32 renders/256 full R32F images/128 timestamps/fences",
+    "compute": "both PASS3x257 outputs/63 guards/transfers",
+    "uncompressed_draw": "both PASS3x703 pixels/guards",
+    "uncompressed_bindless": "both PASS16x1280x720 pixels/nonzero samplers",
+    "default_compressed_draw": "both FAIL second frame pixel0 got255 expected63"
+  },
+  "cold_recovery_both": true,
+  "changed_Neo_kernel_sources": false,
+  "Mesa_source_base": "9817e318b114ea9eea969414dcfcede4c8eeea50",
+  "Mesa_fix_commit": "f2c1ef83973c19b3c7fb0fdc5779fb9e1712ddf3",
+  "artifact_sha256": {
+    "neo-protected-kernel-manifest-v1.json": "04323ddc3ec3a6facd8627214b79921835adbf9a96f1978c16d4a3b2df4c6d54",
+    "neo-protected-control-v1.json": "4b9ac06581f897695a31de348416d62125cea5c100ca87376a1823defcac638e",
+    "neo-protected-cold-vulkan-v1.json": "1b0d8e1382224de3a953390ec4934f3b98e81ce8bcb3526bde3392397f5a46c2",
+    "neo-current-cold-vulkan-v1.json": "ca3514b0eba3e2d93587dc09184a3604bae7c36e073bf0e441ad475fda2b0c05",
+    "neo-current-control-result-v1.json": "c87a0c84f83afc1021147603954c1a22324b8aeb4f4adbcbed1635fd26f6fd53",
+    "mesa-neo-candidate-v2.json": "43026c5d3ce549db49a3e3b06156c5a71ec569cac062690b42b0d2488c67610f",
+    "mesa-neo-candidate-v2-sources.tar.gz": "ea0863fdc665fd76d8922e4d1166606d314ef20b91ce8cc18bd7a27fe778ef83",
+    "neo-runtime-preparation-v3.json": "246c8ff0534579e9dec4488322d1b626decd36e4b9b56a799c463f9a1f676f93",
+    "neo-probe-a9v4-1.log": "ce3acd48e8ef6a338314743c7b45d5206e4c1938c8d3b9eb92a72d7e1ccb4027",
+    "neo-probe-protected1-1.log": "4502331e707b21740cc33abbbca4d5739bccac5a905ec1d3e7d6b03c6033a911",
+    "neo-probe-protectedcold1-1.log": "1eb545acd4eed31b5c14f7b1ebae3b1a2c498fb7f4eea908bdb23dfbb3133cde",
+    "neo-probe-currentcold1-1.log": "8fd261c5b0ea2b2f5c5db7d64561ec7ceb305be6cc4e4ccf50f4c15f8f091078",
+    "qualify-neo-control-v1.py": "ad458183d0b2edfc02feace7699aaeba2482ea1a27a2f9a4299b9de13e327aab"
+  },
+  "workflow_source_archive_sha256": "adff569132a3a252fd0402497d610d47fca0538e03727b36e8cfc5936d8e5e10",
+  "qualification_file": "build/dual-gpu-20261026/qualified-neo-control-v1.json",
+  "qualification_file_sha256": "06be86843425e128ea8215afc13c386807813586a0f3b414371f370e0e805e4f",
+  "Neo_FDT_loader_source_sha256": "48eef56a3d9e15da319db24aeb253623b59ad18a027d1a5debdd95d41b71b7d7"
+}

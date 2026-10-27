@@ -694,8 +694,53 @@ static int dt_set_gpu_t6041(void *dt)
     return 0;
 }
 
+/* Neo's G17P driver constructs its own initialization graph. Preserve the
+ * live ADT resource contract and calibration inputs without old serializers. */
+static int dt_set_gpu_t8140(void *dt)
+{
+    int gpu = fdt_path_offset(dt, "gpu");
+    if (gpu < 0)
+        return 0;
+    int sgx = adt_path_offset(adt, "/arm-io/sgx");
+    if (sgx < 0)
+        bail("ADT: GPU: missing Neo sgx node\n");
+    static const struct {
+        const char *adt_name;
+        const char *dt_path;
+    } regions[] = {
+        {"gpu-region", "/reserved-memory/uat-ttbs"},
+        {"gfx-shared-region", "/reserved-memory/uat-pagetables"},
+        {"gfx-shared-l2-region", "/reserved-memory/uat-l2"},
+        {"gfx-handoff", "/reserved-memory/uat-handoff"},
+        {"gfx-data", "/reserved-memory/gpu-firmware"},
+        {"gfx1-data", "/reserved-memory/gpu-firmware-secondary"},
+    };
+    for (size_t i = 0; i < ARRAY_SIZE(regions); i++) {
+        if (dt_set_region(dt, sgx, regions[i].adt_name, regions[i].dt_path))
+            return -1;
+    }
+    gpu = fdt_path_offset(dt, "gpu");
+    u64 private_base, private_size;
+    if (ADT_GETPROP(adt, sgx, "rtkit-private-vm-region-base", &private_base) < 0 ||
+        ADT_GETPROP(adt, sgx, "rtkit-private-vm-region-size", &private_size) < 0 ||
+        !private_size)
+        bail("ADT: GPU: missing Neo private VM region\n");
+    fdt64_t private_vm[2] = {cpu_to_fdt64(private_base), cpu_to_fdt64(private_size)};
+    if (fdt_setprop(dt, gpu, "apple,rtkit-private-vm-region", private_vm, sizeof(private_vm)) ||
+        dt_set_gpu_t8132_adt(dt, gpu, sgx) ||
+        fdt_setprop_u32(dt, gpu, "apple,neo-boot-abi", 1) ||
+        fdt_setprop_string(dt, gpu, "status", "okay"))
+        return -1;
+    printf("FDT: GPU: T8140 firmware memory handoff ready\n");
+    return 0;
+}
+
+
 int dt_set_gpu(void *dt)
 {
+    if (chip_id == T8140)
+        return dt_set_gpu_t8140(dt);
+
     if (chip_id == T6041)
         return dt_set_gpu_t6041(dt);
     if (chip_id == T8132)
