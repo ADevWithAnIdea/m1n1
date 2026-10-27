@@ -1,0 +1,530 @@
+{
+  "scope": "Stable user-binding pressure variant and raw asynchronous submission timing; paired firmware timeout remains unresolved",
+  "goal_complete": false,
+  "production_kernel_changed": false,
+  "kernel": 244,
+  "production_commit": "43c91e98c57b5cdcd78632b6021502abe25ed2bb",
+  "source_manifest": "kernel-neo-lifecycle-v54d.json",
+  "source_manifest_sha256": "f9d732fdf78710824133b0d196cd795cb82ae7035d7e30bb6bf1307e36ef33f2",
+  "source_archive_sha256": "73c22da9ea38e68b9de43443da1660db96e376b0d4a0e0714d1e880b86814f41",
+  "all180_current_sparseHEAD_remote_archive_sources_match": true,
+  "Image_sha256": "0af45c5d89051b0087e287b2e8439a7be54a84455926360397e5d98df9e264b3",
+  "native_single_raw_returns_before_compute_begins": true,
+  "proofs": {
+    "native-stable-render-pressure-overlap244-v1.json": {
+      "sha256": "75691ce6e9c5f2534b5aa458d2848ee3a35cea305071a6aeeaa6baae6d705d03",
+      "receipt": {
+        "kernel": 244,
+        "records": [
+          {
+            "version": "v1211",
+            "stage": 0,
+            "monitor_pid": 85380,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v3.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=1",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1211"
+            ],
+            "guest_hashes_verified": 359,
+            "both_original_warmup_oracles_passed": true,
+            "timestamp_rows": [
+              {
+                "client": "A",
+                "generation": 1,
+                "origin": 481036337152,
+                "CS": [
+                  539734329125,
+                  539734345583
+                ],
+                "TA": [
+                  539753467166,
+                  539817417625
+                ],
+                "FR": [
+                  539817417750,
+                  539836335333
+                ]
+              },
+              {
+                "client": "B",
+                "generation": 1,
+                "origin": 481036337152,
+                "CS": [
+                  540278110791,
+                  540278126416
+                ],
+                "TA": [
+                  540297374708,
+                  540365457541
+                ],
+                "FR": [
+                  540365457666,
+                  540384379166
+                ]
+              },
+              {
+                "client": "A",
+                "generation": 2,
+                "origin": 481036337152,
+                "CS": [
+                  540814203416,
+                  540814211791
+                ],
+                "TA": [
+                  540819023416,
+                  540823309416
+                ],
+                "FR": [
+                  540823309583,
+                  540842223416
+                ]
+              },
+              {
+                "client": "B",
+                "generation": 2,
+                "origin": 481036337152,
+                "CS": [
+                  540698047166,
+                  540698063666
+                ],
+                "TA": [
+                  540702855708,
+                  540714962208
+                ],
+                "FR": [
+                  540714962375,
+                  540735172291
+                ]
+              }
+            ],
+            "measured_render_stage_overlaps": [],
+            "both_clients_full_original_output_guard_timestamp_oracles": true,
+            "GPU_render_overlap_proven": false,
+            "tests_passed": true,
+            "recovery": {
+              "reason": "unbind",
+              "monitor_exit": -15,
+              "RID": 0,
+              "raw_chainload_and_identity": true
+            },
+            "unbind_passed": true
+          }
+        ]
+      }
+    },
+    "native-stable-render-pressure-overlap244-v2.json": {
+      "sha256": "04a6a514e1507f961ff3f1b0b8fb7411dd3418fa67a91b50443cb8493c12ddf2",
+      "receipt": {
+        "kernel": 244,
+        "records": [
+          {
+            "version": "v1212",
+            "stage": 0,
+            "monitor_pid": 85567,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v3.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=3",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1212"
+            ],
+            "guest_hashes_verified": 359,
+            "both_original_warmup_oracles_passed": true,
+            "timestamp_rows": [
+              {
+                "client": "A",
+                "generation": 1,
+                "origin": 481036337152,
+                "CS": [
+                  314287862375,
+                  314287878166
+                ],
+                "TA": [
+                  314387781666,
+                  314481376208
+                ],
+                "FR": [
+                  314481376375,
+                  314500296375
+                ]
+              },
+              {
+                "client": "B",
+                "generation": 1,
+                "origin": 481036337152,
+                "CS": [
+                  315113902791,
+                  315113919166
+                ],
+                "TA": [
+                  315206231583,
+                  315301432916
+                ],
+                "FR": [
+                  315301433041,
+                  315320351291
+                ]
+              },
+              {
+                "client": "A",
+                "generation": 2,
+                "origin": 481036337152,
+                "CS": [
+                  315880373375,
+                  315880381750
+                ],
+                "TA": [
+                  315928614708,
+                  315940678541
+                ],
+                "FR": [
+                  315940678666,
+                  315960876083
+                ]
+              },
+              {
+                "client": "B",
+                "generation": 2,
+                "origin": 481036337152,
+                "CS": [
+                  315775413625,
+                  315775430291
+                ],
+                "TA": [
+                  315838391458,
+                  315854875916
+                ],
+                "FR": [
+                  315854876041,
+                  315876063750
+                ]
+              }
+            ],
+            "measured_render_stage_overlaps": [],
+            "both_clients_full_original_output_guard_timestamp_oracles": true,
+            "GPU_render_overlap_proven": false,
+            "tests_passed": true,
+            "recovery": {
+              "reason": "unbind",
+              "monitor_exit": -15,
+              "RID": 0,
+              "raw_chainload_and_identity": true
+            },
+            "unbind_passed": true
+          }
+        ]
+      }
+    },
+    "native-stable-render-pressure-overlap244-v3.json": {
+      "sha256": "472836fab9d5193af3cabadd5fb0cf7c0d179f90f9160e3f8303ef8298ec3b79",
+      "receipt": {
+        "kernel": 244,
+        "records": [
+          {
+            "version": "v1213",
+            "stage": 0,
+            "monitor_pid": 85687,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v3.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=0",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1213"
+            ],
+            "startup_stall": {
+              "log_unchanged_seconds": 15.239779233932495,
+              "CPUs": 16,
+              "no_userspace_or_GPU": true
+            },
+            "recovery": {
+              "reason": "startup_stall",
+              "monitor_exit": -15,
+              "RID": 0,
+              "raw_chainload_and_identity": true
+            },
+            "identical_retry": "v1214"
+          },
+          {
+            "version": "v1214",
+            "stage": 0,
+            "monitor_pid": 85800,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v3.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=0",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1214"
+            ],
+            "guest_hashes_verified": 359,
+            "both_original_warmup_oracles_passed": true,
+            "timestamp_rows": [
+              {
+                "client": "A",
+                "generation": 1,
+                "origin": 481036337152,
+                "CS": [
+                  39988587583,
+                  39988603583
+                ],
+                "TA": [
+                  40003363333,
+                  40074793708
+                ],
+                "FR": [
+                  40074793833,
+                  40093711541
+                ]
+              },
+              {
+                "client": "B",
+                "generation": 1,
+                "origin": 481036337152,
+                "CS": [
+                  40524356916,
+                  40524372791
+                ],
+                "TA": [
+                  40539133208,
+                  40610756166
+                ],
+                "FR": [
+                  40610756291,
+                  40629676458
+                ]
+              },
+              {
+                "client": "A",
+                "generation": 2,
+                "origin": 481036337152,
+                "CS": [
+                  41056592708,
+                  41056600791
+                ],
+                "TA": [
+                  41056601041,
+                  41060887041
+                ],
+                "FR": [
+                  41060887208,
+                  41079802500
+                ]
+              },
+              {
+                "client": "B",
+                "generation": 2,
+                "origin": 481036337152,
+                "CS": [
+                  40946746541,
+                  40946762333
+                ],
+                "TA": [
+                  40946762541,
+                  40962165083
+                ],
+                "FR": [
+                  40962165208,
+                  40983100625
+                ]
+              }
+            ],
+            "measured_render_stage_overlaps": [],
+            "both_clients_full_original_output_guard_timestamp_oracles": true,
+            "GPU_render_overlap_proven": false,
+            "tests_passed": true,
+            "recovery": {
+              "reason": "unbind",
+              "monitor_exit": -15,
+              "RID": 0,
+              "raw_chainload_and_identity": true
+            },
+            "unbind_passed": true
+          }
+        ]
+      }
+    },
+    "native-stable-render-pressure-overlap244-v4.json": {
+      "sha256": "616e8a6d6eba684edb23dfae8e02acee44a477f52b3c39906cc8cac10c8f21e1",
+      "receipt": {
+        "kernel": 244,
+        "records": [
+          {
+            "version": "v1215",
+            "stage": 0,
+            "monitor_pid": 85943,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v4.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=0",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1215"
+            ]
+          }
+        ],
+        "setup_failure": {
+          "monitor_exit": 1,
+          "no_guest_boot": true,
+          "cause": "C compile failed; host shell incorrectly continued and launched before initrd packaging",
+          "fixed": "strict C casts, installed UAPI headers, sequential checked subprocess preparation",
+          "RID0_raw_chainload_identity_pass": true
+        }
+      }
+    },
+    "native-stable-render-pressure-overlap244-v5.json": {
+      "sha256": "9c1259300fd1c54d43f1ad0917b981ce29b7e74d20495f32e3dd01379eee240c",
+      "receipt": {
+        "kernel": 244,
+        "records": [
+          {
+            "version": "v1216",
+            "stage": 0,
+            "monitor_pid": 86063,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v4.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=0",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1216"
+            ],
+            "guest_hashes_verified": 359,
+            "both_original_warmup_oracles_passed": true,
+            "native_GPU_failure": true,
+            "both_warmups_passed": true,
+            "both_concurrent_second_generations_failed_original_output_checks": true,
+            "firmware_timeout": true,
+            "marker_semantics_correction": "submitted sampled after existing synchronous test wrapper; not raw submit return",
+            "log_sha256": "4410a91977846d11778ea6e163c8ded822ad3642bed0ab970a4b976994ff5836",
+            "recovery": {
+              "confirmed_GPU_timeout": true,
+              "own_monitor_SIGTERM": true,
+              "RID0_raw_chainload_N01_identity": true
+            }
+          }
+        ]
+      }
+    },
+    "native-raw-stable-pressure244-v1.json": {
+      "sha256": "852664eab285b0047f9a0b48b3945946ffc983d22439ff4a28ef3c57b2d8f430",
+      "receipt": {
+        "kernel": 244,
+        "records": [
+          {
+            "version": "v1217",
+            "stage": 0,
+            "monitor_pid": 86236,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v5.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=0",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1217"
+            ],
+            "startup_stall": {
+              "log_unchanged_seconds": 15.208254098892212,
+              "CPUs": 16,
+              "no_userspace_or_GPU": true
+            },
+            "recovery": {
+              "reason": "startup_stall",
+              "monitor_exit": -15,
+              "RID": 0,
+              "raw_chainload_and_identity": true
+            },
+            "identical_retry": "v1218"
+          },
+          {
+            "version": "v1218",
+            "stage": 0,
+            "monitor_pid": 86327,
+            "command": [
+              "/Users/user/gravity/bootloader-m4maxmbp/.venv/bin/python",
+              "-u",
+              "proxyclient/experiments/g16c_linux_probe.py",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/Image-neo-lifecycle-v54",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/t6041-j616c-monitored.dtb",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/initramfs-pressure-overlap-v5.cpio.gz",
+              "--enable-gpu",
+              "--bootarg",
+              "asahi_neo.submission_log=0",
+              "--evidence",
+              "build/m4max-gpu/neo-lifecycle-restoration-20261025/probe-v1218"
+            ],
+            "guest_hashes_verified": 359,
+            "raw_submit_samples": [
+              {
+                "generation": 1,
+                "before": 31371922808,
+                "returned": 31372597736
+              },
+              {
+                "generation": 2,
+                "before": 31515102600,
+                "returned": 31515158968
+              }
+            ],
+            "tests_passed": true,
+            "recovery": {
+              "reason": "unbind",
+              "monitor_exit": -15,
+              "RID": 0,
+              "raw_chainload_and_identity": true
+            },
+            "unbind_passed": true
+          }
+        ]
+      }
+    }
+  },
+  "oracle_source_audit": {
+    "source_sha256": "956b40b4a24112cd26bbaf7e00a6ee4569f4e3e2bc42e943f2fecc00be57b3ae",
+    "original_revision": "43c91e98c57b5cdcd78632b6021502abe25ed2bb",
+    "entire_original_full_output_guard_timestamp_poison_cleanup_suffix_preserved_except_opt_in_clock_report": true,
+    "stable_mode_uses_raw_submit_and_bounded_public_timeline_wait": true,
+    "default_mode_keeps_original_synchronous_test_wrapper": true
+  },
+  "next_required": "Minimal own Metal paired submissions, single-user all16, two-kick fullUAT, correct changed-output cold replay and source bisection; no guessed handshake change",
+  "test_and_comparison_commit": "9f248e0b5c8ef5fb5feabc382c3119994e24bae6"
+}
