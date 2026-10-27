@@ -1,0 +1,67 @@
+{
+  "pass_": true,
+  "linux_commit": "ea8c2e7729f0731f8cf61657972852b4257a8a70",
+  "kernel": 247,
+  "local_evidence_root": "build/m4max-gpu/neo-lifecycle-restoration-20261025",
+  "current181sources_match_archive_and_remote_build": true,
+  "source_manifest_sha256": "46db0b68d2eb40bff6fc706dd491f4ab141b31ccff449d5002dee0cdabd8d0c6",
+  "source_archive_sha256": "960870870e5f1a7abaa07a62fbd815c6fc9a2fbba339d8d6d3d6e46cbfe631e4",
+  "Image_sha256": "385cfb425bb14160b89c970f10c896781a5201a13554040b123612b6a0881b37",
+  "object_sha256": "3b0137c56b05f142b1d0c78fee44a587aa63d4a3c8f73c37350ba6681233c32e",
+  "host_actual_common_RAII_key_release_and_shared_wave_cases": 23,
+  "host_actual_all256slot_identities": true,
+  "host_harness_sha256": "57d65196bbc6ee1e3e61a86fe0adf7d025ece1fc0701408eaa2daa38ec431a14",
+  "host_preparation_gate_sha256": "d0a371c9d314bd4d9f59fd5b66cf75ba05aad614f8cb9b412473923f55125715",
+  "native": {
+    "native-offlock-work-clear247-v1.json": {
+      "sha256": "073597674b226ba2405d27159bae43ee097cea95a70bbc7c5c5a3362cdfe33da",
+      "version": "v1226",
+      "actual_guest_hashes": 359,
+      "CPUs": 16,
+      "tests_and_unbind_passed": true,
+      "exact_cold_recovery": true
+    },
+    "native-raw-paired-pressure247-v1.json": {
+      "sha256": "58e59016c58e4e372f295a373236641c5fe541f18cde0f7e05296b09a27ed323",
+      "version": "v1229",
+      "actual_guest_hashes": 359,
+      "CPUs": 16,
+      "tests_and_unbind_passed": true,
+      "exact_cold_recovery": true
+    }
+  },
+  "wrap_proof_sha256": "c29c8208598493e950a6c1d577354cae4bd9476110864509e00ea46ab0f2678e",
+  "native_wrap_total_unique_publications": 277,
+  "original_wrap_controller_failure_preserved": true,
+  "minimum256checked_draws_and128retired_poisoned_lifetimes": true,
+  "Vulkan_render_nonzero_sampler_compute_transfer_passed_after_wrap": true,
+  "all_native_CPUs": 16,
+  "own_source_package_sha256": "b4c234322bc6f4a412bc29b47e3bc1a8c4635e98c3e5cef67dd45f4f6a08147f",
+  "own_source_files": {
+    "sync-build-neo-lifecycle-v57.py": "491b332779f1fa5497cfcf398134fa4e97b5645a9602fbc32f1599206acc14e1",
+    "refresh-work-clear-test-manifest-v57b.py": "81982e0aa8646f2536c5dc271ab69af5af8018f16f4239419c1065930a8187ca",
+    "run-native-offlock-work-clear247-v1.py": "8fc2bc835c8e09f110bce10cd2e8544484044ef8fe6e9e9bf15896b5c7a0beba",
+    "run-native-work-storage-wrap247-v1.py": "ac682be699b37bfafaf7d2b7b33e0bc40f878fe746ac5b5051e2d4b7dda24fbd",
+    "finish-work-storage-wrap247-v1.py": "5286955d10086f2c1757d50fb9781e039841138de22e4a28f52085b0ce6c33c7",
+    "run-native-raw-paired-pressure247-v1.py": "46d0775e0e860c526fc814907d7c3a53d947540e98e68195016e56e0db8cbb1d",
+    "qualify-offlock-work-clear247-v1.py": "51bd1e29c018703a28fc2509a5794955be1ae80ff73a8521193d77825268f926"
+  },
+  "Apple_payload_included": false,
+  "scope_completed": "seven retired wrapped-work pages clear off-lock using the existing shared preparation lease; fresh pages arrive zeroed and clean",
+  "remaining": [
+    "private backing reset",
+    "queued scene/status/producer lifetime parity",
+    "firmware context wrap/error and sustained qualification",
+    "current Chromium/WebGPU qualification",
+    "prior kernel244/v1216 timeout cause remains unproven"
+  ],
+  "new_Max_scheduler_or_lifetime_manager": false,
+  "actual_render_stage_overlap_proven": false,
+  "live_Neo_hardware_tested": false,
+  "goal_complete": false,
+  "protected_refs": {
+    "neo-known-good-2026-10-21^{commit}": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "snapshot/max-before-neo-lifecycle-20261025": "569a3e80ec4424a5954b903d99f8208ade032f6b",
+    "PUBLIC_wip_m4_max_agx": "a0934325187a66cf6f91817e3d2a3874606f9e10"
+  }
+}
