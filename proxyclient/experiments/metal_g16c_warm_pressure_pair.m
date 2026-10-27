@@ -97,9 +97,23 @@ static int phase(int child,int notify,int proceed) {
         seed_output(output,child);
         id<MTLCommandBuffer> warm=encode(queue,compute,pipeline,arguments,output,texture);
         if(!warm)return 3;
+        printf("PAIR_CLIENT_CREATED tag=%c gpu_output=0x%llx cpu_output=%p size=512 gpu_arguments=0x%llx instances=200000\n",
+            child?'B':'A',(unsigned long long)output.gpuAddress,output.contents,(unsigned long long)arguments.gpuAddress);
+        fflush(stdout);
+        if(child) {if(!token(notify,'C',1)||!token(proceed,'W',0))return 7;}
+        else {
+            if(!token(notify,'C',0))return 7;
+            puts("WARM_A_READY before first warm commit");fflush(stdout);
+            if(getchar()!='\n')return 7;
+        }
         [warm commit];[warm waitUntilCompleted];
         int rc=verify(warm,output,child);if(rc)return rc;
         printf("PAIR_WARM_PASS tag=%c instances=200000 guards=500\n",child?'B':'A');fflush(stdout);
+        if(child) {if(!token(notify,'W',1))return 7;}
+        else {
+            puts("WARM_B_READY retaining first client output");fflush(stdout);
+            if(getchar()!='\n'||!token(proceed,'W',1)||!token(notify,'W',0))return 7;
+        }
         seed_output(output,child);
         id<MTLCommandBuffer> command=encode(queue,compute,pipeline,arguments,output,texture);
         if(!command)return 3;
@@ -125,6 +139,7 @@ static int phase(int child,int notify,int proceed) {
     return 0;
 }
 int main(int argc,char **argv) {
+    setvbuf(stdin,NULL,_IONBF,0);
     if(argc==4&&!strcmp(argv[1],"--child"))return phase(1,atoi(argv[2]),atoi(argv[3]));
     if(argc!=1)return 1;
     int ready[2],go[2];if(pipe(ready)||pipe(go))return 10;

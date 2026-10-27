@@ -1,0 +1,100 @@
+{
+  "pass_": true,
+  "kernel": 246,
+  "linux_commit": "2db5830eede9a5b8de6d28bfdeff94aa1f347e2b",
+  "device": "JPWWJRX2N0",
+  "native_CPUs": 16,
+  "single_user_native_references": true,
+  "actual181sources_match_current_archive_and_remote_build": true,
+  "build_manifest_sha256": "c885ad7a028954f7305f309716273cc19eb4dbe7385c45a80a0c2dc2aaef7506",
+  "source_archive_sha256": "d748ce7f11b8294673498b263b70dc6908293d9e164e8da0023ad96caec58633",
+  "Image_sha256": "e158a69ca8f095cd9b837d3125e483822a3a835e3487e60845cf1b3cc39896f2",
+  "object_sha256": "7fec0dc3ae883ad54fdae9143aeaea4393ad2ffc6d470c6eff926a11a6d4af65",
+  "native_runs": {
+    "native-correct-descriptor-bounds246-v1.json": {
+      "sha256": "46298c05e4e1d3ea87d23dd81562581621e7a2acbf754eb35a4be37335514e51",
+      "version": "v1219",
+      "CPUs": 16,
+      "tests_passed": true,
+      "actual_guest_hashes": 359,
+      "exact_cold_recovery": true
+    },
+    "native-raw-paired-pressure246-v1.json": {
+      "sha256": "4fec9549fb360440c45cb79c8b4100af3927a68e383f27cdb5f298f0c5967021",
+      "version": "v1221",
+      "CPUs": 16,
+      "tests_passed": true,
+      "actual_guest_hashes": 359,
+      "exact_cold_recovery": true
+    },
+    "native-nonbootstrap-OOM246-v1.json": {
+      "sha256": "85ee8c6eb4482847834ecd2c9cc45a17be50479a7419f2724f8e647b7706729f",
+      "version": "v1223",
+      "CPUs": 16,
+      "tests_passed": true,
+      "actual_guest_hashes": 359,
+      "exact_cold_recovery": true
+    }
+  },
+  "evidence": {
+    "host-correct-descriptor-bounds-v1/summary.json": {
+      "sha256": "ce6943592c639c64f8210b630660375d539a1eba3b6411a1802a280991824a45"
+    },
+    "host-correct-descriptor-adjacency-v1/summary.json": {
+      "sha256": "eaf3565a9229fba235ab101dc5a5ede51f77525835eaae7968d2e498c7442180"
+    },
+    "host-correct-descriptor-OOM-v1/summary.json": {
+      "sha256": "10d409933325673fda370269fabaac329a7c87f1389d7ab0bb9afff123c12126"
+    },
+    "host-correct-descriptor-preparation-v1/summary.json": {
+      "sha256": "d0a371c9d314bd4d9f59fd5b66cf75ba05aad614f8cb9b412473923f55125715"
+    },
+    "descriptor-adjacency-correction-v1.json": {
+      "sha256": "80a01d315e8bc19af535e9bef093a7e182a88cce4c47e04520a9b1e3d87cade8"
+    },
+    "single-user-warm-pressure-phases-v1/full-three-phase-validation.json": {
+      "sha256": "e24f7c49bfed49cbc97a7d94213466e12d92862eda4e01dded82fa4ef1acaf24"
+    },
+    "native-reference-warm-pressure-phases-completed-v1.json": {
+      "sha256": "9b4a316ba34c60d14a392d0a1545fd6b3ff4ef6a1d019be23f69471d67e504aa"
+    },
+    "native-reference-warm-pressure-writers-v1.json": {
+      "sha256": "6b99b4055fedc1112bc3bd6dbbd7492e399ca1d2365349ea5eed27b9a0d49069"
+    },
+    "warm-pressure-phases-opaque-replay-v1/result.json": {
+      "sha256": "0f4f306c1ef411ba78c786ef05fa76838849f8dfcdff1e4bc6bd4cc810477192"
+    },
+    "warm-pressure-full-rebind-replay-v1/result.json": {
+      "sha256": "c52de543d50d65fc0de9d5f9f6d137cd325a51313d99f19ab401f517aa3b56c2"
+    }
+  },
+  "source_package": "build/m4max-gpu/neo-lifecycle-restoration-20261025/warm-pressure-reference-sources-v3.tar.gz",
+  "source_package_sha256": "2a3f46e51d01e9e735e13287e95ca9b6631b58e3f5bc0652939ef8c165e16869",
+  "own_source_files": 95,
+  "rejected_peer_codec_archive_sha256": "1c13b4d5dcc96da569de4ff8184ca15f8f7c6ce97f097906b863be86733f2330",
+  "preserved_failed_header_corruption_experiments": {
+    "warm-pressure-zero-extensions-replay-v1.json": "af671b34b8ffa14ddea8add74460f401b48eb9fe297e17aeb2052ce83665f893",
+    "warm-pressure-zero-fragment-replay-v1.json": "66a6d889dc8f3eb65af5baa2fb972a0e9aa5fddc74f2d08ff6959d41759d3328",
+    "warm-pressure-zero-tiling-replay-v1.json": "764cbbb41d3ab84d93799df5792aad4fdcfe99ee96050d83cc7db6f710e287ed",
+    "warm-pressure-prearm-extensions-replay-v1.json": "eb69d29cf27420b8c78fa09d83eb78ba23788fe65603047e17d56de27a092dee",
+    "warm-pressure-ordered-A-replay-v1.json": "2913b526be8fdd1141204e617dd07e7c19d5c3428d0d47c8bccff54631de968d",
+    "warm-pressure-ordered-B-replay-v1.json": "2f74529b6a7d1f95579d8e4d9611b40f9938b626278753a42576a3e146162aa1"
+  },
+  "correct_sizes": {
+    "TA": 2496,
+    "FR": 8768
+  },
+  "new_peer_graph_required": false,
+  "earlier_v1216_timeout_fixed": false,
+  "actual_render_stage_overlap_proven": false,
+  "current_Chromium_WebGPU_qualified": false,
+  "goal_complete": false,
+  "protected_refs": {
+    "neo-known-good-2026-10-21^{commit}": "a6883c3c6e5aa42548543a5a7b82bb6e375d6922",
+    "snapshot/max-before-neo-lifecycle-20261025": "569a3e80ec4424a5954b903d99f8208ade032f6b",
+    "PUBLIC_wip_m4_max_agx": "a0934325187a66cf6f91817e3d2a3874606f9e10"
+  },
+  "Apple_disassembly": false,
+  "local_evidence_root": "build/m4max-gpu/neo-lifecycle-restoration-20261025",
+  "correction": "The alleged extensions are exact virtual/physical aliases of adjacent descriptor headers. Zero/order mutation negatives corrupted queued work; they do not prove any peer handshake. No peer graph or lifetime implementation was added."
+}
