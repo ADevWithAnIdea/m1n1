@@ -1,0 +1,364 @@
+{
+  "scope": "Two warmed Metal clients at one combined kick; native success, binding resume and cross-client Max-extension topology; cold replay still fails",
+  "goal_complete": false,
+  "production_kernel_changed": false,
+  "kernel": 244,
+  "linux_document_commit": "a1663fe77d74768a6519dd125f78452767fc43c0",
+  "native_scope": {
+    "single_user": true,
+    "CPUs": 16,
+    "both_warmups_and_both_continuations_correct": true,
+    "pending_clients": 2,
+    "changed_correct_output_pages": 2,
+    "paired_guard_bytes": 1000,
+    "all6stage_stamps_and_innerqueues_retired": true,
+    "simultaneous_GPU_render_stage_overlap_proven": false
+  },
+  "capture_validation": {
+    "producer_time_whole_objects_exact": 70,
+    "descriptor_cores_exact": 2,
+    "Max_extension_updates": [
+      {
+        "client": "A",
+        "stage": 1,
+        "boundary": 8768,
+        "before_extension": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "final_extension": "010000000400000000000000020000000000000000000000000000000000000000028dc020fcffff008098c020fcffff00818fc020fcffff00a88fc020fcffff",
+        "changes": [
+          {
+            "offset": 8768,
+            "before": "00000000",
+            "after": "01000000"
+          },
+          {
+            "offset": 8772,
+            "before": "00000000",
+            "after": "04000000"
+          },
+          {
+            "offset": 8780,
+            "before": "00000000",
+            "after": "02000000"
+          },
+          {
+            "offset": 8800,
+            "before": "00000000",
+            "after": "00028dc0"
+          },
+          {
+            "offset": 8804,
+            "before": "00000000",
+            "after": "20fcffff"
+          },
+          {
+            "offset": 8808,
+            "before": "00000000",
+            "after": "008098c0"
+          },
+          {
+            "offset": 8812,
+            "before": "00000000",
+            "after": "20fcffff"
+          },
+          {
+            "offset": 8816,
+            "before": "00000000",
+            "after": "00818fc0"
+          },
+          {
+            "offset": 8820,
+            "before": "00000000",
+            "after": "20fcffff"
+          },
+          {
+            "offset": 8824,
+            "before": "00000000",
+            "after": "00a88fc0"
+          },
+          {
+            "offset": 8828,
+            "before": "00000000",
+            "after": "20fcffff"
+          }
+        ],
+        "core_exact": true,
+        "final_from_complete_UAT": true
+      },
+      {
+        "client": "A",
+        "stage": 0,
+        "boundary": 2496,
+        "before_extension": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "final_extension": "0000000005000000000000000200000000028dc020fcffff0100000000000000008098c020fcffff00818fc020fcffff00a88fc020fcffff",
+        "changes": [
+          {
+            "offset": 2500,
+            "before": "00000000",
+            "after": "05000000"
+          },
+          {
+            "offset": 2508,
+            "before": "00000000",
+            "after": "02000000"
+          },
+          {
+            "offset": 2512,
+            "before": "00000000",
+            "after": "00028dc0"
+          },
+          {
+            "offset": 2516,
+            "before": "00000000",
+            "after": "20fcffff"
+          },
+          {
+            "offset": 2520,
+            "before": "00000000",
+            "after": "01000000"
+          },
+          {
+            "offset": 2528,
+            "before": "00000000",
+            "after": "008098c0"
+          },
+          {
+            "offset": 2532,
+            "before": "00000000",
+            "after": "20fcffff"
+          },
+          {
+            "offset": 2536,
+            "before": "00000000",
+            "after": "00818fc0"
+          },
+          {
+            "offset": 2540,
+            "before": "00000000",
+            "after": "20fcffff"
+          },
+          {
+            "offset": 2544,
+            "before": "00000000",
+            "after": "00a88fc0"
+          },
+          {
+            "offset": 2548,
+            "before": "00000000",
+            "after": "20fcffff"
+          }
+        ],
+        "core_exact": true,
+        "final_from_complete_UAT": true
+      }
+    ],
+    "single_user": true,
+    "CPUs": 16,
+    "coverage": {
+      "chunks": 966,
+      "tables": 60,
+      "bytes": 930824192
+    },
+    "whole_native_data_objects": 72,
+    "two_distinct_contexts": true,
+    "all6stages_retired": true,
+    "both_outputs_changed_correct": true,
+    "guards": 1000,
+    "workload_warm_and_paired_guards": 2000,
+    "cold_plain_replay_qualified": false,
+    "Apple_instructions_decoded": false,
+    "pass": true
+  },
+  "binding_evidence": {
+    "full_initializations": 6,
+    "retained_resumes": 6,
+    "register_writes": 96,
+    "all48scratch_alias_pages_verified": true
+  },
+  "cross_client_pointer_topology": {
+    "first_A_extensions_zero_at_publication": true,
+    "first_A_extensions_link_to_B_at_combined_kick": true,
+    "TA_extension_pointer_offsets": [
+      2512,
+      2528,
+      2536,
+      2544
+    ],
+    "FR_extension_pointer_offsets": [
+      8800,
+      8808,
+      8816,
+      8824
+    ],
+    "all4pointers_shared_between_A_TA_and_FR": true,
+    "first_pointer_is_B_event_control_scheduler": true,
+    "pointers": [
+      {
+        "pointer": 18446739816332460544,
+        "pointer_hex": "0xfffffc20c08d0200",
+        "matches_B_descriptor_fields": [
+          {
+            "client": "B",
+            "stage": 2,
+            "field_offset": 16
+          },
+          {
+            "client": "B",
+            "stage": 1,
+            "field_offset": 32
+          },
+          {
+            "client": "B",
+            "stage": 0,
+            "field_offset": 16
+          }
+        ]
+      },
+      {
+        "pointer": 18446739816333213696,
+        "pointer_hex": "0xfffffc20c0988000",
+        "matches_B_descriptor_fields": [
+          {
+            "client": "B",
+            "stage": 1,
+            "field_offset": 40
+          },
+          {
+            "client": "B",
+            "stage": 0,
+            "field_offset": 32
+          }
+        ]
+      },
+      {
+        "pointer": 18446739816332624128,
+        "pointer_hex": "0xfffffc20c08f8100",
+        "matches_B_descriptor_fields": [
+          {
+            "client": "B",
+            "stage": 1,
+            "field_offset": 48
+          },
+          {
+            "client": "B",
+            "stage": 0,
+            "field_offset": 40
+          }
+        ]
+      },
+      {
+        "pointer": 18446739816332634112,
+        "pointer_hex": "0xfffffc20c08fa800",
+        "matches_B_descriptor_fields": [
+          {
+            "client": "B",
+            "stage": 1,
+            "field_offset": 56
+          },
+          {
+            "client": "B",
+            "stage": 0,
+            "field_offset": 48
+          }
+        ]
+      }
+    ],
+    "semantics_beyond_pointer_equality_unproven": true,
+    "required_for_GPU_execution_unproven": true,
+    "whole_final_TA_sha256": "25c3249d556438800466ba13895543c524d32d2da475f86c7ad53a1a9fda604d",
+    "whole_final_FR_sha256": "57bd42ffec6cdec40d2d8d241d3a42cefc1b90ec574fa8e09bd3ae48e7dcabaf"
+  },
+  "cold_replay_scope": {
+    "pass_": false,
+    "firmware_initdata_accepted": true,
+    "all7opaque_controls_retired": true,
+    "all96binding_writes_replayed": true,
+    "firmware_crashed_at_work_publication": true,
+    "captured_pages_replaced_by_source": 0,
+    "independent_replay_qualified": false,
+    "raw_crash_not_disassembled": true,
+    "exact_RID0_raw_N01_recovery": true
+  },
+  "original_harness_errors_preserved": true,
+  "all3old_and_current_owned_Preboot_directories_removed": true,
+  "own_source_archive_sha256": "975d193f8bcfb86e122f0995263e278b27ffddd07f6d998674db34919be3ba17",
+  "own_source_files": {
+    "proxyclient/experiments/metal_g16c_warm_pressure_pair.m": "fda1dd26382702fce1c2118948974c6b83d097c62839d29910fb444901405049",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/reference-warm-pressure-pair-v1.py": "55e714d0230b67f550dd2f3178902555816ff6be033f4881a431677aaf9cfb95",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/reference-warm-pressure-pair-v2.py": "6655454fd5b9d9114dde363abf76ffe3af3bcdefea7ed5dc256d5188b74cf08b",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/capture-warm-pressure-pair-v1.py": "068743a6f22cb5f38968250f470d2790986bbafa88c2723172c48a7d9ecd28b3",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/capture-warm-pressure-pair-v2.py": "0ac9a9f24b0145e699fff576ec42811572a16285201b2e3b079af67931d82d5d",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/run-single-user-warm-pressure-pair-v1.py": "e6e014cba33858873da596e36ac5ad8b1630d3a600f98165f91ad3c71ed74099",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/run-single-user-warm-pressure-pair-v2.py": "2b678c7e3646f26976edbf0bfbbbd5b72e20e79c8abf9e8c6a82db3ea1f9a84d",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/console-warm-pressure-pair-v1.py": "cf52b32b3323a04717cfc8e7232993d87192130c26b47cf9b852820f877463f9",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/validate-warm-pressure-pair-v1.py": "d4cd669fe2d7125d7a03e73ecd042e9b2d4a8a57c826d21f22031e062d1b868e",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/validate-warm-pressure-pair-v2.py": "bf2eab2d53c4ad9e037c121d5bcfe7a9b9553e5722f9ff32b48cbf900b11cebf",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/check-warm-pressure-pair-adapter-v1.py": "6f6e6dbabbb919089e41b2b65fe23f28744b72609431ef44d0cba5464fbad304",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/check-warm-pressure-pair-adapter-v2.py": "07c94d2f251bc7ff03465bf3b79a93fbdf6a18e673f5b3efdb5c08f27cb6da3a",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/run-native-reference-warm-pressure-pair-v1.py": "0194da36891f42a828f89fdad4bfef8e9475920563a6cd8af9c53f7f3399acba",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/run-native-reference-warm-pressure-pair-v2.py": "5de7a2946bccbb1d74205f5c1c51bd0894c8a67dffc10e8c985391d379c9ca07",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/finish-reference-warm-pressure-pair-v2.py": "28661727727cbd641fa3aa2d3a3df288cd71f57bb52d65b8d51f3261857fcf15",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/finish-reference-warm-pressure-pair-v2b.py": "01de849fa69cc6bcf4a1cc366854a4534824bce80f7c64dfaf34fd8c5efb79c7",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/prepare-warm-pair-replay-v1.py": "55b85d1ed5adde6bd84feb51cbe1d0e41022e0d02f9caae9de513406d40bf9ec",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/replay-warm-pressure-pair-v1.py": "30b8b58918efb8f2e7feff868ea26b77961424f44ce07a1ffaad3196686c3d74",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/run-warm-pressure-pair-opaque-replay-v1.py": "1f5be8d87f8a3b4e5aab868781c380a83ebca5f66577bf4ea24593327c7226f8",
+    "build/m4max-gpu/neo-lifecycle-restoration-20261025/reference-indirect-pressure-two-clients-v3.py": "60452139dc68883b28b328abf43e0affca562874780286ab0d81e7d35640c828",
+    "proxyclient/experiments/agx_g16c_capture_single_user_compute.py": "a4ff3dfabb2453b59ee56d4b4a967cf08d0b49659f1e9e124a172b6ca5b2934b",
+    "proxyclient/experiments/agx_g16c_capture_full_uat.py": "3d061c9176a0026e6c9f20c057727af473024b857aa138b2f730e76949952e7c",
+    "proxyclient/experiments/agx_g16c_console_protocol.py": "6fba0bac84cdf57c7decebea7796d92b64cecfa0de1287e165e538d789538fe8",
+    "proxyclient/experiments/agx_g16c_reference_image.py": "4ee6c88043fed61f8642df0faf3c0f56b49280cad7763946696c18ddad6a120f",
+    "proxyclient/experiments/agx_g16c_replay_uat.py": "04f76c6c0b6770078bce0d64676af8f4fed23f6b945a0a7d17ce8f5effead61e"
+  },
+  "proof_files": {
+    "native-reference-warm-pressure-pair-v1.json": {
+      "sha256": "615409cc44a03c67db1bc2ee5f4820b8434457c2da1bba2a34f9bfe074bb43d8"
+    },
+    "native-reference-warm-pressure-pair-v2.json": {
+      "sha256": "ebb1de2d5223942efde2180eaccef6a0c7b59d30e25fa3de7b232fcd5fe4f637"
+    },
+    "finish-reference-warm-pressure-pair-v2.json": {
+      "sha256": "81c30d8a21cdc9001ecc19485d88fdbef1559b141f44eb85b259a8db2d88ac6a"
+    },
+    "finish-reference-warm-pressure-pair-v2c.json": {
+      "sha256": "3f1614de97671707bd07e933c8a3554e3b044e22d4456ec14c7409452121c54b"
+    },
+    "warm-pressure-pair-opaque-replay-v1.json": {
+      "sha256": "d2f17ba25d5abfb496d815e1bb9a08a3cc8031317fdbccf47bba0229721cdf2f"
+    },
+    "single-user-warm-pressure-pair-v2/console-result-original.json": {
+      "sha256": "58432a34951784e5610a8de7a615735173adb38d9749a80d2c12b47854ab475d"
+    },
+    "single-user-warm-pressure-pair-v2/console-result.json": {
+      "sha256": "c21c71d84232c6e23d5188cfbd23bd8f1a42d9477a6eb779c2f68b7cb86522dd"
+    },
+    "single-user-warm-pressure-pair-v2/finisher-b-result.json": {
+      "sha256": "75ed21389029d6fc9a3f05a4b9f1a1da01daa9137693badda42d9cd16c3b7afb"
+    },
+    "single-user-warm-pressure-pair-v2/full-capture-validation.json": {
+      "sha256": "461eba5710c0e6f48ea3551ba31bba376ab4e2b12d4d4828e8868c30963af3cc"
+    },
+    "single-user-warm-pressure-pair-v2/native-verification.json": {
+      "sha256": "97b5a4f07952108d94976b64116c136fe1d6cbbca56bb4d5ff1868c657030f5c"
+    },
+    "single-user-warm-pressure-pair-v2/producer-to-combined-kick-extension-changes.json": {
+      "sha256": "07a0244ea7c6c1467b7467fa3e7c3d44e3384746a4718cd230b27cffcda97ac2"
+    },
+    "single-user-warm-pressure-pair-v2/native-cross-client-extension-topology.json": {
+      "sha256": "eab74fd843a897b1fe6d188e4a6e54ecb8755e2cdf6c999d8096b7484011c4f2"
+    },
+    "single-user-warm-pressure-pair-v2/startup-history.json": {
+      "sha256": "701921a087cbac8d4d8b8010bba351f0d22e10ceafe6e40a374633a1ed3f9313"
+    },
+    "single-user-warm-pressure-pair-v2/uat/replay-plan.json": {
+      "sha256": "f467dd42ec432a258be879ec0b4753838acb5ea4025f6102628fbc746cbbd769"
+    },
+    "single-user-warm-pressure-pair-v2/uat/manifest.json": {
+      "sha256": "624b2e92ec7134f93e9572df15ee62a37edf1772cf5d8f6130f3229f79fd3ec1"
+    },
+    "warm-pressure-pair-opaque-replay-v1/asc-crash-1793061775461671000.bin": {
+      "sha256": "4a89264766cb5c440e43d6cd9f8b2155556b9de0fb3478447764e92736ced1b1",
+      "opaque_not_disassembled": true
+    }
+  },
+  "next_required": "Capture and replay warmA then warmB then final pending pair before bisection; independently test native resumes vs full reinitialization and native extension links vs zero",
+  "own_source_archive": "build/m4max-gpu/neo-lifecycle-restoration-20261025/warm-pressure-reference-sources-v2.tar.gz"
+}
