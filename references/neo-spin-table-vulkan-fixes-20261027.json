@@ -1,0 +1,44 @@
+{
+  "Neo": {
+    "RID": 2,
+    "serial": "GWXJTJCN2M",
+    "model": "Mac17,5",
+    "chip_id": "0x8140",
+    "CPUs": 6
+  },
+  "Max_touched": false,
+  "PSCI": false,
+  "CPU_enable_method": "spin-table",
+  "boot_transport": "five guest holding loops staged at one pre-Linux rendezvous; standard Linux release words afterward",
+  "FDT": "loader-populated bytes copied unchanged beside guest Image",
+  "test_root": "build/dual-gpu-20261026",
+  "candidate_Image_sha256": "43ebca8925e0288de04d79be6c531b9e3f46800a7e8275d1aad3d64ba7078a78",
+  "old_Image_sha256": "385cfb425bb14160b89c970f10c896781a5201a13554040b123612b6a0881b37",
+  "built_sources": 181,
+  "adoption_fix_files": [
+    "g17p_boot.rs",
+    "g17p_render_runtime.rs"
+  ],
+  "Max_binding_prototype_excluded": true,
+  "production_Mesa_entry_cache_fix": true,
+  "CPU_only_recording_before_RC": 1,
+  "CPU_only_recording_after_RC": 0,
+  "compute_then_first_large_sampler_candidate_RC": 0,
+  "same_transport_old_kernel_RC": 1,
+  "compressed_draw_and_repeat_candidate_RC": 0,
+  "clean_unbind_and_exact_cold_recovery_both": true,
+  "full_Vulkan_conformance_claim": false,
+  "overall_Max_goal_complete": false,
+  "reference_sha256": {
+    "neo-adoption-and-entry-fix-spin-v2.json": "953c7fbf738cdc056f4f05454d81184ce7fb7ee5d6d1b6ad79e9fc4f6eea3b3f",
+    "neo-entry-fix-spin-old-kernel-v1.json": "d7bffe8f7d1d87b2038f6b5237462307280cc91d7a07544fa11dc47f86497669",
+    "neo-adoption-candidate-remote-audit-v1.json": "cc06f3ab4b245e91696edfa2b83b5026191d1d080505dda758d6e2d057c7888b",
+    "neo-spin-table-startup-negative-v1.json": "c1baa4bf79935fbc4ee60e26acdf75c98fb7e40ed4af11d69a211d392b5a939b",
+    "neo-probe-adoptionspin2-1.log": "131d890d0399596f16c3c4e5d2de43bb135becab430a47c71f6d5c1745a1b94d",
+    "neo-probe-spinold1-1.log": "4cf75884c254f3210d96215fecccca1dddf812866f5cc5d2e0a66a528f45d36b"
+  },
+  "source_sha256": {
+    "proxyclient/experiments/agx_g17p_linux_spin_table.py": "e5e26e2978b612a7b07fc43aaaf78609b389876e9958e6cfbc1bcda0f8872529",
+    "proxyclient/experiments/neo-linux-spin-table.S": "25a256e084b7ea93336ab10b244a099d9b57e73aa577a35d4928fdae67438d2a"
+  }
+}
