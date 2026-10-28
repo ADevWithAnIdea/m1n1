@@ -1678,7 +1678,7 @@ class HV(Reloadable):
                         self.start_secondary(die, cluster, i)
                         cpu_state = 0x210050100 | (die << 27) | (cluster << 24) | (i << 20)
                         self.map_hook(cpu_state, 8, read=cpu_state_rh)
-                        self.add_tracer(irange(addr, 8), "CPU STATE HACK", TraceMode.RESERVED)
+                        self.add_tracer(irange(cpu_state, 8), "CPU STATE HACK", TraceMode.RESERVED)
 
         die_count = self.adt["/arm-io"].die_count if hasattr(self.adt["/arm-io"], "die-count") else 1
 
