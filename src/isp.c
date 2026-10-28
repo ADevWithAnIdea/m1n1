@@ -67,6 +67,16 @@ int isp_init(void)
     if (node < 0)
         return 0;
 
+    /* T6041 macOS 26.6.2 starts shared allocations at 32 MiB. Its
+     * preloaded segments end below that boundary. Linux starts the ISP
+     * after PMP is ready, so do not apply the older revision-probe power
+     * sequence here.
+     */
+    if (chip_id == T6041) {
+        heap_top = 0x2000000;
+        goto setup_heap;
+    }
+
     if (pmgr_adt_power_enable(isp_path) < 0)
         return -1;
 
@@ -170,13 +180,18 @@ int isp_init(void)
             return -1;
     }
 
+setup_heap:;
     const struct adt_segment_ranges *seg;
     u32 segments_len;
 
     seg = adt_getprop(adt, isp_node, "segment-ranges", &segments_len);
+    if (!seg || segments_len < 2 * sizeof(*seg) || segments_len % sizeof(*seg))
+        return -1;
     unsigned int count = segments_len / sizeof(*seg);
 
     heap_iova = seg[count - 1].iova + seg[count - 1].size;
+    if (heap_iova >= heap_top)
+        return -1;
     heap_size = heap_top - heap_iova;
     heap_phys = top_of_memory_alloc(heap_size);
 
@@ -188,6 +203,7 @@ int isp_init(void)
 
     isp_initialized = true;
 
-    pmgr_adt_power_disable(isp_path);
+    if (chip_id != T6041)
+        pmgr_adt_power_disable(isp_path);
     return err;
 }
