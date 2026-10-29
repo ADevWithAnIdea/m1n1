@@ -1723,6 +1723,24 @@ static int dt_carveout_reserved_regions(const char *dcp_alias, const char *disp_
 
         region[i].paddr = phys_map[0];
         region[i].size = phys_map[1];
+        if (!fdt_node_check_compatible(dt, 0, "apple,t8140") &&
+            (!strcmp(name, "region-id-50") || !strcmp(name, "region-id-73"))) {
+            /* Neo maps the trailing __SHARED_DATA_RW segment at a
+             * separate IOVA. It is reserved from segment-ranges above;
+             * keep the preceding DCP data mapping as its own range. */
+            char path[48];
+            snprintf(path, sizeof(path), "/arm-io/%s", dcp_alias);
+            int dcp_node = adt_path_offset(adt, path);
+            u32 length;
+            const struct adt_segment_ranges *segments =
+                adt_getprop(adt, dcp_node, "segment-ranges", &length);
+            if (!segments || length < 2 * sizeof(*segments) ||
+                segments[1].phys <= region[i].paddr ||
+                segments[1].phys + ALIGN_UP(segments[1].size, SZ_16K) !=
+                    region[i].paddr + region[i].size)
+                bail("DCP: unexpected Neo shared-data carveout layout\n");
+            region[i].size = segments[1].phys - region[i].paddr;
+        }
     }
 
     return dt_add_reserved_regions(dcp_alias, disp_alias, piodma_alias, "apple,asc-mem", maps,
@@ -1757,6 +1775,13 @@ static int dt_vram_reserved_region(const char *dcp_alias, const char *disp_alias
     ret = adt_get_reg(adt, adt_path, "reg", 0, &region.paddr, &region.size);
     if (ret < 0)
         bail("ADT: failed to read /vram/reg\n");
+
+    /* Neo allocates scanout buffers from the remainder of this carveout.
+     * Reserve the boot framebuffer separately so the physical ranges do
+     * not overlap. The pool below preserves the remainder's mappings. */
+    if (!fdt_node_check_compatible(dt, 0, "apple,t8140"))
+        region.size = ALIGN_UP((u64)cur_boot_args.video.stride * cur_boot_args.video.height,
+                              SZ_16K);
 
     return dt_add_reserved_regions(dcp_alias, disp_alias, NULL, "framebuffer",
                                    disp_reserved_regions_vram, &region, 1);
