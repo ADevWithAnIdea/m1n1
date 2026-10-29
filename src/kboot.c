@@ -1789,6 +1789,120 @@ static int dt_vram_reserved_region(const char *dcp_alias, const char *disp_alias
 }
 
 
+/* Read-only client of the firmware's existing DART mappings. Never change
+ * stream configuration or page tables while exporting the AOP memory contract.
+ * Format matches the existing public proxyclient hw/dart8110.py client. */
+#define AOP_DART_TCR(sid) (0x1000 + 4 * (sid))
+#define AOP_DART_TTBR(sid) (0x1400 + 4 * (sid))
+#define AOP_DART_TCR_TRANSLATE BIT(0)
+#define AOP_DART_TCR_FOUR_LEVELS BIT(3)
+#define AOP_DART_TTBR_VALID BIT(0)
+#define AOP_DART_TTBR_ADDRESS GENMASK(29, 2)
+#define AOP_DART_PTE_VALID BIT(0)
+#define AOP_DART_PTE_ADDRESS GENMASK(37, 10)
+#define AOP_DART_ENTRIES (SZ_16K / sizeof(u64))
+#define AOP_MAX_TABLES 128
+#define AOP_MAX_REGIONS 128
+
+struct aop_boot_region { u64 iova, phys, size; };
+struct aop_boot_walk {
+    u64 tables[AOP_MAX_TABLES];
+    unsigned int table_count, count;
+    struct aop_boot_region region[AOP_MAX_REGIONS];
+};
+
+static bool aop_boot_ram(u64 address, u64 size)
+{
+    u64 end = cur_boot_args.phys_base + mem_size_actual;
+    return size && address >= cur_boot_args.phys_base && address < end && size <= end - address;
+}
+
+static int aop_boot_walk_table(struct aop_boot_walk *walk, u64 table, unsigned int shift,
+                               u64 base)
+{
+    if (!aop_boot_ram(table, SZ_16K) || walk->table_count == AOP_MAX_TABLES)
+        bail("AOP: invalid firmware page-table bounds\n");
+    for (unsigned int i = 0; i < walk->table_count; i++)
+        if (walk->tables[i] == table)
+            bail("AOP: cyclic firmware page table\n");
+    walk->tables[walk->table_count++] = table;
+    const u64 *entries = (const u64 *)table;
+    for (unsigned int i = 0; i < AOP_DART_ENTRIES; i++) {
+        u64 entry = entries[i];
+        if (!(entry & AOP_DART_PTE_VALID))
+            continue;
+        u64 phys = FIELD_GET(AOP_DART_PTE_ADDRESS, entry) << 14;
+        u64 iova = base + ((u64)i << shift);
+        if (shift > 14) {
+            if (aop_boot_walk_table(walk, phys, shift - 11, iova))
+                return -1;
+            continue;
+        }
+        if (!aop_boot_ram(phys, SZ_16K))
+            bail("AOP: firmware mapping outside RAM\n");
+        if (walk->count) {
+            struct aop_boot_region *last = &walk->region[walk->count - 1];
+            if (last->phys + last->size == phys && last->iova + last->size == iova) {
+                last->size += SZ_16K;
+                continue;
+            }
+        }
+        if (walk->count == AOP_MAX_REGIONS)
+            bail("AOP: firmware mapping count exceeds bound\n");
+        walk->region[walk->count++] = (struct aop_boot_region){iova, phys, SZ_16K};
+    }
+    return 0;
+}
+
+static int dt_set_aop_native_regions(void)
+{
+    if (chip_id != T8140)
+        return 0;
+    int path[8];
+    if (adt_path_offset_trace(adt, "/arm-io/dart-aop", path) < 0)
+        bail("AOP: missing firmware DART\n");
+    u64 regs, size;
+    if (adt_get_reg(adt, path, "reg", 0, &regs, &size) < 0 || size < 0x1408)
+        bail("AOP: invalid firmware DART registers\n");
+    const char *consumers[] = {"/soc/aop@310600000", "/soc/aop-second-host"};
+    for (unsigned int sid = 0; sid < ARRAY_SIZE(consumers); sid++) {
+        int node = fdt_path_offset(dt, consumers[sid]);
+        if (node < 0)
+            continue;
+        u32 phandle = fdt_get_phandle(dt, node);
+        if (!phandle) {
+            if (fdt_generate_phandle(dt, &phandle) || fdt_setprop_u32(dt, node, "phandle", phandle))
+                return -1;
+        }
+        u32 tcr = read32(regs + AOP_DART_TCR(sid));
+        u32 ttbr = read32(regs + AOP_DART_TTBR(sid));
+        if (!(tcr & AOP_DART_TCR_TRANSLATE) || !(ttbr & AOP_DART_TTBR_VALID))
+            bail("AOP: firmware host stream is not mapped\n");
+        struct aop_boot_walk *walk = calloc(1, sizeof(*walk));
+        if (!walk)
+            return -1;
+        int ret = aop_boot_walk_table(walk, FIELD_GET(AOP_DART_TTBR_ADDRESS, ttbr) << 14,
+                                     tcr & AOP_DART_TCR_FOUR_LEVELS ? 36 : 25, 0);
+        for (unsigned int i = 0; !ret && i < walk->count; i++) {
+            const struct aop_boot_region *region = &walk->region[i];
+            char name[64];
+            snprintf(name, sizeof(name), "aop-native-%u@%lx", sid, region->phys);
+            int mem = dt_get_or_add_reserved_mem(name, "apple,asc-mem", true,
+                                                 region->phys, region->size);
+            if (mem < 0) { ret = mem; break; }
+            u32 memory_phandle = fdt_get_phandle(dt, mem);
+            ret = dt_device_set_reserved_mem(mem, name, phandle, region->iova, region->size);
+            if (!ret)
+                ret = dt_device_add_mem_region(consumers[sid], memory_phandle, NULL);
+        }
+        printf("AOP: stream %u: reserved %u firmware regions\n", sid, walk->count);
+        free(walk);
+        if (ret)
+            return ret;
+    }
+    return 0;
+}
+
 static int dt_reserve_asc_firmware_segments(const char *adt_path, const char *adt_path_alt,
                                             const char *fdt_path, bool remap, u64 base,
                                             unsigned int segment_limit)
@@ -3066,6 +3180,8 @@ int kboot_prepare_dt(void *fdt)
     if (dt_set_multitouch())
         return -1;
     if (dt_set_sep())
+        return -1;
+    if (dt_set_aop_native_regions())
         return -1;
     if (dt_set_pmp())
         return -1;
