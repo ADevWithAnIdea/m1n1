@@ -271,6 +271,19 @@ static int dt_append_atc_tunable(void *dt, int adt_node, int fdt_node,
     return 0;
 }
 
+/* CIO4 separates the fabric/common controls from the analog register bank.
+ * Copy board calibration to Linux's own nodes; Linux never consumes the ADT.
+ */
+static const struct atc_tunable_info atc_tunables_t6040[] = {
+    {"tunable_ATC_FABRIC", "apple,tunable-cio4-fabric", 0, 0x4000, true},
+    {"tunable_ATC_COMMON_CFG", "apple,tunable-cio4-common", 0, 0x4000, true},
+    {"tunable_LN0_RX_CFG_TX_OF_RXCLK", "apple,tunable-cio4-analog", 0xd000, 0x1000, true},
+    {"tunable_LN1_RX_CFG_TX_OF_RXCLK", "apple,tunable-cio4-analog", 0x1d000, 0x1000, true},
+    {"tunable_AUS40CMN_SHM", "apple,tunable-cio4-analog", 0xa00, 0x200, true},
+    {"tunable_AUSPLL_CORE", "apple,tunable-cio4-analog", 0x3200, 0x200, true},
+    {"tunable_CIO4PLL_CORE", "apple,tunable-cio4-analog", 0x3a00, 0x200, true},
+};
+
 static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_alias, int port)
 {
     int ret;
@@ -290,6 +303,18 @@ static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_
     int fdt_node = fdt_path_offset(dt, fdt_path);
     if (fdt_node < 0) {
         printf("FDT: Unable to find path %s for alias %s\n", fdt_path, dt_alias);
+        return;
+    }
+
+    if (adt_is_compatible_at(adt, adt_node, "atc-phy,t6040", 0)) {
+        for (size_t i = 0; i < ARRAY_SIZE(atc_tunables_t6040); i++) {
+            ret = dt_append_atc_tunable(dt, adt_node, fdt_node, &atc_tunables_t6040[i]);
+            if (ret) {
+                printf("FDT: Unable to copy CIO4 calibration for %s\n", adt_path);
+                fdt_setprop_string(dt, fdt_node, "status", "disabled");
+                return;
+            }
+        }
         return;
     }
 

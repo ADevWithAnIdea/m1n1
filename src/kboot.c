@@ -1128,6 +1128,15 @@ static const struct adt_tunable_info usb4_nhi_tunables[] = {
     {"fw_int_ctl_management_tunables", "apple,tunable-nhi", 0x4000, 0x4000, true},
 };
 
+/* CIO v2 integrates the old descriptor/data fabrics into the NHI and
+ * publishes only the two merge-fabric tables plus interrupt management.
+ */
+static const struct adt_tunable_info usb4_nhi_tunables_v2[] = {
+    {"hi_up_merge_fabric_tunables", "apple,tunable-nhi", 0xf8000, 0x4000, true},
+    {"hi_dn_merge_fabric_tunables", "apple,tunable-nhi", 0xfc000, 0x4000, true},
+    {"fw_int_ctl_management_tunables", "apple,tunable-nhi", 0x4000, 0x4000, true},
+};
+
 static const struct adt_tunable_info usb4_rc_tunables[] = {
     {"top_tunables", "apple,tunable-rc", 0x0, 0x4000, true},
     {"hbw_fabric_tunables", "apple,tunable-rc", 0x4000, 0x4000, true},
@@ -1278,8 +1287,13 @@ static int dt_set_acio_tunables(void)
 
         memset(fdt_alias, 0, sizeof(fdt_alias));
         snprintf(fdt_alias, sizeof(fdt_alias), "usb4_%d_nhi", i);
-        dt_copy_acio_tunables(adt_path, fdt_alias, usb4_nhi_tunables,
-                              sizeof(usb4_nhi_tunables) / sizeof(*usb4_nhi_tunables));
+        int acio_node = adt_path_offset(adt, adt_path);
+        if (acio_node >= 0 && adt_is_compatible_at(adt, acio_node, "acio,v2", 0))
+            dt_copy_acio_tunables(adt_path, fdt_alias, usb4_nhi_tunables_v2,
+                                  ARRAY_SIZE(usb4_nhi_tunables_v2));
+        else
+            dt_copy_acio_tunables(adt_path, fdt_alias, usb4_nhi_tunables,
+                                  ARRAY_SIZE(usb4_nhi_tunables));
         dt_copy_usb4_drom(adt_path, fdt_alias);
     }
 
