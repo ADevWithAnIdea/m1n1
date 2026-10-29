@@ -304,7 +304,8 @@ static int pcie_init_controller(int controller, const char *path)
         fuse_bits = NULL;
         state->pcie_regs = &regs_t6031;
         printf("pcie: Initializing t6031 PCIe controller\n");
-    } else if (adt_is_compatible(adt, adt_offset, "apcie,t8132")) {
+    } else if (adt_is_compatible(adt, adt_offset, "apcie,t8132") ||
+               adt_is_compatible(adt, adt_offset, "apcie,t8140")) {
         fuse_bits = NULL;
         state->pcie_regs = &regs_t8132;
         printf("pcie: Initializing t8132 PCIe controller\n");
@@ -463,7 +464,11 @@ static int pcie_init_controller(int controller, const char *path)
         }
     }
 
-    for (int phy = 0; phy < state->num_phys; phy++) {
+    /* T8140's common PHY is already initialized by boot firmware. Its
+     * control banks differ from T8132; retain that setup and start the RC.
+     * Per-port PHY clocks are enabled below using the ADT port registers.
+     */
+    for (int phy = 0; chip_id != T8140 && phy < state->num_phys; phy++) {
         set32(state->phy_base[phy] + APCIE_PHY_CTRL, APCIE_PHY_CTRL_CLK0REQ);
         if (poll32(state->phy_base[phy] + APCIE_PHY_CTRL, APCIE_PHY_CTRL_CLK0ACK,
                    APCIE_PHY_CTRL_CLK0ACK, 50000)) {
@@ -526,20 +531,22 @@ static int pcie_init_controller(int controller, const char *path)
     }
 
     if (state->pcie_regs->type == APCIE_T602X || state->pcie_regs->compat == APCIE_T8122) {
-        mask32(state->phy_common_base + APCIE_PHYCMN_CLK, APCIE_PHYCMN_CLK_MODE,
-               FIELD_PREP(APCIE_PHYCMN_CLK_MODE, 1));
+        if (chip_id != T8140) {
+            mask32(state->phy_common_base + APCIE_PHYCMN_CLK, APCIE_PHYCMN_CLK_MODE,
+                   FIELD_PREP(APCIE_PHYCMN_CLK_MODE, 1));
 
-        // Why always PHY 1 in this case?
-        u32 off = state->num_phys > 1 ? PHY_STRIDE : 0;
-        if (poll32(state->phy_base[0] + off + 0x8, 1, 1, 250000)) {
-            printf("pcie: PHY clock enable timed out\n");
-            return -1;
-        }
-        for (int phy = 0; phy < state->num_phys; phy++) {
-            if (state->pcie_regs->type == APCIE_T602X) {
-                set32(state->phy_base[phy] + APCIE_PHY_CTRL, 0x300);
-            } else if (state->pcie_regs->compat == APCIE_T8122) {
-                set32(state->phy_base[phy] + APCIE_PHY_CTRL, 0x200);
+            // Why always PHY 1 in this case?
+            u32 off = state->num_phys > 1 ? PHY_STRIDE : 0;
+            if (poll32(state->phy_base[0] + off + 0x8, 1, 1, 250000)) {
+                printf("pcie: PHY clock enable timed out\n");
+                return -1;
+            }
+            for (int phy = 0; phy < state->num_phys; phy++) {
+                if (state->pcie_regs->type == APCIE_T602X) {
+                    set32(state->phy_base[phy] + APCIE_PHY_CTRL, 0x300);
+                } else if (state->pcie_regs->compat == APCIE_T8122) {
+                    set32(state->phy_base[phy] + APCIE_PHY_CTRL, 0x200);
+                }
             }
         }
         write32(state->rc_base + 0x54, 0x140);
@@ -876,7 +883,8 @@ int pcie_shutdown(void)
             clear32(state->port_base[port] + APCIE_PORT_APPCLK, APCIE_PORT_APPCLK_EN);
         }
 
-        for (int phy = 0; phy < state->num_phys; phy++) {
+        /* T8140's common PHY banks do not use this control layout. */
+        for (int phy = 0; chip_id != T8140 && phy < state->num_phys; phy++) {
             clear32(state->phy_base[phy] + APCIE_PHY_CTRL, state->pcie_regs->phy_ctrl_reset);
             clear32(state->phy_base[phy] + APCIE_PHY_CTRL, APCIE_PHY_CTRL_CLK1REQ);
             clear32(state->phy_base[phy] + APCIE_PHY_CTRL, APCIE_PHY_CTRL_CLK0REQ);
