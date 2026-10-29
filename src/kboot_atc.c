@@ -592,6 +592,107 @@ cleanup:
     printf("FDT: Unable to setup ATC tunables for %s - USB3/Thunderbolt will not work\n", adt_path);
 }
 
+/* USB host tuning uses the same 32-bit ADT triples as the PHY tables. */
+static int dt_usb_named_reg(void *dt, int node, const char *name, u64 *base, u64 *size)
+{
+    int length, index = fdt_stringlist_search(dt, node, "reg-names", name);
+    int parent = fdt_parent_offset(dt, node);
+    const fdt64_t *regs = fdt_getprop(dt, node, "reg", &length);
+
+    if (index < 0)
+        return index;
+    if (!regs || fdt_address_cells(dt, parent) != 2 ||
+        fdt_size_cells(dt, parent) != 2 || length % (2 * sizeof(*regs)) ||
+        fdt_stringlist_count(dt, node, "reg-names") != length / (2 * sizeof(*regs)))
+        return -FDT_ERR_BADVALUE;
+    *base = fdt64_ld(&regs[index * 2]);
+    *size = fdt64_ld(&regs[index * 2 + 1]);
+    if (!*size || *base + *size < *base)
+        return -FDT_ERR_BADVALUE;
+    return 0;
+}
+
+static int dt_copy_neo_usb_host(void *dt)
+{
+    struct adt_tunable_info table = {.required = true};
+    int node, phy, source, path[8], ret;
+    u64 base, size, adt_base, adt_size, globals, globals_size;
+    u64 cfg_base, cfg_size, pipe_base, pipe_size;
+
+    node = fdt_node_offset_by_compatible(dt, -1, "apple,t8140-dwc3");
+    if (node == -FDT_ERR_NOTFOUND)
+        return 0;
+    if (node < 0)
+        return node;
+    source = adt_path_offset_trace(adt, "/arm-io/usb-drd", path);
+    if (source < 0 || dt_usb_named_reg(dt, node, "dwc3-core", &base, &size) ||
+        adt_get_reg(adt, path, "reg", 0, &adt_base, &adt_size) || base != adt_base || size > adt_size ||
+        adt_get_reg(adt, path, "reg", 2, &globals, &globals_size) ||
+        globals > UINT64_MAX - 0x100 || base > UINT64_MAX - 0xc100 ||
+        globals + 0x100 != base + 0xc100 || size <= 0xc100 || globals_size <= 0x100)
+        return -1;
+    table.reg_size = min(size - 0xc100, globals_size - 0x100);
+    table.fdt_name = "apple,tunable-host";
+    /* Rebuilding a DT must not append a second copy of the tuning tables. */
+    fdt_delprop(dt, node, table.fdt_name);
+    table.adt_name = "tunable_DRD_USB31_GBL_DEFAULT";
+    ret = dt_append_atc_tunable(dt, source, node, &table, table.reg_size);
+    if (ret)
+        return ret;
+    table.adt_name = "tunable_DRD_USB31_GBL_HOST";
+    ret = dt_append_atc_tunable(dt, source, node, &table, table.reg_size);
+    if (ret)
+        return ret;
+
+    if (adt_get_reg(adt, path, "reg", 1, &cfg_base, &cfg_size) || !cfg_size ||
+        cfg_base + cfg_size < cfg_base)
+        return -1;
+    ret = dt_usb_named_reg(dt, node, "dwc3-cfg", &base, &size);
+    if (ret == -FDT_ERR_NOTFOUND) {
+        int length;
+        const fdt64_t *regs = fdt_getprop(dt, node, "reg", &length);
+        fdt64_t resource[] = {cpu_to_fdt64(cfg_base), cpu_to_fdt64(cfg_size)};
+
+        /* Validate this new ADT resource against every existing DT window. */
+        for (size_t i = 0; i < (size_t)length / sizeof(*regs); i += 2) {
+            base = fdt64_ld(&regs[i]);
+            size = fdt64_ld(&regs[i + 1]);
+            if (!size || base + size < base ||
+                (cfg_base < base + size && base < cfg_base + cfg_size))
+                return -1;
+        }
+        ret = fdt_appendprop(dt, node, "reg", resource, sizeof(resource));
+        if (!ret)
+            ret = fdt_appendprop_string(dt, node, "reg-names", "dwc3-cfg");
+    } else if (!ret && (base != cfg_base || size != cfg_size)) {
+        return -1;
+    }
+    if (ret)
+        return ret;
+    table.reg_size = cfg_size;
+    table.adt_name = "tunable_DRD_USB31_CFG_HOST";
+    table.fdt_name = "apple,tunable-cfg-host";
+    fdt_delprop(dt, node, table.fdt_name);
+    ret = dt_append_atc_tunable(dt, source, node, &table, cfg_size);
+    if (ret)
+        return ret;
+
+    /* Previous property insertion may have moved the PHY node. */
+    phy = fdt_node_offset_by_compatible(dt, -1, "apple,t8130-atcphy");
+    if (phy < 0 || dt_usb_named_reg(dt, phy, "pipehandler", &pipe_base, &pipe_size) ||
+        adt_get_reg(adt, path, "reg", 3, &base, &size) ||
+        base != pipe_base || pipe_size > size)
+        return -1;
+    table.reg_size = pipe_size;
+    table.adt_name = "tunable_PIPE_HANDLER_DEFAULT";
+    table.fdt_name = "apple,tunable-pipehandler";
+    fdt_delprop(dt, phy, table.fdt_name);
+    ret = dt_append_atc_tunable(dt, source, phy, &table, pipe_size);
+    if (!ret)
+        printf("FDT: Exported Neo USB host and PIPE factory tables from ADT\n");
+    return ret;
+}
+
 int kboot_setup_atc(void *dt)
 {
     char adt_path[32];
@@ -607,5 +708,5 @@ int kboot_setup_atc(void *dt)
         dt_copy_atc_tunables(dt, adt_path, fdt_alias, i);
     }
 
-    return 0;
+    return dt_copy_neo_usb_host(dt);
 }
