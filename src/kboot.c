@@ -1816,7 +1816,10 @@ static int dt_reserve_asc_firmware(const char *adt_path, const char *adt_path_al
         if (ret < 0)
             return ret;
 
-        ret = dt_device_add_mem_region(fdt_path, mem_phandle, NULL);
+        const char *region_name = NULL;
+        if (chip_id == T8140 && !strcmp(fdt_path, "isp"))
+            region_name = i == 0 ? "text" : "data";
+        ret = dt_device_add_mem_region(fdt_path, mem_phandle, region_name);
         if (ret < 0)
             return ret;
 
@@ -2283,6 +2286,23 @@ static int dt_set_isp_fwdata(void)
     if (adt_node < 0)
         return 0;
 
+    if (chip_id == T8140) {
+        u32 segments_len;
+        const struct isp_segment_ranges *segments =
+            adt_getprop(adt, adt_node, "segment-ranges", &segments_len);
+        if (!segments || segments_len < sizeof(*segments))
+            bail("FDT: missing Neo ISP firmware segments\n");
+        u32 fuse0, fuse1;
+        if (ADT_GETPROP(adt, adt_node, "fuse_aciphy_0", &fuse0) < 0 ||
+            ADT_GETPROP(adt, adt_node, "fuse_aciphy_1", &fuse1) < 0)
+            bail("ADT: missing Neo ISP calibration fuses\n");
+        fdt32_t fuses[] = {cpu_to_fdt32(fuse0), cpu_to_fdt32(fuse1)};
+        if (fdt_setprop(dt, fdt_node, "apple,aciphy-fuses", fuses, sizeof(fuses)))
+            bail("FDT: failed to pass Neo ISP calibration fuses\n");
+        if (fdt_setprop_u64(dt, fdt_node, "apple,firmware-phys", segments[0].phys))
+            bail("FDT: failed to pass Neo ISP firmware address\n");
+    }
+
     uint32_t dev_phandle = fdt_get_phandle(dt, fdt_node);
     if (!dev_phandle) {
         ret = fdt_generate_phandle(dt, &dev_phandle);
@@ -2299,6 +2319,13 @@ static int dt_set_isp_fwdata(void)
     ret = dt_device_set_reserved_mem(mem_node, "isp-heap", dev_phandle, iova, size);
     if (ret < 0)
         return ret;
+
+    if (chip_id == T8140) {
+        uint32_t mem_phandle = fdt_get_phandle(dt, mem_node);
+        ret = dt_device_add_mem_region(fdt_path, mem_phandle, "heap");
+        if (ret < 0)
+            return ret;
+    }
 
     return 0;
 }
