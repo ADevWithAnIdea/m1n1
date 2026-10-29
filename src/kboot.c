@@ -1987,6 +1987,75 @@ static struct disp_mapping disp_reserved_regions_t602x[] = {
     {"region-id-157", "region157", true, true, false},
 };
 
+static int dt_neo_display_dart_clock_protection(const char *path, bool protect)
+{
+    int trace[8];
+    int node = adt_path_offset_trace(adt, path, trace);
+    if (node < 0)
+        bail("DCP: missing Neo DART %s\n", path);
+    u32 length = 0;
+    const char *instances = adt_getprop(adt, node, "instance", &length);
+    int bank = -1;
+    if (instances && !(length % 16)) {
+        for (u32 i = 0; i < length / 16; i++) {
+            if (!memcmp(instances + i * 16, "FPAG", 4)) {
+                bank = i;
+                break;
+            }
+        }
+    }
+    u32 slice;
+    u64 base, size;
+    if (node < 0 || bank < 0 ||
+        ADT_GETPROP(adt, node, "clock-protection-slice-index", &slice) < 0 || !slice ||
+        adt_get_reg(adt, trace, "reg", bank, &base, &size) < 0)
+        bail("DCP: missing Neo DART clock for %s\n", path);
+    u64 offset = 0x140 + (u64)(slice - 1) * 0x40;
+    if (offset + sizeof(u32) > size)
+        bail("DCP: invalid Neo DART clock range for %s\n", path);
+    if (protect)
+        set32(base + offset, BIT(4));
+    else
+        clear32(base + offset, BIT(4));
+    return 0;
+}
+
+
+static int dt_prepare_neo_display_dart(const char *path)
+{
+    if (dt_neo_display_dart_clock_protection(path, true) < 0 ||
+        tunables_apply_local(path, "dart-tunables-instance-0", 0) < 0)
+        bail("DCP: failed to prepare Neo DART %s\n", path);
+    return 0;
+}
+
+
+static int dt_prepare_neo_dcp_firmware(const char *alias, const char *path,
+                                       const char *dart_path, const char *reset_device)
+{
+    if (pmgr_adt_power_enable(path) < 0)
+        bail("DCP: failed to enable Neo coprocessor power\n");
+    int node = fdt_path_offset(dt, alias);
+    dart_dev_t *dart = dt_init_dart_by_node(node, 0);
+    if (!dart)
+        bail("DCP: failed to inspect Neo firmware mappings\n");
+    int ret = dart_setup_pt_region(dart, dart_path, 23, dart_vm_base(dart));
+    if (!ret)
+        ret = dcp_create_firmware_mappings(path, dart, true);
+    dart_shutdown(dart);
+    if (ret < 0)
+        bail("DCP: failed to prepare Neo firmware mappings\n");
+    /* DCPEXT's ADT clock is a virtual PMGR alias. Reset the real CPU
+     * domain, which pmgr_adt_power_enable() already enabled as its parent. */
+    if (ret > 0 && (reset_device ? pmgr_reset(0, reset_device) : pmgr_adt_reset(path)) < 0)
+        bail("DCP: failed to reset Neo coprocessor after remapping\n");
+
+    /* Inform Linux about the firmware remaps as well as the carveouts.
+     * OS-log buffers are not needed by the Linux RTKit implementation. */
+    return dt_reserve_asc_firmware_segments(path, NULL, alias, true, 0, 2);
+}
+
+
 static int dt_set_display(void)
 {
     /* lock dart-disp0 to prevent old software from resetting it */
