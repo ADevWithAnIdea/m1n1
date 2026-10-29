@@ -389,6 +389,22 @@ static int dt_set_memory(void)
             bail("FDT: Could not reserve CTRR range\n");
     }
 
+    /* iBoot's trust cache remains write-protected on secondary CPUs. */
+    int memory_map = adt_path_offset(adt, "/chosen/memory-map");
+    u64 trustcache[2];
+    if (chip_id == T8140 && memory_map >= 0 &&
+        ADT_GETPROP_ARRAY(adt, memory_map, "TrustCache", trustcache) == sizeof(trustcache) &&
+        trustcache[1]) {
+        if (trustcache[0] < dram_min || trustcache[0] >= dram_max ||
+            trustcache[1] > dram_max - trustcache[0])
+            bail("FDT: Invalid iBoot trust cache range\n");
+        u64 start = ALIGN_DOWN(trustcache[0], get_page_size());
+        u64 end = ALIGN_UP(trustcache[0] + trustcache[1], get_page_size());
+        printf("FDT: Reserving iBoot trust cache 0x%lx..0x%lx\n", start, end);
+        if (fdt_add_mem_rsv(dt, start, end - start))
+            bail("FDT: Could not reserve iBoot trust cache\n");
+    }
+
     printf("FDT: DRAM at 0x%lx size 0x%lx\n", dram_base, dram_size);
     printf("FDT: Usable memory is 0x%lx..0x%lx (0x%lx)\n", dram_min, dram_max, dram_max - dram_min);
 
