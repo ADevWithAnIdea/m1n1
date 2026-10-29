@@ -1,0 +1,127 @@
+SPDX-License-Identifier: GPL-2.0-only
+
+M5 DRM shim extraction audit, 2026-10-28
+======================================
+
+Base and source
+---------------
+
+Base: GravityLinux/bootloader main,
+f02d4a52017915febb222539636b5b025a70407a.
+
+Source: recovered m1n1-m5-hv-bringup at
+c852298d27372d1b625e753c06f350b19fe07e63, together with
+011-m1n1-m5-hv-bringup.patch and its saved untracked files from the verified
+dev-machine-handoff-20261006 source backup. File hashes and explicit
+transformations are recorded in provenance.json. No private Git history is
+merged into this branch. The base is not AsahiLinux/m1n1 main.
+
+The previous 39825406 publication extracted only the ioctl frontend and used
+the wrong upstream. This replacement includes the actual firmware backend.
+
+Included firmware interface
+---------------------------
+
+The source constructs GPU initialization records, command/queue/control
+objects and report payloads, then exchanges them with firmware over StandardASC
+mailboxes. The saved research source describes these as passive data-only
+observations and hardware experiments; its protocol builders do not import
+Apple executable code or restore firmware checkpoints. No Apple binary was
+disassembled or inspected for this extraction.
+
+Existing source files were reviewed for imports, input-file reads, embedded
+payloads, direct table construction and protocol publication. Their source
+headers, saved research provenance and call sites distinguish numeric ABI
+data from instruction/implementation sources. The firmware-facing modules
+have no capture/HV/SPTM/ringgate/Exclave dependency. The legacy AGX Python
+package is also not imported by the new runtime package.
+
+Compressed/hex GPU-program fixtures are the original research caller's own
+Metal compiler/resource products. They are not firmware text, kernel code,
+page tables or firmware-state checkpoints. Existing byte/hash tests exercise
+these fixtures. The active UAPI adapter uses opaque caller CDM/VDM and caller
+BOs; it does not replace submitted programs with those reference workloads.
+No claim is made that compiler fixtures implement all render formats/options.
+
+Excluded UAT implementation
+---------------------------
+
+The recovered source's changes to hw/uat.py are NOT imported:
+
+* Direct-root map/translate/unmap and unmap implementations.
+* New root-walk caching and invalidation behavior.
+* Invalid-leaf refresh control and the sign-extension implementation change.
+
+These other recovered implementations are also NOT imported:
+
+* The selector-2 UAT state-object builder and constants.
+* Management shared-region/root/table image construction and PTE constants.
+* The handoff-page state builder and its duplicated layout/constants.
+* g17g_transition.py's capture-normalization walker/PTE rewriting.
+* TVB growth's separate raw-table walker, PTE encoder and table allocator.
+* Capture/replay, SPTM root-directory helpers and hypervisor instrumentation.
+
+The UAT selector state is not treated as GPU firmware ABI. Renaming a copied
+walker would not satisfy this boundary; these implementations were removed.
+Tests specifically testing those removed implementations were excluded, not
+carried with a disabled implementation or marked as expected failures.
+
+UAT client adaptation
+---------------------
+
+hw/uat.py and fw/agx/handoff.py are byte-identical to the Gravity main base.
+No method is added to, replaced on or monkey-patched into the UAT class.
+
+RootMappingClient composes the existing UAT. A copy of its client configuration
+points at a private scratch context table, allowing public set_l0/iomap_at/
+iotranslate/foreach_table calls to address a driver-owned root without writing
+a live device slot. Unmapping supplies VALID=0 through the existing iomap_at
+keyword API. Root table discovery uses existing foreach_table callbacks, not
+a new walker. The M5 subclass supplies only the existing 42-bit geometry;
+it overrides no UAT algorithm. Scratch views are released with their VM.
+
+The GPU boot code uses existing PTE.set_offset/write_pte for its shared-table
+link and existing GFXHandoff register fields for handoff initialization. These
+are UAT clients, not replacements for the descriptor or handoff implementation.
+g17g_uat.py now contains mapping-policy data and client calls only. TVB growth
+also delegates mapping and table allocation to that same public UAT client.
+
+The sole change to an existing upstream source file is adding the already
+public Asahi G15/G15X names to constructutils.Ver.MATRIX. Gravity main's UAT
+module already evaluates 'G >= G15' at import, but its version matrix lacks
+G15; this otherwise raises NameError before the firmware runtime can import.
+This one-line compatibility fix matches the corresponding public Asahi matrix.
+No UAT, handoff, shared ASC, bootloader-C or hypervisor implementation changes
+are needed by this branch.
+
+Other extraction changes
+------------------------
+
+All new runtime modules live under m1n1.drm_shim and retain source names.
+The native entrypoint now connects to the configured M1N1DEVICE rather than
+embedding the original workstation serial. It opens the proxy directly using
+UartInterface, M1N1Proxy and ProxyUtils, rather than generic setup which
+constructs an HV.
+T8142 identity checking remains
+before GPU allocation or power changes. The saved refresh_invalid performance
+hint is dropped; the unchanged conservative public translation API is used.
+Test-only caller/reference functions were extracted without experiment CLI,
+capture or setup code. Added source carries GPL-2.0-only as requested.
+
+Verification and limits
+-----------------------
+
+413 tests pass on macOS and Linux, including the native C bridge and protocol
+builders. New host-memory integration tests exercise the actual unchanged UAT,
+not a replacement translator: full initialization preparation, shared-root
+linking, 42-bit low/high/USC ranges, resident contexts, isolated unmapping, TVB
+growth, overlap/OOM handling and scratch allocation cleanup. Entrypoint tests
+check that the native shim reaches firmware boot and the hardware adapter
+without importing or constructing a hypervisor.
+
+No included implementation was identified as derived from the excluded
+UAT/SPTM/Exclave implementations. This is an audit of this extraction's source
+and recorded provenance. The UAT client adaptation has not been tested on M5
+hardware; no device was connected, rebooted or accessed during this work.
+The retained firmware backend is synchronous and retains the saved prototype's
+limits. Successful offline tests are not a new hardware completion claim.

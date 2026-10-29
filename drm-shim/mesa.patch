@@ -1,0 +1,320 @@
+SPDX-License-Identifier: GPL-2.0-only
+
+--- a/src/drm-shim/drm_shim.h
++++ b/src/drm-shim/drm_shim.h
+@@ -36,6 +36,7 @@
+ typedef int (*ioctl_fn_t)(int fd, unsigned long request, void *arg);
+ 
+ struct shim_bo;
++struct shim_fd;
+ 
+ struct shim_device {
+    /* Mapping from int fd to struct shim_fd *. */
+@@ -59,6 +60,13 @@
+ 
+    int mem_fd;
+ 
++   /* Optional full dispatcher with open-file-description ownership. */
++   int (*driver_file_open)(struct shim_fd *file);
++   void (*driver_file_close)(struct shim_fd *file);
++   ioctl_fn_t driver_ioctl;
++   void *(*driver_mmap)(struct shim_fd *file, void *addr, size_t length,
++                       int prot, int flags, off64_t offset);
++
+    int (**driver_ioctls)(int fd, unsigned long request, void *arg);
+    int driver_ioctl_count;
+ 
+@@ -79,6 +87,7 @@
+ struct shim_fd {
+    int fd;
+    int refcount;
++   uint64_t driver_file;
+    mtx_t handle_lock;
+    /* mapping from int gem handle to struct shim_bo *. */
+    struct hash_table *handles;
+@@ -102,11 +111,11 @@
+                             const char *path_format, ...) PRINTFLIKE(2, 3);
+ void drm_shim_override_link(const char *contents,
+                             const char *path_format, ...) PRINTFLIKE(2, 3);
+-void drm_shim_fd_register(int fd, struct shim_fd *shim_fd);
++int drm_shim_fd_register(int fd, struct shim_fd *shim_fd);
+ void drm_shim_fd_unregister(int fd);
+ struct shim_fd *drm_shim_fd_lookup(int fd);
+ int drm_shim_ioctl(int fd, unsigned long request, void *arg);
+-void *drm_shim_mmap(struct shim_fd *shim_fd, size_t length, int prot, int flags,
++void *drm_shim_mmap(struct shim_fd *shim_fd, void *addr, size_t length, int prot, int flags,
+                     int fd, off64_t offset);
+ 
+ int drm_shim_bo_init(struct shim_bo *bo, size_t size);
+--- a/src/drm-shim/device.c
++++ b/src/drm-shim/device.c
+@@ -115,6 +115,10 @@
+ drm_shim_file_create(int fd)
+ {
+    struct shim_fd *shim_fd = calloc(1, sizeof(*shim_fd));
++   if (!shim_fd) {
++      errno = ENOMEM;
++      return NULL;
++   }
+ 
+    shim_fd->fd = fd;
+    p_atomic_set(&shim_fd->refcount, 1);
+@@ -123,6 +127,16 @@
+                                               uint_key_hash,
+                                               uint_key_compare);
+ 
++   if (shim_device.driver_file_open) {
++      int ret = shim_device.driver_file_open(shim_fd);
++      if (ret) {
++         _mesa_hash_table_destroy(shim_fd->handles, NULL);
++         mtx_destroy(&shim_fd->handle_lock);
++         free(shim_fd);
++         errno = -ret;
++         return NULL;
++      }
++   }
+    return shim_fd;
+ }
+ 
+@@ -130,16 +144,22 @@
+  * Called when the libc shims have interposed an open or dup of our simulated
+  * DRM device.
+  */
+-void drm_shim_fd_register(int fd, struct shim_fd *shim_fd)
+-{
+-   if (!shim_fd)
++int drm_shim_fd_register(int fd, struct shim_fd *shim_fd)
++{
++   if (fd < 0)
++      return -EBADF;
++   if (!shim_fd) {
+       shim_fd = drm_shim_file_create(fd);
+-   else
++      if (!shim_fd)
++         return -errno;
++   } else {
+       p_atomic_inc(&shim_fd->refcount);
++   }
+ 
+    mtx_lock(&shim_device.lock);
+    _mesa_hash_table_insert(shim_device.fd_map, (void *)(uintptr_t)(fd + 1), shim_fd);
+    mtx_unlock(&shim_device.lock);
++   return 0;
+ }
+ 
+ static void handle_delete_fxn(struct hash_entry *entry)
+@@ -166,6 +186,9 @@
+    if (!p_atomic_dec_zero(&shim_fd->refcount))
+       return;
+ 
++   if (shim_device.driver_file_close)
++      shim_device.driver_file_close(shim_fd);
++   mtx_destroy(&shim_fd->handle_lock);
+    _mesa_hash_table_destroy(shim_fd->handles, handle_delete_fxn);
+    free(shim_fd);
+ }
+@@ -306,6 +329,8 @@
+ int
+ drm_shim_ioctl(int fd, unsigned long request, void *arg)
+ {
++   if (shim_device.driver_ioctl)
++      return shim_device.driver_ioctl(fd, request, arg);
+    ASSERTED int type = _IOC_TYPE(request);
+    int nr = _IOC_NR(request);
+ 
+@@ -439,9 +464,12 @@
+  * fd.
+  */
+ void *
+-drm_shim_mmap(struct shim_fd *shim_fd, size_t length, int prot, int flags,
++drm_shim_mmap(struct shim_fd *shim_fd, void *addr, size_t length, int prot, int flags,
+               int fd, off64_t offset)
+ {
++   if (shim_device.driver_mmap)
++      return shim_device.driver_mmap(shim_fd, addr, length, prot, flags, offset);
++
+    if (shim_device.iomem_region.mmap &&
+        offset >= shim_device.iomem_region.start &&
+        offset + length <= shim_device.iomem_region.start + shim_device.iomem_region.size) {
+--- a/src/drm-shim/drm_shim.c
++++ b/src/drm-shim/drm_shim.c
+@@ -70,6 +70,10 @@
+ REAL_FUNCTION_POINTER(close);
+ REAL_FUNCTION_POINTER(closedir);
+ REAL_FUNCTION_POINTER(dup);
++REAL_FUNCTION_POINTER(dup2);
++#ifdef __linux__
++REAL_FUNCTION_POINTER(dup3);
++#endif
+ REAL_FUNCTION_POINTER(fcntl);
+ REAL_FUNCTION_POINTER(fopen);
+ REAL_FUNCTION_POINTER(ioctl);
+@@ -186,6 +190,10 @@
+    GET_FUNCTION_POINTER(close);
+    GET_FUNCTION_POINTER(closedir);
+    GET_FUNCTION_POINTER(dup);
++   GET_FUNCTION_POINTER(dup2);
++#ifdef __linux__
++   GET_FUNCTION_POINTER(dup3);
++#endif
+    GET_FUNCTION_POINTER(fcntl);
+    GET_FUNCTION_POINTER(fopen);
+    GET_FUNCTION_POINTER(ioctl);
+@@ -362,10 +370,17 @@
+ {
+    init_shim();
+ 
+-   va_list ap;
+-   va_start(ap, flags);
+-   mode_t mode = va_arg(ap, mode_t);
+-   va_end(ap);
++   mode_t mode = 0;
++   bool has_mode = flags & O_CREAT;
++#ifdef O_TMPFILE
++   has_mode |= (flags & O_TMPFILE) == O_TMPFILE;
++#endif
++   if (has_mode) {
++      va_list ap;
++      va_start(ap, flags);
++      mode = va_arg(ap, mode_t);
++      va_end(ap);
++   }
+ 
+    int fd = file_override_open(path);
+    if (fd >= 0)
+@@ -379,10 +394,15 @@
+    if (strcmp(path, render_node_path) != 0)
+       return real_open(path, flags, mode);
+ 
+-   fd = real_open("/dev/null", O_RDWR, 0);
+-
+-   drm_shim_fd_register(fd, NULL);
+-
++   fd = real_open("/dev/null", O_RDWR | (flags & O_CLOEXEC), 0);
++   if (fd < 0)
++      return fd;
++   int ret = drm_shim_fd_register(fd, NULL);
++   if (ret) {
++      real_close(fd);
++      errno = -ret;
++      return -1;
++   }
+    return fd;
+ }
+ PUBLIC int open64(const char*, int, ...) __attribute__((alias("open")));
+@@ -793,7 +813,12 @@
+    if (!shim_fd)
+       return real_ioctl(fd, request, arg);
+ 
+-   return drm_shim_ioctl(fd, request, arg);
++   int ret = drm_shim_ioctl(fd, request, arg);
++   if (ret < 0) {
++      errno = -ret;
++      return -1;
++   }
++   return ret;
+ }
+ 
+ /* Gallium uses this to dup the incoming fd on gbm screen creation */
+@@ -804,14 +829,17 @@
+ 
+    struct shim_fd *shim_fd = drm_shim_fd_lookup(fd);
+ 
+-   va_list ap;
+-   va_start(ap, cmd);
+-   void *arg = va_arg(ap, void *);
+-   va_end(ap);
++   void *arg = NULL;
++   if (cmd != F_GETFD && cmd != F_GETFL && cmd != F_GETOWN) {
++      va_list ap;
++      va_start(ap, cmd);
++      arg = va_arg(ap, void *);
++      va_end(ap);
++   }
+ 
+    int ret = real_fcntl(fd, cmd, arg);
+ 
+-   if (cmd == F_DUPFD || cmd == F_DUPFD_CLOEXEC) {
++   if (ret >= 0 && (cmd == F_DUPFD || cmd == F_DUPFD_CLOEXEC)) {
+       if (shim_fd) {
+          drm_shim_fd_register(ret, shim_fd);
+       } else {
+@@ -847,6 +875,44 @@
+    return ret;
+ }
+ 
++/* Preserve the open-file description when a dup atomically replaces a fd. */
++static int
++finish_fd_replacement(int fd, struct shim_fd *source)
++{
++   if (fd < 0)
++      return fd;
++   drm_shim_fd_unregister(fd);
++   if (source) {
++      int ret = drm_shim_fd_register(fd, source);
++      if (ret) {
++         real_close(fd);
++         errno = -ret;
++         return -1;
++      }
++   }
++   return fd;
++}
++
++PUBLIC int
++dup2(int oldfd, int newfd)
++{
++   get_function_pointers();
++   if (oldfd == newfd)
++      return real_dup2(oldfd, newfd);
++   struct shim_fd *source = drm_shim_fd_lookup(oldfd);
++   return finish_fd_replacement(real_dup2(oldfd, newfd), source);
++}
++
++#ifdef __linux__
++PUBLIC int
++dup3(int oldfd, int newfd, int flags)
++{
++   get_function_pointers();
++   struct shim_fd *source = drm_shim_fd_lookup(oldfd);
++   return finish_fd_replacement(real_dup3(oldfd, newfd, flags), source);
++}
++#endif
++
+ PUBLIC void *
+ mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset)
+ {
+@@ -854,7 +920,7 @@
+ 
+    struct shim_fd *shim_fd = drm_shim_fd_lookup(fd);
+    if (shim_fd)
+-      return drm_shim_mmap(shim_fd, length, prot, flags, fd, offset);
++      return drm_shim_mmap(shim_fd, addr, length, prot, flags, fd, offset);
+ 
+    return real_mmap(addr, length, prot, flags, fd, offset);
+ }
+@@ -866,7 +932,7 @@
+ 
+    struct shim_fd *shim_fd = drm_shim_fd_lookup(fd);
+    if (shim_fd)
+-      return drm_shim_mmap(shim_fd, length, prot, flags, fd, offset);
++      return drm_shim_mmap(shim_fd, addr, length, prot, flags, fd, offset);
+ 
+    return real_mmap64(addr, length, prot, flags, fd, offset);
+ }
+--- a/src/drm-shim/meson.build
++++ b/src/drm-shim/meson.build
+@@ -16,3 +16,13 @@
+   link_with: drm_shim,
+   dependencies: dep_libdrm,
+ )
++
++# Local G17G dispatcher integration; sources copied by prepare_mesa.py.
++shared_library(
++  'asahi_g17g_drm_shim',
++  ['mesa_g17g.c', 'g17g_bridge.c'],
++  include_directories: [inc_include, inc_src],
++  dependencies: [dep_drm_shim, dependency('python3-embed')],
++  c_args: ['-DG17G_PYTHON_EXECUTABLE="' + prog_python.full_path() + '"'],
++  install: false,
++)

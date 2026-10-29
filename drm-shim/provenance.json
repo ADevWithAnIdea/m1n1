@@ -1,0 +1,1475 @@
+{
+  "spdx_license_identifier": "GPL-2.0-only",
+  "upstream_repository": "https://github.com/GravityLinux/bootloader.git",
+  "upstream_base": "f02d4a52017915febb222539636b5b025a70407a",
+  "recovered_head": "c852298d27372d1b625e753c06f350b19fe07e63",
+  "recovery_archive": "dev-machine-handoff-20261006",
+  "recovery_patch": "011-m1n1-m5-hv-bringup.patch",
+  "scope": "Full T8142 DRM shim, firmware ABI builders and transport; unchanged upstream UAT used as a client",
+  "verification": {
+    "macos_tests": 413,
+    "linux_tests": 413,
+    "m5_hardware_retested": false
+  },
+  "excluded_implementation": [
+    "private hw/uat.py extensions",
+    "selector-2 state object",
+    "management page-table image builder",
+    "handoff page-state builder",
+    "g17g_transition.py",
+    "private TVB page-table walker",
+    "SPTM/HV/capture/replay"
+  ],
+  "files": [
+    {
+      "path": "drm-shim/.gitattributes",
+      "sha256": "40904c12c0804f850ca4bb560bb1b11e8d42204d8478bb115242eab18dec0626",
+      "source_path": null
+    },
+    {
+      "path": "drm-shim/AUDIT.txt",
+      "sha256": "0a28f40047202b9e50d4c8f2667861e3f4842a18e73aecc8dfb5ceea56e458ae",
+      "source_path": null
+    },
+    {
+      "path": "drm-shim/COPYING",
+      "sha256": "86dc744860e6dfacfeba2f33fea908db03fe67c7e37a878285b7aae8e4596735",
+      "source_path": null
+    },
+    {
+      "path": "drm-shim/README.txt",
+      "sha256": "792def903a5b71d30ecc14b5406234e2530ddb621e7977b9b685d9392460c64a",
+      "source_path": null
+    },
+    {
+      "path": "drm-shim/build_bridge.py",
+      "sha256": "041a95005cf1141105e1422e32c3bedd02fd70fe7c5a7e9bfd9c88be8eff2f03",
+      "source_path": "drm-shim/build_bridge.py",
+      "source_sha256": "5172b28086f7315a1583f1a049facf171ef3c8600727259e6835359e6feb7e62",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "pathlib",
+        "shlex",
+        "subprocess",
+        "sys",
+        "sysconfig"
+      ]
+    },
+    {
+      "path": "drm-shim/compute_fixture.c",
+      "sha256": "398feb9ea66ab997ca04d01dba8c0fbba44f0d937c41245a9c86c9c6af0a6db6",
+      "source_path": "drm-shim/compute_fixture.c",
+      "source_sha256": "eb87b3da69ddaea68e46fafdae127a3d6ea25d72578a755f8e9258171e2375e2",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true
+    },
+    {
+      "path": "drm-shim/g17g_bridge.c",
+      "sha256": "b331ef6765f0e9607ac498c2ad90053c35aef1e0ba33378b96e30b8a87e9552e",
+      "source_path": "drm-shim/g17g_bridge.c",
+      "source_sha256": "21e59dca2e259f094f01c3c0aa561a306c7955d6b6f019b53e17eecc6f3d5bd7",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false
+    },
+    {
+      "path": "drm-shim/g17g_bridge.h",
+      "sha256": "978198458926faf4e1da46b33862448f67ac3a604e3cfdc09a3a0647d6a11799",
+      "source_path": "drm-shim/g17g_bridge.h",
+      "source_sha256": "b335d6a411d7b1b63c4f3146790e1b6b9fa284365fd95ef836721a4c10a35e15",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false
+    },
+    {
+      "path": "drm-shim/libc_discovery_test.c",
+      "sha256": "d5a983b8e4f0da69e05cb95569e15d9b46d8dde80ae53c394a0561ad5e8ca48b",
+      "source_path": "drm-shim/libc_discovery_test.c",
+      "source_sha256": "8babbd6ca55e6d590396b453e17c0c7f6b7fb7331acfba97dbe308a5c5f861ab",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false
+    },
+    {
+      "path": "drm-shim/libc_lifetime_test.py",
+      "sha256": "36f5c1c29581983605373beb9e003bdf8995717eddda41da8ce362c16a6ec80f",
+      "source_path": "drm-shim/libc_lifetime_test.py",
+      "source_sha256": "a3af8c3e2a3c5e75e649449ed51d605450cc6fb6889e11ef87fe42652135c9be",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "ctypes",
+        "errno",
+        "gc",
+        "m1n1.g17g_shim_entry",
+        "os"
+      ]
+    },
+    {
+      "path": "drm-shim/mesa.patch",
+      "sha256": "2daee6eda6f7f1cf90fe3b9cdeb5a2c1bcd2c58e6712f2488c3fb811f5dd6658",
+      "source_path": "drm-shim/mesa.patch",
+      "source_sha256": "dc432432afcc024420dcb46ff6eeb6ffafe70c1d5453052457c250e259db6814",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false
+    },
+    {
+      "path": "drm-shim/mesa_g17g.c",
+      "sha256": "9bcae8f1afbf860fe8b8a9c1a62322ba0f4b0707ccd00f0ee18e2cbc4e45fcda",
+      "source_path": "drm-shim/mesa_g17g.c",
+      "source_sha256": "133a88901c236cf03fd9320377b49448a6315b37113e44c90647cf0af2dfd98d",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false
+    },
+    {
+      "path": "drm-shim/native_init_test.c",
+      "sha256": "adff2c9667b92e78820e994a9deb343493fc03386dc893826ae1693ab6301b5c",
+      "source_path": "drm-shim/native_init_test.c",
+      "source_sha256": "1dd03096d2c80a576d6a548686abdf0c32d27748d3334df9cfe201358b6ac05b",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false
+    },
+    {
+      "path": "drm-shim/prepare_mesa.py",
+      "sha256": "5a88fdb13744af079292a96f719c3fe1de6c51465fe48733d829d9351af102c6",
+      "source_path": "drm-shim/prepare_mesa.py",
+      "source_sha256": "82b59cc79bacec78c0daa07e16580b24eed37d4c195bc340fd8b5c0cbd3846d2",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "pathlib",
+        "shutil",
+        "subprocess",
+        "tarfile",
+        "tempfile"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/__init__.py",
+      "sha256": "d5c43749df402eda83fadb1a4b19d001cb7a5c845f1e59954c96387c9f36de3b",
+      "source_path": null,
+      "imports": []
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g.py",
+      "sha256": "cb24cc58a81d0127b0474cdf99ea9d3a0a4260bd2daf9ba5417f46ecb8e02a33",
+      "source_path": "proxyclient/m1n1/agx/g17g.py",
+      "source_sha256": "28c07148ef9d9da8187f4d9c8c50666edab4bae95895b3b4c00531cb659025bc",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_adapter.py",
+      "sha256": "4825b10b6da122b50cfc4dba3c618dc8a0403d21032f9eec78afbfd1b2d0961e",
+      "source_path": "proxyclient/m1n1/agx/g17g_adapter.py",
+      "source_sha256": "e7bcffbaa9a385642836d0a6745c2e66198cb33515ecdbcd8fab2460331c3ffe",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_backend",
+        ".g17g_barriers",
+        ".g17g_compute_queue",
+        ".g17g_context",
+        ".g17g_memory",
+        ".g17g_mixed_runtime",
+        ".g17g_mixed_submit",
+        ".g17g_partial_runtime",
+        ".g17g_render_batch",
+        ".g17g_render_buffers",
+        ".g17g_render_queue",
+        ".g17g_render_runtime",
+        ".g17g_render_submit",
+        ".g17g_resident_queue",
+        ".g17g_sparse_read",
+        ".g17g_submit",
+        ".g17g_sync",
+        ".g17g_timestamp",
+        ".g17g_transfer",
+        ".g17g_uapi",
+        "dataclasses",
+        "errno",
+        "itertools",
+        "math"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_backend.py",
+      "sha256": "e5d4d65ac8ee3cf03d82e16874b05bb140ad9c28ecbcb59ac090c1788709171d",
+      "source_path": "proxyclient/m1n1/agx/g17g_backend.py",
+      "source_sha256": "f91315ab68ba443b667660afc511d6102278f102da81eafc97fdd1b9296000bf",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        "dataclasses",
+        "hashlib",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_barriers.py",
+      "sha256": "fdc4f6014d1f58cd3f03bcc70f5e2b55abbaab57fa5836d24459fa325c399996",
+      "source_path": "proxyclient/m1n1/agx/g17g_barriers.py",
+      "source_sha256": "d2c5de99f58ecb8ba32161535fd1b9af1b5917d2d0b6ce7c1bc056c90dc8ee92",
+      "source_commit": null,
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_uapi",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_boot.py",
+      "sha256": "9ba03eba3b5ec20f1be7ea095c088fdad56d20975f27ce402de9944975ed14c9",
+      "source_path": "proxyclient/m1n1/agx/g17g_boot.py",
+      "source_sha256": "0dbf02d552a1a901ed00ba9cc13d171b35c26f4bc7148ff8c15ba77fae97b374",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        ".g17g_crash",
+        ".g17g_mapping_client",
+        "m1n1.fw.agx.handoff",
+        "m1n1.fw.asc",
+        "m1n1.fw.asc.base",
+        "m1n1.hw.uat",
+        "m1n1.utils",
+        "math",
+        "pathlib",
+        "secrets",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_compute.py",
+      "sha256": "f3f335e0258186679984d9759d44a4000d60ad3bb9db52070b75dfaee6f48bd8",
+      "source_path": "proxyclient/m1n1/agx/g17g_compute.py",
+      "source_sha256": "44d35deaf55b8e375639d11a18caca0fe9817c0f1a65667b778dcffad313971b",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        "hashlib",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_compute_predecessor_assets.py",
+      "sha256": "a45a061616075923659d54633e7f8fd37c657023e2d500e9adf5e1cf27f29eec",
+      "source_path": "proxyclient/m1n1/agx/g17g_compute_predecessor_assets.py",
+      "source_sha256": "09b7ac0722edea2c2a8ccd522da521ed6d6dc2be31f98964e219c51c015ca07b",
+      "source_commit": "ede7abc8e224833b17955d03a916f118c12879d9",
+      "source_saved_patch": false,
+      "imports": [
+        "base64",
+        "hashlib",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_compute_queue.py",
+      "sha256": "7ccf80b29901566ba8f7301e539a82bed32d719c58dcf34f818952a7764330e6",
+      "source_path": "proxyclient/m1n1/agx/g17g_compute_queue.py",
+      "source_sha256": "567d56839b272a80e2691edae479e0aad4ddfe45dfc1f6d9fdc14cb485b323d7",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_barriers",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_context.py",
+      "sha256": "6307563e38b014063cfcbbfed661d6e36973593100f2acc708dfcf494d77ad0e",
+      "source_path": "proxyclient/m1n1/agx/g17g_context.py",
+      "source_sha256": "0399f2120761673ce83efc37d49401a0e1369743c1c308e614691632e91e139b",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_vm_layout",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_context1.py",
+      "sha256": "9d84d38369e3b2446219f1b341e07bb7c45bbc2ed75d2cf1b432f8334576fd29",
+      "source_path": "proxyclient/m1n1/agx/g17g_context1.py",
+      "source_sha256": "7e9914a61d3fcfb781e39ff154b30392235157da920c16206e066ef2a839c2e1",
+      "source_commit": "ee4e262ffbdd68d352f7ade798ebc5e4c8c8f6e3",
+      "source_saved_patch": false,
+      "imports": [
+        "hashlib",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_crash.py",
+      "sha256": "3244dffb9aebdd78f49f083eaec0b7454e6f6a4d53cb79b87f37c02e80e20d65",
+      "source_path": "proxyclient/m1n1/agx/g17g_crash.py",
+      "source_sha256": "8f39037a3cb00f1f1ef0108499a38b08a5f0597421b3c9d73472a9959bd71fed",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_sync",
+        "hashlib",
+        "json",
+        "m1n1.fw.asc.crash",
+        "m1n1.g17g_adt",
+        "pathlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_defaults.py",
+      "sha256": "10a1be8ceef9c218eb0dc369f4ed338c3bb9169b333da294b53646f90527ba17",
+      "source_path": "proxyclient/m1n1/agx/g17g_defaults.py",
+      "source_sha256": "c828cd736f38d35686f8dc011bd95a86ac09386f967aa33701d43728ee869ba2",
+      "source_commit": "ee4e262ffbdd68d352f7ade798ebc5e4c8c8f6e3",
+      "source_saved_patch": false,
+      "imports": [
+        "."
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_direct_pair_assets.py",
+      "sha256": "47f4010325e6eb5edd537e82212d5f70acf630c6c18563fd30a6b7b6e25db926",
+      "source_path": "proxyclient/m1n1/agx/g17g_direct_pair_assets.py",
+      "source_sha256": "79afae75224adba3305ea924ca383e19ef9b448f38f667527167dddb5073280e",
+      "source_commit": "2ab49dac0473a753d080fd0296d4ae39f5d4eab4",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        "base64",
+        "hashlib",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_drm_sync.py",
+      "sha256": "3876c5b770263714562d308927b27edd6963247645895f6a3cc1bbeaa18303cd",
+      "source_path": "proxyclient/m1n1/agx/g17g_drm_sync.py",
+      "source_sha256": "aafa8e14f2efeaf80c50dad2e25a02a9c88569df01d3c47a770aaa0b75074411",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_sync"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_drm_uapi.py",
+      "sha256": "8a35bd6212f9491ce3535f7a2f8e5ce83f420b0762ed1f700c4845c3c934890e",
+      "source_path": "proxyclient/m1n1/agx/g17g_drm_uapi.py",
+      "source_sha256": "415361ee5b0a0e04842d0b20267894d162be488e7a2e52fd5f15bf2940c56842",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_uapi",
+        "ctypes"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_encoder.py",
+      "sha256": "42b696318dd78f2d33b7c1579158bbdedb0bcd23943569fbe7aff624d38e0d45",
+      "source_path": "proxyclient/m1n1/agx/g17g_encoder.py",
+      "source_sha256": "37af9661ff763553dfa381cf14d98cceaf5da9b196a45c5280d9f0d6fb514c97",
+      "source_commit": "2ab49dac0473a753d080fd0296d4ae39f5d4eab4",
+      "source_saved_patch": false,
+      "imports": [
+        "dataclasses",
+        "hashlib",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_growth.py",
+      "sha256": "a9001b11ad58cc5aa5ec3ae1120ea4e2b24edba693a86395b04c6a09b0301e4c",
+      "source_path": "proxyclient/m1n1/agx/g17g_growth.py",
+      "source_sha256": "805f6b0d9dcd8f6e958111a65d05a959f4edf08253ff8ce372fb93a056037d28",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".g17g_uat",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_growth_service.py",
+      "sha256": "290c9bb49d6520fa16bd7cc84baffff6255d52b5ef18a626781b06ab1116bff1",
+      "source_path": "proxyclient/m1n1/agx/g17g_growth_service.py",
+      "source_sha256": "aababdd9547bfebd36af63fe80e27331eb7ad29853867f9ed3f9870f9c979d10",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_history.py",
+      "sha256": "1271a601a3705bfa1731c8bc1617fe0e1f0a18f3e243051090395d96346bccf0",
+      "source_path": "proxyclient/m1n1/agx/g17g_history.py",
+      "source_sha256": "ed3939e601808bef93cf752855b629202902fe3883e63478680bae651d9c67d2",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_info.py",
+      "sha256": "878e5bb0e163b8d7c41eb1c506da5b999b1d2d454cca5195f138257274c93755",
+      "source_path": "proxyclient/m1n1/agx/g17g_info.py",
+      "source_sha256": "6c5079f5ea7f1e4f1c9a6dc6cecc10efa56aa06735d9a78ea7fd53f7d14c8ffe",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_modern",
+        ".g17g_uapi",
+        "errno"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_initdata.py",
+      "sha256": "8bb92f6b5966a53d6a8386886a184a6f8c00d79f0555f94a9265ebcc7f776972",
+      "source_path": "proxyclient/m1n1/agx/g17g_initdata.py",
+      "source_sha256": "c2298e73f5da16293f2a0214ed4503d3975f63a93b029bfebac86ea360bfe6fe",
+      "source_commit": "cb1d0481bd8125813788c4b0c54d0bf2e19dd045",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_ioctl.py",
+      "sha256": "ac15d0eb1b9128e0df525dd2cd19186ff0265b71116ed3a06941a211d30ca8d5",
+      "source_path": "proxyclient/m1n1/agx/g17g_ioctl.py",
+      "source_sha256": "648859130149db33facf8dbc7dc4d9d55e0fb52d7a10560a3d6675483e833f0f",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        ".g17g_drm_sync",
+        ".g17g_modern",
+        "ctypes",
+        "errno",
+        "os",
+        "struct",
+        "threading",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_mapping_client.py",
+      "sha256": "25ae986d8e78a5ed6cd6b55d1902bfe6f3fc951bb16314234e609528fbc00db8",
+      "source_path": null,
+      "imports": [
+        "copy",
+        "threading"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_memory.py",
+      "sha256": "00506525f6b31670260a5fca7902925d4056174eb5141a6d02d43ee95c444d07",
+      "source_path": "proxyclient/m1n1/agx/g17g_memory.py",
+      "source_sha256": "44b08c080e3bbecc541ddadd3b886e922f450d56fbd9a88fd1c7634b1706ae4d",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_boot",
+        ".g17g_uapi",
+        "dataclasses",
+        "mmap"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_mixed_partial_assets.py",
+      "sha256": "96cfe9d896031da561720c8cd19609f6a9904d70b70d88cebbeb1c0b38753192",
+      "source_path": "proxyclient/m1n1/agx/g17g_mixed_partial_assets.py",
+      "source_sha256": "f465cb4062e3967aa23e6dec9e50d6532bf24c87f4ef1dae138bf1538bb98225",
+      "source_commit": "ede7abc8e224833b17955d03a916f118c12879d9",
+      "source_saved_patch": false,
+      "imports": [
+        "base64",
+        "hashlib",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_mixed_partial_native_tail.py",
+      "sha256": "e8c1ec7650574abe82d45eeb419eff6cc0840da344e437281ac882c9575b5db6",
+      "source_path": "proxyclient/m1n1/agx/g17g_mixed_partial_native_tail.py",
+      "source_sha256": "fa0f60aee69bc53a7c1ba08d143fbc9e4a47d4dbab11ff401b7c204cc1fd03a3",
+      "source_commit": "92af5e02032fb1e5c9fb6f565b1e7eb305daa900",
+      "source_saved_patch": false,
+      "imports": [
+        "base64",
+        "hashlib",
+        "struct",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_mixed_render_assets.py",
+      "sha256": "2a898a47d798785e5325c2de30c8b3ca709e1b911728b87eafd651efd00f20af",
+      "source_path": "proxyclient/m1n1/agx/g17g_mixed_render_assets.py",
+      "source_sha256": "4d863c225ffdbf8b7e221e72734227f1d2a38fb3a356a6127fb0a7faa753fbf5",
+      "source_commit": "cb1d0481bd8125813788c4b0c54d0bf2e19dd045",
+      "source_saved_patch": false,
+      "imports": [
+        "base64",
+        "hashlib",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_mixed_runtime.py",
+      "sha256": "74ef4b8ac899c55f8b5e6a0d0759f80439cbcb8cae14acbad4143476f18d71dd",
+      "source_path": "proxyclient/m1n1/agx/g17g_mixed_runtime.py",
+      "source_sha256": "feb297c69607f2395558f14288345bd1a37b7355de4b827804fb419e986d55e2",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_boot",
+        ".g17g_compute_queue",
+        ".g17g_history",
+        ".g17g_memory",
+        ".g17g_mixed_submit",
+        ".g17g_render_buffers",
+        ".g17g_render_queue",
+        ".g17g_render_runtime",
+        ".g17g_render_submit",
+        ".g17g_resident_queue",
+        ".g17g_runtime",
+        ".g17g_sync",
+        ".g17g_transfer",
+        ".g17g_tvb_runtime",
+        "copy",
+        "m1n1.fw.asc.base",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_mixed_submit.py",
+      "sha256": "bad618564558d2d9bbfe0d9d45c6c539a3627087ec36b148af384cfc5b992985",
+      "source_path": "proxyclient/m1n1/agx/g17g_mixed_submit.py",
+      "source_sha256": "d803d8bacdce54dce0d6c713c11135ba959e6376ad38df5cf76575c0986bdf31",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_barriers",
+        ".g17g_render_queue",
+        ".g17g_render_submit",
+        ".g17g_shim",
+        ".g17g_submit",
+        "dataclasses",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_modern.py",
+      "sha256": "f4abe0f31076ebc88beff32cb0e1265bc2d22315e90ddec5c337c35c66b02d78",
+      "source_path": "proxyclient/m1n1/agx/g17g_modern.py",
+      "source_sha256": "2b65fc541f750c71c8458f90ddf7fa3e09f5eedcd83c7bd7f67078ea8d72ef2a",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".g17g_sync",
+        ".g17g_uapi",
+        "dataclasses",
+        "errno",
+        "functools",
+        "threading"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_partial_assets.py",
+      "sha256": "508eac2509dca6a08eb4b93b58f0ec73e6d80748c113fa6646784bc84595ba10",
+      "source_path": "proxyclient/m1n1/agx/g17g_partial_assets.py",
+      "source_sha256": "c3f0651bef61bd7d15d2260e6950f70e4d35930c1572c8d4c938c95079c91e25",
+      "source_commit": "02428bddb9f366884cfb3885a12541430ad2ee68",
+      "source_saved_patch": false,
+      "imports": [
+        "base64",
+        "hashlib",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_partial_repeat_assets.py",
+      "sha256": "18016cada4a45cccb877ea36b41e48e62cbd94f7a6581622fcffd35977d81a9d",
+      "source_path": "proxyclient/m1n1/agx/g17g_partial_repeat_assets.py",
+      "source_sha256": "0a7345c723eeb9aa182a37064989c7faf9e5bf71694d165651dd6ebaaf384bdc",
+      "source_commit": "02428bddb9f366884cfb3885a12541430ad2ee68",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        "base64",
+        "hashlib",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_partial_runtime.py",
+      "sha256": "18cb311b87d16f0ac5ff7188a1b7f8d64d16bf43651adc7b50a934e8d98aeb18",
+      "source_path": "proxyclient/m1n1/agx/g17g_partial_runtime.py",
+      "source_sha256": "dc965604b21c01fdf78f16b6e8d2e45c99b8cf316dcd01bde063e0f7ed0ab0e3",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_boot",
+        ".g17g_transfer",
+        "m1n1.fw.asc.base",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_postcontrol.py",
+      "sha256": "e8917b5c09a6f5690eb41ec85486c1846626bb55ad95c50932986186bf835129",
+      "source_path": "proxyclient/m1n1/agx/g17g_postcontrol.py",
+      "source_sha256": "3ce7beb3337d77d982f1d38b90c05b333a6fc2065a5e0a820715d630903f201d",
+      "source_commit": "ede7abc8e224833b17955d03a916f118c12879d9",
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_render.py",
+      "sha256": "18b0a732540331844a4e333b06d7fe59b847c17f2759339d8ef1d8cfd6b35c0e",
+      "source_path": "proxyclient/m1n1/agx/g17g_render.py",
+      "source_sha256": "7d68d0b652e8114acba8e0b1d360d9087fcf7b93538e37336b61a89da9986b96",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".g17g_render_buffers",
+        "dataclasses",
+        "hashlib",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_render_batch.py",
+      "sha256": "4e58e9b9617b0504ac8f59fb0db7727d636ed002c76c7d53276c9e723511bf8d",
+      "source_path": "proxyclient/m1n1/agx/g17g_render_batch.py",
+      "source_sha256": "fb21c376a653b7cd3230b1d459d35e5e2c26852e81988a7560865aca5255bd53",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_boot",
+        ".g17g_compute_queue",
+        ".g17g_partial_runtime",
+        ".g17g_render_buffers",
+        ".g17g_render_queue",
+        ".g17g_render_submit",
+        ".g17g_sync",
+        "m1n1.fw.asc.base",
+        "math",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_render_buffers.py",
+      "sha256": "221ec0c838c1ca1c300dd590cdae0349faab270742cf4cc013cedb154792246f",
+      "source_path": "proxyclient/m1n1/agx/g17g_render_buffers.py",
+      "source_sha256": "9c2d50e17c75e503d35cb7f1e03b7f1199d15722746f24a097590ef00e5769de",
+      "source_commit": null,
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        ".g17g_render",
+        "dataclasses"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_render_compiler.py",
+      "sha256": "f00fbc87467eae3b769d7378e83abd11b89d51af088a1ff4f3e800eab7646e21",
+      "source_path": "proxyclient/m1n1/agx/g17g_render_compiler.py",
+      "source_sha256": "74fd4c54e783af7c2aae93e68288e5c80ea4afd1a6304d69b89fb03e7bbaa4c9",
+      "source_commit": "02428bddb9f366884cfb3885a12541430ad2ee68",
+      "source_saved_patch": false,
+      "imports": [
+        "base64",
+        "hashlib",
+        "zlib"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_render_queue.py",
+      "sha256": "c5d4c030e094b018f96a299eba6ac85350bebca07cce5ea7c34ae4af2c499317",
+      "source_path": "proxyclient/m1n1/agx/g17g_render_queue.py",
+      "source_sha256": "dbcd200a3e2dd9f5134050c0f95644eb7d517d08f5aa0ccb26eee4e9ef232bb7",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_compute_queue",
+        ".g17g_transfer",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_render_runtime.py",
+      "sha256": "f5324744ac43034759077132def0c062af1922fe64b266d7a41bed3113d884c4",
+      "source_path": "proxyclient/m1n1/agx/g17g_render_runtime.py",
+      "source_sha256": "8660f3e92d5963ff70e28f265cd1faa8766926772369107eef56fe8cbacabff4",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_boot",
+        ".g17g_compute_queue",
+        ".g17g_memory",
+        ".g17g_partial_runtime",
+        ".g17g_render_batch",
+        ".g17g_render_buffers",
+        ".g17g_render_queue",
+        ".g17g_render_submit",
+        ".g17g_resident_queue",
+        ".g17g_runtime",
+        ".g17g_stream",
+        ".g17g_sync",
+        ".g17g_transfer",
+        ".g17g_tvb_runtime",
+        "copy",
+        "m1n1.fw.asc.base",
+        "math",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_render_submit.py",
+      "sha256": "b1b5792d4620aa2f7729a07b099feb7fc7ec6958227688b98a93747f8a06c655",
+      "source_path": "proxyclient/m1n1/agx/g17g_render_submit.py",
+      "source_sha256": "68f93353fe44eb927906a5aeaf3ddb42f3c83ffe8e451b16fde219af09732c04",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_barriers",
+        ".g17g_render_buffers",
+        ".g17g_render_queue",
+        ".g17g_shim",
+        ".g17g_timestamp",
+        ".g17g_uapi",
+        "dataclasses",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_resident_queue.py",
+      "sha256": "481cc9a275c28752c3b0e9e28d09d73ac15acc5edf9a8d45017f7b2a93e15396",
+      "source_path": "proxyclient/m1n1/agx/g17g_resident_queue.py",
+      "source_sha256": "70076159650aa59c6680dd91a3e1da359f4756c83da328ee11491a54601853c7",
+      "source_commit": null,
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        ".g17g_barriers",
+        ".g17g_compute_queue",
+        ".g17g_render_queue",
+        ".g17g_transfer",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_runtime.py",
+      "sha256": "28f1ecfddfe64f66977f0ca5a3e9debed58631cde413f4b0951527ba807f9efa",
+      "source_path": "proxyclient/m1n1/agx/g17g_runtime.py",
+      "source_sha256": "53a02a9e8ab9125a50dc680c48847b5ad5822d6759686ca00a37eaee5597fc97",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_boot",
+        ".g17g_compute_queue",
+        ".g17g_memory",
+        ".g17g_submit",
+        ".g17g_sync",
+        ".g17g_transfer",
+        "m1n1.fw.asc.base",
+        "m1n1.hw.uat",
+        "math",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_shim.py",
+      "sha256": "dde434b84cbe590453aa4ec2985c67272ed4bd0e00fe105617f7e694a57c0768",
+      "source_path": "proxyclient/m1n1/agx/g17g_shim.py",
+      "source_sha256": "86b4e22f367f2fd5919f2c8cbfc4c66f1d9d72c7fde81408b1042be7cdf2d739",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "."
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_sparse_read.py",
+      "sha256": "b2ada268c206bb53a6f65cfa49ad600041092d5b46d5e8d8263a9a3e9d9335d9",
+      "source_path": "proxyclient/m1n1/agx/g17g_sparse_read.py",
+      "source_sha256": "e83e812cc0961c5831af27b2d0556351150afeb242673fa674ab41d7dfdb5731",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_stream.py",
+      "sha256": "5b03999bd9eeb0a34223fdbeaa5091603d3864ebd2a40de0ef07e65f84c16a73",
+      "source_path": "proxyclient/m1n1/agx/g17g_stream.py",
+      "source_sha256": "a8700d43e39ad5c0cbec2a2e2ab4676d76b88fb00a451c2e627af0e9afb06583",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "..proxy",
+        ".g17g_transfer",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_submit.py",
+      "sha256": "731be030f57381f12a55259a219441859f920a9a0d9fbedd5a83624a2c3239b5",
+      "source_path": "proxyclient/m1n1/agx/g17g_submit.py",
+      "source_sha256": "908e56fc141286d6c5cd1466f7662e221da4759e343c35e6da29bf2b247ef993",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_barriers",
+        ".g17g_shim",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_sync.py",
+      "sha256": "1ea195bf834232c1ca3c8d9080ca3f5b8f74318a42a1a318886fbeda382ec3b7",
+      "source_path": "proxyclient/m1n1/agx/g17g_sync.py",
+      "source_sha256": "761b848a9fca7006c886077d548e599e1ac82a12e3830c595430363580ab55b0",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_growth",
+        "enum",
+        "struct",
+        "time"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_timestamp.py",
+      "sha256": "d8fc5a01e0a1e9a510f4b6d31010c4540719ace8e20a47a92b1870aebee3054f",
+      "source_path": "proxyclient/m1n1/agx/g17g_timestamp.py",
+      "source_sha256": "66bdb3d0d800fdb06c57f92a5dcb07207d163055954138ce65dc88dc0fa811b9",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".g17g_boot",
+        ".g17g_render",
+        ".g17g_uat",
+        "errno"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_transfer.py",
+      "sha256": "8aa32408054281b7a57370cb85995a1446ce3c9c3c56da342486238da068ba69",
+      "source_path": "proxyclient/m1n1/agx/g17g_transfer.py",
+      "source_sha256": "3c320a678f04220d79457c8682244c5d406479c67961417a3e007956cf06aed9",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_tvb_runtime.py",
+      "sha256": "9fd9ef92d0fb925a70ae3caf94bea001b59dcf8dc2e0e2b2ffbc4ceda53d3654",
+      "source_path": "proxyclient/m1n1/agx/g17g_tvb_runtime.py",
+      "source_sha256": "7518615823089ea1c8a426f8f29bccf6fa357d9602a93f081262c070c4ab4b16",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        ".",
+        ".g17g_growth",
+        ".g17g_growth_service",
+        "m1n1.fw.asc.base",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_uapi.py",
+      "sha256": "f838dbefb0e435623d37d354edce2a3ed63331b9aa54e4c198228e23d4f6765b",
+      "source_path": "proxyclient/m1n1/agx/g17g_uapi.py",
+      "source_sha256": "b7bdfc79288db2a6ca9711c15623ca1ebf921edff528448860721548f17c947e",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "ctypes",
+        "dataclasses"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_uat.py",
+      "sha256": "c882be4977c095d56f9e4449b7cc0722e187169e4f60d0dc87654f126e52ab4f",
+      "source_path": "proxyclient/m1n1/agx/g17g_uat.py",
+      "source_sha256": "c1c30c21a1ebb35d7255857f9d96c7dc41363b7319bc62676ac72c926b940767",
+      "source_commit": "ee4e262ffbdd68d352f7ade798ebc5e4c8c8f6e3",
+      "source_saved_patch": false,
+      "imports": [
+        "."
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/drm_shim/g17g_vm_layout.py",
+      "sha256": "49a29846258681d952e6cfbc617e9df31506957000685717fbf38902bbac8016",
+      "source_path": "proxyclient/m1n1/agx/g17g_vm_layout.py",
+      "source_sha256": "7c6c4edaab87941cc5fdd0d30a8204cdfc75a918f4717cbf4c0a5e76a72eb386",
+      "source_commit": null,
+      "source_saved_patch": false,
+      "imports": [
+        ".",
+        ".g17g_context",
+        "m1n1.drm_shim",
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/g17g_adt.py",
+      "sha256": "0a039b80e9b95a5319a74c1c5968b4412c351b47dc743ef7e541ffe42990b543",
+      "source_path": "proxyclient/m1n1/g17g_adt.py",
+      "source_sha256": "11e9879e34cf917e39d42608b0d93da218e26bcb2bf0ad43ad2d067b042f050c",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "struct"
+      ]
+    },
+    {
+      "path": "proxyclient/m1n1/g17g_shim_entry.py",
+      "sha256": "79453c97e9f94dfe112c0beb22e6dce3ffcc73193acd8b0cd311fa6e2bba7658",
+      "source_path": "proxyclient/m1n1/g17g_shim_entry.py",
+      "source_sha256": "b48cfb22ad1aac5b984c7445f7d243393e914829bb0104ff35c0c8f915b70303",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        ".drm_shim.g17g_adapter",
+        ".drm_shim.g17g_boot",
+        ".drm_shim.g17g_info",
+        ".drm_shim.g17g_ioctl",
+        ".drm_shim.g17g_modern",
+        ".proxy",
+        ".proxyutils",
+        "errno",
+        "os",
+        "pathlib"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/_g17g_compute_reference.py",
+      "sha256": "792bf1c87a122b6752dc9f5409a589d8bac350d73be29aa01181b6c487686ce2",
+      "source_path": "proxyclient/experiments/agx_g17g_coldboot_init.py",
+      "source_sha256": "bbe9bf8a0f6bbb08f75e1fa00e994aeaefc1b3097603f14a06ed52ea382d9e6c",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "source_functions": [
+        "publish_compute_batch"
+      ],
+      "imports": []
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/_g17g_heap_pressure.py",
+      "sha256": "b49227879d65a1a55cfb045bcbbb05815e74fd871e4bfc9dd539b6760b0c18fd",
+      "source_path": "proxyclient/experiments/g17g_heap_pressure.py",
+      "source_sha256": "04b9eeeb038661332f70e8a0af6ec0f462abe8eabe9ea1b31b9c6cda0f1292b9",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "source_functions": [],
+      "imports": []
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/_g17g_render_callers.py",
+      "sha256": "b656c682e601fbe0f07a27819bf1f786990420365e9319ef29199ae78510f97c",
+      "source_path": "proxyclient/experiments/agx_g17g_runtime_render_smoke.py",
+      "source_sha256": "78a07c42fee0522bf044e0e576dee0c358cab1703590216a11f0822a59f47212",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "source_functions": [
+        "command_bytes",
+        "caller_case"
+      ],
+      "additional_source": {
+        "path": "proxyclient/experiments/agx_g17g_runtime_partial_smoke.py",
+        "function": "caller_vdm_page"
+      },
+      "imports": [
+        "dataclasses",
+        "m1n1.drm_shim",
+        "struct"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g.py",
+      "sha256": "85a45229bfd42ab4fdce3f2af7911ae003e2954efeeeda6fafdc47ee604bd6da",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g.py",
+      "source_sha256": "685d152e096fd58d4a49d52c74c656c555ab995f7b57ec352692e4acb4648ee5",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "dataclasses",
+        "hashlib",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_growth",
+        "m1n1.drm_shim.g17g_shim",
+        "pathlib",
+        "struct",
+        "sys",
+        "unittest"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_adapter.py",
+      "sha256": "9c410fa02d506c8c6f9efdb76a6ae2e63254123ab2013117998b76a1c134317f",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_adapter.py",
+      "source_sha256": "5c7537573906b4b2bae1c42ab7b656c90bd60029df5133d49831c243a61e060b",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "dataclasses",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_adapter",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_memory",
+        "m1n1.drm_shim.g17g_mixed_runtime",
+        "m1n1.drm_shim.g17g_mixed_submit",
+        "m1n1.drm_shim.g17g_partial_runtime",
+        "m1n1.drm_shim.g17g_render_runtime",
+        "m1n1.drm_shim.g17g_render_submit",
+        "m1n1.drm_shim.g17g_runtime",
+        "m1n1.drm_shim.g17g_submit",
+        "m1n1.drm_shim.g17g_sync",
+        "m1n1.drm_shim.g17g_uapi",
+        "struct",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_barriers.py",
+      "sha256": "edab59624cf86c1faa1b9e92e0e2260d31eeb519b4084daa15c2b9dac5f0b9bf",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_barriers.py",
+      "source_sha256": "8306ed575f82378566571ca2a2790dd18f5befc73104266f075331c859fcb396",
+      "source_commit": null,
+      "source_saved_patch": false,
+      "imports": [
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_barriers",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_mixed_submit",
+        "m1n1.drm_shim.g17g_uapi",
+        "struct",
+        "types",
+        "unittest"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_boot.py",
+      "sha256": "9788de0a7f1b57519a12d932230b620620424fbb72a1b81e25fe9775a2f73890",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_boot.py",
+      "source_sha256": "e64e38811d78dda66190daa02abfec43dbf83ece13a314316352994b9716c4ec",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "contextlib",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_backend",
+        "m1n1.drm_shim.g17g_crash",
+        "m1n1.drm_shim.g17g_initdata",
+        "m1n1.drm_shim.g17g_runtime",
+        "m1n1.drm_shim.g17g_sync",
+        "m1n1.g17g_adt",
+        "pathlib",
+        "struct",
+        "subprocess",
+        "sys",
+        "tempfile",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_compute_queue.py",
+      "sha256": "560f5e6799d5254405df9c5b952906742b087ab9944456c1e52d4153a3cc8548",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_compute_queue.py",
+      "source_sha256": "21043fdc8de4df7b59da5eddfe1fca0bfbf575a9144b9dad2a95206d7237e7e2",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_submit",
+        "struct",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_compute_reference.py",
+      "sha256": "60b167ede7bb82269732bb485833d1ef0cc095e0ce9d874e723ed8bedd4fbb7c",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_compute_reference.py",
+      "source_sha256": "43b1bc4bf28365061cf35871c8762d704b69eb305630aa131e363cc12c29607e",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "ast",
+        "functools",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "pathlib",
+        "struct",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_context.py",
+      "sha256": "03605104a6cb1d9bbfd801070c2bc6c1796c791a7c2dd993ccfa7de5f170ed23",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_context.py",
+      "source_sha256": "018da9cf19ccccf192ffe94c28e54a8f992cb45b740175834480bf75537803ee",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "m1n1.drm_shim.g17g_context",
+        "m1n1.drm_shim.g17g_memory",
+        "tests.python.test_proxyclient.test_m1n1",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_entry.py",
+      "source_path": null,
+      "sha256": "9ef4f2c6eec10df7f91d19a6eae344084fdb96aa07f28cf2473141f3b9cc1f5b",
+      "imports": [
+        "importlib.abc",
+        "m1n1.drm_shim.g17g_adapter",
+        "m1n1.drm_shim.g17g_boot",
+        "m1n1.g17g_shim_entry",
+        "os",
+        "pathlib",
+        "sys",
+        "tempfile",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_growth_service.py",
+      "sha256": "bf3f179314535e5b7a5a9b71ba3336e6684a83ed2f09ea9aa9b3b82d5247fdae",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_growth_service.py",
+      "source_sha256": "17d91731cb042c8f9008024aea1d9fec807b702c650cc39b9bf1ab2fd4e41ba3",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "_g17g_heap_pressure",
+        "contextlib",
+        "m1n1.drm_shim.g17g_crash",
+        "m1n1.drm_shim.g17g_growth",
+        "m1n1.drm_shim.g17g_growth_service",
+        "m1n1.drm_shim.g17g_stream",
+        "m1n1.malloc",
+        "struct",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_history.py",
+      "sha256": "bf61cf637c0f747f2ed11039ae13ff970942bae297a715939fd3d0ad3a0b7ffd",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_history.py",
+      "source_sha256": "86368923b89dde53209f552dd25b16e81aca78399d9302204401637fc8ecca2c",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_history",
+        "struct",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_info.py",
+      "sha256": "0735321a0b141678bfac352baceebf13f0445f81a044adf2956ce46ad6ccfd9d",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_info.py",
+      "source_sha256": "4ae490e08fe75e2107482d91e6c71c052992bbb77c4892e0d827f78398cb7f52",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "m1n1.drm_shim.g17g_info",
+        "pathlib",
+        "sys",
+        "unittest"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_ioctl.py",
+      "sha256": "1126e6e005853b69164a938ca05c88168a6d2bce512c22eead5c3cd67055712c",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_ioctl.py",
+      "source_sha256": "85007d214d4f09f5ffa511ee904c0eb75e68fb56f697fc29982f5a835ef96ed8",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "concurrent.futures",
+        "ctypes",
+        "errno",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_ioctl",
+        "m1n1.drm_shim.g17g_modern",
+        "m1n1.drm_shim.g17g_sync",
+        "os",
+        "pathlib",
+        "struct",
+        "subprocess",
+        "sys",
+        "tempfile",
+        "threading",
+        "time",
+        "unittest"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_mapping_client.py",
+      "sha256": "95fa67bdd9813e05c4dbde9014383363b0ff7d0b6db07c104e5caf1b4e409942",
+      "source_path": null,
+      "imports": [
+        "m1n1.drm_shim.g17g_boot",
+        "m1n1.drm_shim.g17g_growth",
+        "m1n1.drm_shim.g17g_mapping_client",
+        "m1n1.drm_shim.g17g_uat",
+        "pathlib",
+        "struct",
+        "sys",
+        "tempfile",
+        "types",
+        "unittest"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_memory.py",
+      "sha256": "e864858f8c228902c94e7e53279b80a36aecb4bd570e134c6b0c64284729cdaf",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_memory.py",
+      "source_sha256": "44ef24ff66c18a7c931723321e667e9fd3f0bea7c67969a41aa191796cd31e0e",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "m1n1.drm_shim.g17g_memory",
+        "m1n1.drm_shim.g17g_modern",
+        "m1n1.drm_shim.g17g_uapi",
+        "tempfile",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_mixed_submit.py",
+      "sha256": "a24b6e42e6a1849062375da97a35e22f69a08dc42beed2bb78beebf6d5443aac",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_mixed_submit.py",
+      "source_sha256": "f9aac8f161fe42ce1e79c675c913e44e0440eb2c8f2b89788b0158dd19c3fc70",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "contextlib",
+        "copy",
+        "dataclasses",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_mixed_runtime",
+        "m1n1.drm_shim.g17g_mixed_submit",
+        "m1n1.drm_shim.g17g_sync",
+        "m1n1.drm_shim.g17g_timestamp",
+        "struct",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_modern.py",
+      "sha256": "1f08f6fcf7d50ac05f19a80174673060378334961d72a5fdc457706f41de5847",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_modern.py",
+      "source_sha256": "c02d88f37fcf8e216ec64c7c90aa2d56229f24b83c1f882f76feec4d72242420",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "concurrent.futures",
+        "ctypes",
+        "errno",
+        "m1n1.drm_shim",
+        "pathlib",
+        "sys",
+        "threading",
+        "unittest"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_render_queue.py",
+      "sha256": "2ab06db7183cb0de38f5589ef0a96ecb2a3ed478aa8d735cda06e160bd116978",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_render_queue.py",
+      "source_sha256": "1c30fd945cfe0596f2bf70da54a566c71f454ff37b6fc71c2efebec09ca7c5e2",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_render_queue",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_render_submit.py",
+      "sha256": "9e67d356386c1219b2a449591eab5b0fbdda53af6dec14a6d433efa425c686d3",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_render_submit.py",
+      "source_sha256": "6ba16f499761e205926c1df068e0e92e5f6b6a5e35ccd7dbe4a09f17d158fc97",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "_g17g_render_callers",
+        "contextlib",
+        "copy",
+        "dataclasses",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_mixed_submit",
+        "m1n1.drm_shim.g17g_partial_runtime",
+        "m1n1.drm_shim.g17g_render_batch",
+        "m1n1.drm_shim.g17g_render_buffers",
+        "m1n1.drm_shim.g17g_render_runtime",
+        "m1n1.drm_shim.g17g_render_submit",
+        "m1n1.drm_shim.g17g_shim",
+        "m1n1.drm_shim.g17g_stream",
+        "m1n1.drm_shim.g17g_sync",
+        "m1n1.drm_shim.g17g_timestamp",
+        "m1n1.drm_shim.g17g_transfer",
+        "struct",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_resident.py",
+      "sha256": "b00857070573d85a2456ddf873c8ecfde08a4a247771eac2d9da3e91680bcf86",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_resident.py",
+      "source_sha256": "841ccd42fb0e3f5a4c0e7ff6648abe031b6ba717b36f192f4e44419cd42d1e4e",
+      "source_commit": null,
+      "source_saved_patch": false,
+      "imports": [
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_barriers",
+        "m1n1.drm_shim.g17g_compute",
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_memory",
+        "m1n1.drm_shim.g17g_mixed_submit",
+        "m1n1.drm_shim.g17g_resident_queue",
+        "m1n1.drm_shim.g17g_submit",
+        "m1n1.drm_shim.g17g_uapi",
+        "m1n1.drm_shim.g17g_vm_layout",
+        "struct",
+        "types",
+        "unittest"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_timestamp.py",
+      "sha256": "67d6a85c4033fc6ccd1b04b767e34242a3c989c2111b9f53cd43b12bbb8b17a5",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_timestamp.py",
+      "source_sha256": "3ca706f76c0c992a5ccc8b08dce53c3a3965878f24ed06b3e9f10b0c866f2960",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "m1n1.drm_shim.g17g_compute_queue",
+        "m1n1.drm_shim.g17g_memory",
+        "m1n1.drm_shim.g17g_modern",
+        "m1n1.drm_shim.g17g_render",
+        "m1n1.drm_shim.g17g_submit",
+        "m1n1.drm_shim.g17g_timestamp",
+        "struct",
+        "tempfile",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_transfer.py",
+      "sha256": "796b8caeb4b6070701502b0b4fd5f1afbcd9990e0bb0c3682150cf1c38fa801a",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_transfer.py",
+      "source_sha256": "27270acd0f6a5caddc94259be6c049295f4a01e7b45e302e9852db668a6a4203",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": false,
+      "imports": [
+        "contextlib",
+        "m1n1.drm_shim.g17g_transfer",
+        "random",
+        "struct",
+        "unittest",
+        "unittest.mock"
+      ]
+    },
+    {
+      "path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_tvb_runtime.py",
+      "sha256": "c26e61aec3420f6d0a2e5e5fd7de6298bd605c5cce7defb1326a86a886c0c6da",
+      "source_path": "tests/python/test_proxyclient/test_m1n1/test_agx_g17g_tvb_runtime.py",
+      "source_sha256": "9859ad038e8ccf02631798ec2535e47c4c5f35970fa12e39a34bf229123ea3e3",
+      "source_commit": "c852298d27372d1b625e753c06f350b19fe07e63",
+      "source_saved_patch": true,
+      "imports": [
+        "copy",
+        "m1n1.drm_shim",
+        "m1n1.drm_shim.g17g_mixed_submit",
+        "m1n1.drm_shim.g17g_render_submit",
+        "m1n1.drm_shim.g17g_tvb_runtime",
+        "struct",
+        "types",
+        "unittest",
+        "unittest.mock"
+      ]
+    }
+  ],
+  "modified_upstream_source": {
+    "path": "proxyclient/m1n1/constructutils.py",
+    "sha256": "c0e99e6ba0564c7004bd683165efdf8d038209ceee3fa20379db777e17e872cc",
+    "change": "G15/G15X public Asahi version labels only"
+  }
+}
