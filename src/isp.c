@@ -16,6 +16,7 @@
 #define ISP_VER_T6020 0xc3091
 #define ISP_VER_T8122 0xf1001
 #define ISP_VER_T603X 0xf3001
+#define ISP_VER_T8140 0x110000
 
 // PMGR offset to enable to get the version info to work
 #define ISP_PMGR_T8103 0x4018
@@ -42,6 +43,7 @@ u64 isp_iova_base(void)
     switch (chip_id) {
         case 0x6020 ... 0x6fff:
         case 0x8122:
+        case T8140:
             return 0x10000000000;
         default:
             return 0;
@@ -85,6 +87,7 @@ int isp_init(void)
         case T8103:
         case T8112:
         case T8122:
+        case T8140:
             pmgr_off = ISP_PMGR_T8103;
             break;
         case T6000 ... T6002:
@@ -165,6 +168,14 @@ int isp_init(void)
                     return -1;
             }
             break;
+        case ISP_VER_T8140:
+            if (chip_id != T8140) {
+                printf("isp: unexpected Neo revision on another SoC\n");
+                return -1;
+            }
+            /* The 26.6.x Neo firmware starts IPC above its 34 MiB heap. */
+            heap_top = 0x2200000;
+            break;
         default:
             printf("isp: unknown revision 0x%x\n", ver_rev);
             return -1;
@@ -174,9 +185,15 @@ int isp_init(void)
     u32 segments_len;
 
     seg = adt_getprop(adt, isp_node, "segment-ranges", &segments_len);
+    if (!seg || segments_len < 2 * sizeof(*seg) || segments_len % sizeof(*seg))
+        return -1;
     unsigned int count = segments_len / sizeof(*seg);
 
     heap_iova = seg[count - 1].iova + seg[count - 1].size;
+    if (heap_iova >= heap_top) {
+        printf("isp: firmware segments exceed the supported heap\n");
+        return -1;
+    }
     heap_size = heap_top - heap_iova;
     heap_phys = top_of_memory_alloc(heap_size);
 
