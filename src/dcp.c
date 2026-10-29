@@ -106,10 +106,12 @@ int dcp_work(dcp_dev_t *dcp)
     return afk_epic_work(dcp->afk, -1);
 }
 
-static int dcp_create_firmware_mappings(const display_config_t *cfg, dcp_dev_t *dcp)
+int dcp_create_firmware_mappings(const char *path, dart_dev_t *dart, bool skip_oslog)
 {
     int created = 0;
-    int dcp_node = adt_path_offset(adt, cfg->dcp);
+    int dcp_node = adt_path_offset(adt, path);
+    if (dcp_node < 0)
+        return -1;
     int node = adt_first_child_offset(adt, dcp_node);
     if (node < 0) {
         printf("dcp: iop-dcp*-nub not found!\n");
@@ -124,17 +126,37 @@ static int dcp_create_firmware_mappings(const display_config_t *cfg, dcp_dev_t *
     u32 segments_len;
 
     seg = adt_getprop(adt, node, "segment-ranges", &segments_len);
+    if (!seg || !segments_len || segments_len % sizeof(*seg)) {
+        printf("dcp: invalid firmware segment ranges\n");
+        return -1;
+    }
     unsigned int count = segments_len / sizeof(*seg);
+    u32 names_len;
+    const char *names = adt_getprop(adt, node, "segment-names", &names_len);
+    const char *name = names;
 
     for (unsigned int i = 0; i < count; i++) {
+        bool oslog = false;
+        if (name && name < names + names_len) {
+            size_t len = strnlen(name, names + names_len - name);
+            const char *separator = memchr(name, ';', len);
+            size_t name_len = separator ? (size_t)(separator - name) : len;
+            oslog = name_len == 8 && !memcmp(name, "__OS_LOG", 8);
+            name = separator ? separator + 1 : NULL;
+        } else if (skip_oslog) {
+            printf("dcp: missing firmware segment name #%u\n", i);
+            return -1;
+        }
+        if (skip_oslog && oslog)
+            continue;
         u64 iova = seg[i].remap & ~asc_dram_mask;
-        if (dart_translate_silent(dcp->dart_dcp, iova))
+        if (dart_translate_silent(dart, iova))
             continue;
 
         size_t len = ALIGN_UP(seg[i].size, SZ_16K);
         u32 flags = i == 0 ? 0b0100 : 0; // TEXT gets this bit set?
         printf("dcp: Mapping segment #%u %lx -> %lx [%lx]\n", i, iova, seg[i].phys, len);
-        if (dart_map_flags(dcp->dart_dcp, iova, (void *)seg[i].phys, len, flags)) {
+        if (dart_map_flags(dart, iova, (void *)seg[i].phys, len, flags)) {
             printf("dcp: Failed to map segment\n");
             return -1;
         }
@@ -194,7 +216,7 @@ dcp_dev_t *dcp_init(const display_config_t *cfg)
 
     dcp->iovad_dcp = iovad_init(vm_base + 0x10000000, vm_base + 0x20000000);
 
-    int ret = dcp_create_firmware_mappings(cfg, dcp);
+    int ret = dcp_create_firmware_mappings(cfg->dcp, dcp->dart_dcp, false);
     if (ret < 0) {
         printf("dcp: failed to create firmware mappings\n");
         goto out_iovad;

@@ -48,4 +48,6 @@ dcp_dev_t *dcp_init(const display_config_t *config);
 
 int dcp_shutdown(dcp_dev_t *dcp, bool sleep);
 
+int dcp_create_firmware_mappings(const char *path, dart_dev_t *dart, bool skip_oslog);
+
 #endif
