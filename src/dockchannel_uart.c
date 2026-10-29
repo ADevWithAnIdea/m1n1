@@ -144,11 +144,26 @@ static ssize_t dockchannel_uart_iodev_write(void *opaque, const void *buf, size_
     return len;
 }
 
+/* A writable FIFO may have room for less than the entire console string. */
+static ssize_t dockchannel_uart_iodev_queue(void *opaque, const void *buf, size_t len)
+{
+    UNUSED(opaque);
+    const u8 *p = buf;
+    size_t wrote = 0;
+
+    if (!uart_base)
+        return 0;
+    while (wrote < len && read32(uart_base + DATA_TX_FREE))
+        write32(uart_base + DATA_TX8, p[wrote++]);
+    return wrote;
+}
+
 static struct iodev_ops iodev_dockchannel_uart_ops = {
     .can_read = dockchannel_uart_iodev_can_read,
     .can_write = dockchannel_uart_iodev_can_write,
     .read = dockchannel_uart_iodev_read,
     .write = dockchannel_uart_iodev_write,
+    .queue = dockchannel_uart_iodev_queue,
 };
 
 struct iodev iodev_dockchannel_uart = {

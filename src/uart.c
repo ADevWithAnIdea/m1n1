@@ -173,11 +173,27 @@ static ssize_t uart_iodev_write(void *opaque, const void *buf, size_t len)
     return len;
 }
 
+/* Console output must not wait for a debug receiver to drain its FIFO.
+ * Keep the blocking write operation for complete proxy protocol messages. */
+static ssize_t uart_iodev_queue(void *opaque, const void *buf, size_t len)
+{
+    UNUSED(opaque);
+    const u8 *p = buf;
+    size_t wrote = 0;
+
+    if (!uart_base)
+        return len;
+    while (wrote < len && (read32(uart_base + UTRSTAT) & UTRSTAT_TXBE))
+        write32(uart_base + UTXH, p[wrote++]);
+    return wrote;
+}
+
 static struct iodev_ops iodev_uart_ops = {
     .can_read = uart_iodev_can_read,
     .can_write = uart_iodev_can_write,
     .read = uart_iodev_read,
     .write = uart_iodev_write,
+    .queue = uart_iodev_queue,
 };
 
 struct iodev iodev_uart = {

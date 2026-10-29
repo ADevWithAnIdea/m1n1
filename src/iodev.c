@@ -210,7 +210,7 @@ void iodev_console_write(const void *buf, size_t length)
             size_t block = min(con_wp - con_rp[id], CONSOLE_BUFFER_SIZE - buf_rp);
 
             dprintf("  write buf %d\n", block);
-            ssize_t ret = iodev_write(id, &con_buf[buf_rp], block);
+            ssize_t ret = iodev_queue(id, &con_buf[buf_rp], block);
 
             if (ret <= 0)
                 goto next_dev;
@@ -223,7 +223,7 @@ void iodev_console_write(const void *buf, size_t length)
 
         // Write the current buffer
         while (wrote < length) {
-            ssize_t ret = iodev_write(id, p, length - wrote);
+            ssize_t ret = iodev_queue(id, p, length - wrote);
 
             if (ret <= 0)
                 goto next_dev;
