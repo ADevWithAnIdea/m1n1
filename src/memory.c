@@ -386,6 +386,17 @@ void mmu_add_mapping(u64 from, u64 to, size_t size, u8 attribute_index, u64 perm
     sysop("isb");
 }
 
+void mmu_retype_mapping(u64 from, u64 to, size_t size, u8 attribute_index, u64 perms)
+{
+    if (mmu_map(from, 0, size) < 0)
+        panic("Failed to break MMU mapping at 0x%lx (0x%lx)\n", from, size);
+    sysop("dsb ishst");
+    sysop("tlbi vmalle1is");
+    sysop("dsb ish");
+    sysop("isb");
+    mmu_add_mapping(from, to, size, attribute_index, perms);
+}
+
 void mmu_rm_mapping(u64 from, size_t size)
 {
     if (mmu_map(from, 0, size) < 0)
