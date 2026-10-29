@@ -515,6 +515,30 @@ static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_
             goto cleanup;
     }
 
+    if (neo) {
+        static const char *adt_names[] = {
+            "dp-training-table", "dp-training-table-hbr2", "dp-training-table-hbr3",
+        };
+        static const char *fdt_names[] = {
+            "apple,dp-drive-settings", "apple,dp-drive-settings-hbr2",
+            "apple,dp-drive-settings-hbr3",
+        };
+        for (size_t i = 0; i < ARRAY_SIZE(adt_names); i++) {
+            u32 size;
+            const u32 *table = adt_getprop(adt, adt_node, adt_names[i], &size);
+            if (!table || size != 16 * sizeof(*table)) {
+                printf("kboot: invalid Neo DP drive table %s\n", adt_names[i]);
+                goto cleanup;
+            }
+            if (fdt_setprop(dt, fdt_node, fdt_names[i], NULL, 0))
+                goto cleanup;
+            for (size_t entry = 0; entry < 16; entry++)
+                if (fdt_appendprop_u32(dt, fdt_node, fdt_names[i], table[entry]))
+                    goto cleanup;
+        }
+    }
+
+
     /*
      * For backwards compatibility with downstream drivers copy apple,tunable-common-b to
      * apple,tunable-common.
@@ -557,6 +581,11 @@ cleanup:
     if (neo)
         for (size_t i = 0; i < ARRAY_SIZE(atc_tunables_t8130); ++i)
             fdt_delprop(dt, fdt_node, atc_tunables_t8130[i].fdt_name);
+    if (neo) {
+        fdt_delprop(dt, fdt_node, "apple,dp-drive-settings");
+        fdt_delprop(dt, fdt_node, "apple,dp-drive-settings-hbr2");
+        fdt_delprop(dt, fdt_node, "apple,dp-drive-settings-hbr3");
+    }
     fdt_delprop(dt, fdt_node, "apple,tunable-common-a");
     fdt_delprop(dt, fdt_node, "apple,tunable-common");
 
