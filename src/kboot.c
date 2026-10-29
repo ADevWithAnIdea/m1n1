@@ -1929,6 +1929,14 @@ static struct disp_mapping disp_reserved_regions_t8112[] = {
     {"region-id-95", "region95", true, false, true},
 };
 
+static struct disp_mapping disp_reserved_regions_t8140[] = {
+    {"region-id-49", "asc-firmware", true, false, false},
+    {"region-id-50", "dcp_data", true, false, false},
+    {"region-id-57", "region57", true, false, false},
+    {"region-id-94", "region94", true, true, false},
+    {"region-id-95", "region95", true, false, true},
+};
+
 static struct disp_mapping disp_reserved_regions_t600x[] = {
     {"region-id-50", "dcp_data", true, false, false},
     {"region-id-57", "region57", true, false, false},
@@ -2030,6 +2038,68 @@ static int dt_prepare_neo_display_dart(const char *path)
 }
 
 
+static int dt_set_neo_scanout_pool(void)
+{
+    int node = adt_path_offset(adt, "/chosen/carveout-memory-map");
+    u64 vram[2];
+    if (node < 0 || ADT_GETPROP_ARRAY(adt, node, "region-id-14", vram) != sizeof(vram))
+        bail("DCP: missing Neo VRAM carveout\n");
+    u64 used = ALIGN_UP((u64)cur_boot_args.video.stride * cur_boot_args.video.height, SZ_16K);
+    u64 base = vram[0] + used;
+    if (used >= vram[1] || vram[1] - used < used * 2)
+        bail("DCP: Neo VRAM cannot hold two additional framebuffers\n");
+    size_t size = vram[1] - used;
+    int pool = fdt_path_offset(dt, "/reserved-memory/scanout-pool");
+    int disp = fdt_path_offset(dt, "disp0");
+    if (pool < 0 || disp < 0)
+        bail("DCP: missing Neo scanout pool or display node\n");
+    dart_dev_t *dart = dt_init_dart_by_node(disp, 0);
+    if (!dart)
+        bail("DCP: failed to inspect Neo scanout mapping\n");
+    u64 iova = dart_get_mapping(dart, "Neo scanout pool", base, size);
+    dart_shutdown(dart);
+    if (DART_IS_ERR(iova))
+        bail("DCP: Neo scanout pool lacks a continuous mapping\n");
+    fdt64_t reg[] = {cpu_to_fdt64(base), cpu_to_fdt64(size)};
+    if (fdt_setprop(dt, pool, "reg", reg, sizeof(reg)) < 0)
+        bail("DCP: failed to set Neo scanout pool range\n");
+    pool = fdt_path_offset(dt, "/reserved-memory/scanout-pool");
+    if (fdt_setprop_string(dt, pool, "status", "okay") < 0)
+        bail("DCP: failed to enable Neo scanout pool\n");
+    pool = fdt_path_offset(dt, "/reserved-memory/scanout-pool");
+    u32 phandle = fdt_get_phandle(dt, pool);
+    if (!phandle)
+        bail("DCP: Neo scanout pool has no phandle\n");
+    if (dt_device_add_mem_region("disp0", phandle, "scanout-pool") < 0)
+        return -1;
+    disp = fdt_path_offset(dt, "disp0");
+    if (fdt_setprop_u64(dt, disp, "apple,scanout-iova-base", iova) < 0)
+        bail("DCP: failed to set Neo scanout IOVA\n");
+
+    /* Both processors must retain their existing mappings of the pool.
+     * Keep the physical reservation distinct from the boot framebuffer. */
+    const char *aliases[] = {"dcp", "disp0"};
+    for (size_t i = 0; i < ARRAY_SIZE(aliases); i++) {
+        int device = fdt_path_offset(dt, aliases[i]);
+        dart = dt_init_dart_by_node(device, 0);
+        if (!dart)
+            bail("DCP: failed to inspect Neo pool mapping for %s\n", aliases[i]);
+        u64 pool_iova = dart_get_mapping(dart, "Neo scanout pool", base, size);
+        dart_shutdown(dart);
+        if (DART_IS_ERR(pool_iova))
+            bail("DCP: missing Neo pool mapping for %s\n", aliases[i]);
+        pool = fdt_path_offset(dt, "/reserved-memory/scanout-pool");
+        if (dt_device_set_reserved_mem(pool, "scanout-pool", fdt_get_phandle(dt, device),
+                                       pool_iova, size) < 0)
+            return -1;
+        if (i == 0 && dt_device_add_mem_region(aliases[i], phandle, "scanout-pool") < 0)
+            return -1;
+    }
+    printf("DCP: Neo scanout pool %lx..%lx -> %lx\n", base, base + size, iova);
+    return 0;
+}
+
+
 static int dt_prepare_neo_dcp_firmware(const char *alias, const char *path,
                                        const char *dart_path, const char *reset_device)
 {
@@ -2058,6 +2128,28 @@ static int dt_prepare_neo_dcp_firmware(const char *alias, const char *path,
 
 static int dt_set_display(void)
 {
+    bool neo = !fdt_node_check_compatible(dt, 0, "apple,t8140");
+    if (neo && fdt_get_alias(dt, "dcp")) {
+        if (dt_prepare_neo_display_dart("/arm-io/dart-dcp") < 0 ||
+            dt_prepare_neo_display_dart("/arm-io/dart-disp0") < 0 ||
+            dt_prepare_neo_dcp_firmware("dcp", "/arm-io/dcp", "/arm-io/dart-dcp", NULL) < 0)
+            return -1;
+        /* Linux owns these PMGR domains after handoff. Leaving the clock
+         * guards acquired stalls its first DISP_FE power-state write. */
+        if (dt_neo_display_dart_clock_protection("/arm-io/dart-dcp", false) < 0 ||
+            dt_neo_display_dart_clock_protection("/arm-io/dart-disp0", false) < 0)
+            return -1;
+    }
+    if (neo && fdt_get_alias(dt, "dcpext")) {
+        if (dt_prepare_neo_display_dart("/arm-io/dart-dcpext0") < 0 ||
+            dt_prepare_neo_display_dart("/arm-io/dart-dispext0") < 0 ||
+            dt_prepare_neo_dcp_firmware("dcpext", "/arm-io/dcpext", "/arm-io/dart-dcpext0",
+                                        "DISPEXT0_CPU") < 0)
+            return -1;
+        if (dt_neo_display_dart_clock_protection("/arm-io/dart-dcpext0", false) < 0 ||
+            dt_neo_display_dart_clock_protection("/arm-io/dart-dispext0", false) < 0)
+            return -1;
+    }
     /* lock dart-disp0 to prevent old software from resetting it */
     dart_lock_adt("/arm-io/dart-disp0", 0);
 
@@ -2079,6 +2171,18 @@ static int dt_set_display(void)
 
         ret = dt_carveout_reserved_regions("dcpext", NULL, NULL, dcpext_reserved_regions_t8103,
                                            ARRAY_SIZE(dcpext_reserved_regions_t8103));
+    } else if (neo) {
+        ret = dt_carveout_reserved_regions("dcp", "disp0", "disp0_piodma",
+                                           disp_reserved_regions_t8140,
+                                           ARRAY_SIZE(disp_reserved_regions_t8140));
+        if (ret)
+            return ret;
+        ret = dt_carveout_reserved_regions("dcpext", NULL, NULL, dcpext_reserved_regions_t8103,
+                                           ARRAY_SIZE(dcpext_reserved_regions_t8103));
+        if (ret)
+            return ret;
+        if (fdt_get_alias(dt, "dcpext") && dt_set_dcp_firmware("dcpext"))
+            return -1;
     } else if (!fdt_node_check_compatible(dt, 0, "apple,t8112") ||
                !fdt_node_check_compatible(dt, 0, "apple,t8132")) {
         ret = dt_carveout_reserved_regions("dcp", "disp0", "disp0_piodma",
@@ -2135,9 +2239,14 @@ static int dt_set_display(void)
     const display_config_t *disp_cfg = display_get_config();
 
     if (disp_cfg)
-        return dt_vram_reserved_region(disp_cfg->dcp_alias, "disp0");
+        ret = dt_vram_reserved_region(disp_cfg->dcp_alias, "disp0");
     else
-        return dt_vram_reserved_region("dcp", "disp0");
+        ret = dt_vram_reserved_region("dcp", "disp0");
+    if (ret)
+        return ret;
+    if (neo && fdt_get_alias(dt, "dcp"))
+        return dt_set_neo_scanout_pool();
+    return 0;
 }
 
 static const char *excluded_pmp_props[] = {
