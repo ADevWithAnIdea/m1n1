@@ -9,6 +9,44 @@
 #include "string.h"
 #include "utils.h"
 
+/* Modern ADTs describe the type and logical instance of each reg bank.
+ * A bank at the old DAPF index may instead be shared FPAG clock protection. */
+enum dapf_bank_type {
+    DAPF_BANK_LEGACY,
+    DAPF_BANK_TRAD,
+    DAPF_BANK_FPAD,
+    DAPF_BANK_FPAG,
+    DAPF_BANK_OTHER,
+    DAPF_BANK_INVALID,
+};
+
+struct dapf_instance {
+    char type[4];
+    u32 instance;
+    char name[8];
+};
+
+static enum dapf_bank_type dapf_get_bank_type(int node, int index)
+{
+    if (chip_id != T8140)
+        return DAPF_BANK_LEGACY;
+
+    u32 length = 0;
+    const struct dapf_instance *banks = adt_getprop(adt, node, "instance", &length);
+
+    if (!banks)
+        return DAPF_BANK_LEGACY;
+    if (length % sizeof(*banks) || index < 0 || (u32)index >= length / sizeof(*banks))
+        return DAPF_BANK_INVALID;
+    if (!memcmp(banks[index].type, "TRAD", 4))
+        return DAPF_BANK_TRAD;
+    if (!memcmp(banks[index].type, "FPAG", 4))
+        return DAPF_BANK_FPAG;
+    if (!memcmp(banks[index].type, "FPAD", 4))
+        return DAPF_BANK_FPAD;
+    return DAPF_BANK_OTHER;
+}
+
 struct dapf_t8020_config {
     u64 start;
     u64 end;
@@ -143,6 +181,18 @@ int dapf_init(const char *path, int index)
         return -1;
     }
 
+    switch (dapf_get_bank_type(node, index)) {
+        case DAPF_BANK_LEGACY:
+        case DAPF_BANK_FPAD:
+            break;
+        case DAPF_BANK_TRAD:
+        case DAPF_BANK_FPAG:
+        case DAPF_BANK_OTHER:
+        case DAPF_BANK_INVALID:
+            printf("dapf: Refusing non-FPAD or invalid bank %d of %s\n", index, path);
+            return -1;
+    }
+
     u32 pwr;
     if (!adt_getprop(adt, node, "clock-gates", &pwr))
         pwr = 0;
@@ -195,9 +245,22 @@ int dapf_init_all(void)
     struct entry *entry = dapf_entries;
 
     while (entry->path != NULL) {
-        if (adt_path_offset(adt, entry->path) < 0) {
+        int node = adt_path_offset(adt, entry->path);
+        if (node < 0) {
             entry++;
             continue;
+        }
+        switch (dapf_get_bank_type(node, entry->index)) {
+            case DAPF_BANK_LEGACY:
+            case DAPF_BANK_FPAD:
+            case DAPF_BANK_INVALID: /* Let dapf_init report invalid metadata. */
+                break;
+            case DAPF_BANK_TRAD:
+            case DAPF_BANK_FPAG:
+            case DAPF_BANK_OTHER:
+                printf("dapf: Skipping non-FPAD bank %d of %s\n", entry->index, entry->path);
+                entry++;
+                continue;
         }
         if (dapf_init(entry->path, entry->index) < 0) {
             ret = -1;
