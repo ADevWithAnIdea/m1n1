@@ -53,6 +53,34 @@ struct adt_tunable_info {
     const char *adt_fallback;
 };
 
+static const struct adt_tunable_info atc_tunables_t8130[] = {
+    /* Validate the complete table. kboot exports only the ADT-mapped bank. */
+    {"tunable_ATC0AXI2AF", "apple,tunable-axi2af", 0, 0x8000, true},
+    {"tunable_ATC_FABRIC", "apple,tunable-common-b", 0x44000, 0x4000, true},
+    {"tunable_ACIOPHY_TOP", "apple,tunable-common-b", 0, 0x4000, true},
+    {"tunable_AUSCMN_DIG", "apple,tunable-common-b", 0x800, 0x200, true},
+    {"tunable_AUSCMN_SHM", "apple,tunable-common-b", 0xa00, 0x200, true},
+    {"tunable_ACIOPHY_PLL_TOP", "apple,tunable-common-b", 0x1000, 0x4000, true},
+    {"tunable_AUSPLL_CORE", "apple,tunable-common-b", 0x2200, 0x4000, true},
+    {"tunable_CLKMON_CFG", "apple,tunable-common-b", 0x2600, 0x100, true},
+    {"tunable_CIO3PLL_TOP", "apple,tunable-common-b", 0x2800, 0x200, true},
+    {"tunable_CIO3PLL_CORE", "apple,tunable-common-b", 0x2a00, 0x200, true},
+    {"tunable_ACIOPHY_LANE_USBC0", "apple,tunable-common-b", 0x5000, 0x1000, true},
+    {"tunable_ACIOPHY_LANE_USBC1", "apple,tunable-common-b", 0x7000, 0x1000, true},
+    {"tunable_AUX_TOP", "apple,tunable-common-b", 0x16000, 0x4000, true},
+    {"tunable_LN0_RX_TOP_USB_DFLT", "apple,tunable-lane0-usb", 0x9000, 0x1000, true},
+    {"tunable_LN0_RX_EQ_USB_EQA", "apple,tunable-lane0-usb", 0xa000, 0x1000, true},
+    {"tunable_LN0_RX_SHM_USB_DFLT", "apple,tunable-lane0-usb", 0xb000, 0x1000, true},
+    {"tunable_LN0_TX_TOP_USB_DFLT", "apple,tunable-lane0-usb", 0xc000, 0x1000, true},
+    {"tunable_LN0_TX_SHM_USB_DFLT", "apple,tunable-lane0-usb", 0xd000, 0x1000, true},
+    {"tunable_LN1_RX_TOP_USB_DFLT", "apple,tunable-lane1-usb", 0x10000, 0x1000, true},
+    {"tunable_LN1_RX_EQ_USB_EQA", "apple,tunable-lane1-usb", 0x11000, 0x1000, true},
+    {"tunable_LN1_RX_SHM_USB_DFLT", "apple,tunable-lane1-usb", 0x12000, 0x1000, true},
+    {"tunable_LN1_TX_TOP_USB_DFLT", "apple,tunable-lane1-usb", 0x13000, 0x1000, true},
+    {"tunable_LN1_TX_SHM_USB_DFLT", "apple,tunable-lane1-usb", 0x14000, 0x1000, true},
+    {"tunable_ATC_COMMON_CFG", "apple,tunable-lpdptx", 0, 0x8000, true},
+};
+
 struct atc_fuse_info {
     u64 fuse_addr;
     u8 fuse_bit;
@@ -366,7 +394,7 @@ static int dt_append_fuses(void *dt, int adt_node, int fdt_node, int port)
 }
 
 static int dt_append_atc_tunable(void *dt, int adt_node, int fdt_node,
-                                 const struct adt_tunable_info *tunable_info)
+                                 const struct adt_tunable_info *tunable_info, u64 mapped_size)
 {
     u32 tunables_len;
     const struct atc_tunable *tunable_adt =
@@ -410,6 +438,11 @@ static int dt_append_atc_tunable(void *dt, int adt_node, int fdt_node,
             return -1;
         }
 
+        /* The Neo ADT includes a second AXI2AF bank not mapped here. */
+        if (mapped_size < sizeof(u32) ||
+            tunable->offset > mapped_size - sizeof(u32))
+            continue;
+
         if (fdt_appendprop_u32(dt, fdt_node, tunable_info->fdt_name,
                                tunable->offset + tunable_info->reg_offset) < 0)
             return -1;
@@ -444,14 +477,22 @@ static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_
         return;
     }
 
-    ret = dt_append_fuses(dt, adt_node, fdt_node, port);
+    bool neo = chip_id == T8140 &&
+               adt_is_compatible_at(adt, adt_node, "atc-phy,t8130", 0);
+    if (neo)
+        ret = fdt_setprop(dt, fdt_node, "apple,tunable-common-a", NULL, 0);
+    else
+        ret = dt_append_fuses(dt, adt_node, fdt_node, port);
     if (ret) {
         printf("kboot: Unable to copy ATC fuses for %s - USB3/Thunderbolt will not work\n",
                adt_path);
         goto cleanup;
     }
 
-    if (adt_is_compatible_at(adt, adt_node, "atc-phy,t8132", 0) ||
+    if (neo) {
+        tunables = atc_tunables_t8130;
+        tunable_count = ARRAY_SIZE(atc_tunables_t8130);
+    } else if (adt_is_compatible_at(adt, adt_node, "atc-phy,t8132", 0) ||
         adt_is_compatible_at(adt, adt_node, "atc-phy,t8122", 0)) {
         tunables = &atc_tunables_t8122[0];
         tunable_count = sizeof(atc_tunables_t8122) / sizeof(*atc_tunables_t8122);
@@ -461,7 +502,15 @@ static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_
     }
 
     for (size_t i = 0; i < tunable_count; ++i) {
-        ret = dt_append_atc_tunable(dt, adt_node, fdt_node, &tunables[i]);
+        u64 mapped_size = tunables[i].reg_size;
+        if (neo && !strcmp(tunables[i].fdt_name, "apple,tunable-axi2af")) {
+            int path[8];
+            u64 base;
+            if (adt_path_offset_trace(adt, adt_path, path) < 0 ||
+                adt_get_reg(adt, path, "reg", 1, &base, &mapped_size))
+                goto cleanup;
+        }
+        ret = dt_append_atc_tunable(dt, adt_node, fdt_node, &tunables[i], mapped_size);
         if (ret)
             goto cleanup;
     }
@@ -505,6 +554,9 @@ cleanup:
      */
     for (size_t i = 0; i < sizeof(atc_tunables) / sizeof(*atc_tunables); ++i)
         fdt_delprop(dt, fdt_node, atc_tunables[i].fdt_name);
+    if (neo)
+        for (size_t i = 0; i < ARRAY_SIZE(atc_tunables_t8130); ++i)
+            fdt_delprop(dt, fdt_node, atc_tunables_t8130[i].fdt_name);
     fdt_delprop(dt, fdt_node, "apple,tunable-common-a");
     fdt_delprop(dt, fdt_node, "apple,tunable-common");
 
