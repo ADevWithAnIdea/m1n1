@@ -236,6 +236,13 @@ void firmware_parse_version(const char *s, u32 *out)
 
 static void detect_firmware(struct fw_version_info *info, const char *ver)
 {
+    /* J700's 26.6.2 restore uses a different mBoot build from the M4. */
+    if (!strcmp(ver, "mBoot-18000.161.9")) {
+        *info = fw_versions[V26_6_2];
+        info->iboot = ver;
+        return;
+    }
+
     for (size_t i = 0; i < ARRAY_SIZE(fw_versions); i++) {
         if (!strcmp(fw_versions[i].iboot, ver)) {
             *info = fw_versions[i];
