@@ -1817,8 +1817,8 @@ struct aop_boot_walk {
 
 static bool aop_boot_ram(u64 address, u64 size)
 {
-    u64 end = cur_boot_args.phys_base + mem_size_actual;
-    return size && address >= cur_boot_args.phys_base && address < end && size <= end - address;
+    u64 end = ram_base + mem_size_actual;
+    return size && address >= ram_base && address < end && size <= end - address;
 }
 
 static int aop_boot_walk_table(struct aop_boot_walk *walk, u64 table, unsigned int shift,
