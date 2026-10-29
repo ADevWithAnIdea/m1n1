@@ -22,6 +22,7 @@
 #include "sep.h"
 #include "sio.h"
 #include "smp.h"
+#include "smc.h"
 #include "tunables.h"
 #include "types.h"
 #include "usb.h"
@@ -1787,6 +1788,7 @@ static int dt_vram_reserved_region(const char *dcp_alias, const char *disp_alias
                                    disp_reserved_regions_vram, &region, 1);
 }
 
+
 static int dt_reserve_asc_firmware_segments(const char *adt_path, const char *adt_path_alt,
                                             const char *fdt_path, bool remap, u64 base,
                                             unsigned int segment_limit)
@@ -3118,6 +3120,35 @@ int kboot_prepare_dt(void *fdt)
     return 0;
 }
 
+/* Execute the radio's ADT-described eight-byte SMC power operation. */
+static int kboot_power_radio(void)
+{
+    if (chip_id != T8140)
+        return 0;
+    int node = adt_path_offset(adt, "/amfm-sunrise");
+    if (node < 0)
+        return 0;
+    struct {
+        u32 phandle, function, key, value[2];
+    } operation;
+    if (ADT_GETPROP(adt, node, "function-reg_on", &operation) != sizeof(operation) ||
+        operation.function != 0x704b5738) /* pKW8 */
+        bail("ADT: unsupported radio power operation\n");
+    smc_dev_t *smc = smc_init();
+    if (!smc)
+        return -1;
+    int ret = smc_write(smc, operation.key, operation.value, sizeof(operation.value));
+    if (!ret) {
+        mdelay(100);
+        operation.value[0] |= 1;
+        ret = smc_write(smc, operation.key, operation.value, sizeof(operation.value));
+        mdelay(100);
+    }
+    smc_shutdown(smc);
+    printf("Radio power handoff: %d\n", ret);
+    return ret;
+}
+
 int kboot_boot(void *kernel)
 {
     mcc_enable_cache();
@@ -3125,6 +3156,8 @@ int kboot_boot(void *kernel)
     clk_init();
 
     usb_init();
+    if (kboot_power_radio())
+        return -1;
     pcie_init();
     /* HACK: DAPF init raises an SError on T8132. */
     if (chip_id != T8132)

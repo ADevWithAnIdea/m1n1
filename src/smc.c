@@ -170,12 +170,19 @@ out_free:
     return NULL;
 }
 
-int smc_write_u32(smc_dev_t *smc, u32 key, u32 value)
+int smc_write(smc_dev_t *smc, u32 key, const void *value, size_t size)
 {
-    memcpy(smc->shmem, &value, sizeof(value));
+    if (!value || !size || size > 255)
+        return -1;
+    memcpy(smc->shmem, value, size);
     u64 msg = FIELD_PREP(SMC_MSG_TYPE, SMC_WRITE_KEY);
-    msg |= FIELD_PREP(SMC_WRITE_KEY_SIZE, sizeof(value));
+    msg |= FIELD_PREP(SMC_WRITE_KEY_SIZE, size);
     msg |= FIELD_PREP(SMC_WRITE_KEY_KEY, key);
 
     return smc_cmd(smc, msg);
+}
+
+int smc_write_u32(smc_dev_t *smc, u32 key, u32 value)
+{
+    return smc_write(smc, key, &value, sizeof(value));
 }
