@@ -83,6 +83,15 @@ static uintptr_t pmgr_get_psreg(u8 idx)
 
 int pmgr_set_mode(uintptr_t addr, u8 target_mode)
 {
+    /* Neo's firmware-owned PCIe parent gates can reject redundant writes
+     * after initial bring-up. Satisfy an already completed request by readback
+     * instead of rewriting its power policy (including the auto-enable bit). */
+    if (chip_id == T8140) {
+        u32 current = read32(addr);
+        if (FIELD_GET(PMGR_PS_TARGET, current) == target_mode &&
+            FIELD_GET(PMGR_PS_ACTUAL, current) == target_mode)
+            return 0;
+    }
     mask32(addr, PMGR_AUTO_ENABLE | PMGR_WAS_CLKGATED | PMGR_WAS_PWRGATED | PMGR_PS_TARGET,
            FIELD_PREP(PMGR_PS_TARGET, target_mode));
     if (poll32(addr, PMGR_PS_ACTUAL, FIELD_PREP(PMGR_PS_ACTUAL, target_mode), PMGR_POLL_TIMEOUT) <
