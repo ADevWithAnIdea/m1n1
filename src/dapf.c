@@ -193,17 +193,32 @@ int dapf_init(const char *path, int index)
             return -1;
     }
 
-    u32 pwr;
-    if (!adt_getprop(adt, node, "clock-gates", &pwr))
-        pwr = 0;
-    if (pwr && (pmgr_adt_power_enable(path) < 0))
-        return -1;
-
     u64 base;
     if (adt_get_reg(adt, dart_path, "reg", index, &base, NULL) < 0) {
         printf("dapf: Error getting DAPF %s base address.\n", path);
         return -1;
     }
+
+    const char *power_path = path;
+    char owner_path[64];
+    u32 pwr = 0;
+    if (!adt_getprop(adt, node, "clock-gates", &pwr)) {
+        pwr = 0;
+        /* Neo puts these gates on the owning device rather than its DART.
+         * MTP has neither property and retains the existing ungated path. */
+        const char prefix[] = "/arm-io/dart-";
+        if (chip_id == T8140 && !strncmp(path, prefix, sizeof(prefix) - 1)) {
+            int length = snprintf(owner_path, sizeof(owner_path), "/arm-io/%s",
+                                  path + sizeof(prefix) - 1);
+            if (length < 0 || (size_t)length >= sizeof(owner_path))
+                return -1;
+            int owner = adt_path_offset(adt, owner_path);
+            if (owner >= 0 && adt_getprop(adt, owner, "clock-gates", &pwr))
+                power_path = owner_path;
+        }
+    }
+    if (pwr && (pmgr_adt_power_enable(power_path) < 0))
+        return -1;
 
     if (adt_is_compatible(adt, node, "dart,t8020")) {
         ret = dapf_init_t8020(path, base, node);
@@ -213,11 +228,11 @@ int dapf_init(const char *path, int index)
         ret = dapf_init_t8110(path, base, node);
     } else {
         printf("dapf: DAPF %s at 0x%lx is of an unknown type\n", path, base);
-        return -1;
+        ret = -1;
     }
 
     if (pwr)
-        pmgr_adt_power_disable(path);
+        pmgr_adt_power_disable(power_path);
 
     if (!ret)
         printf("dapf: Initialized %s\n", path);
