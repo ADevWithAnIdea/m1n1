@@ -2949,7 +2949,7 @@ int kboot_boot(void *kernel)
     usb_init();
     pcie_init();
     /* HACK: DAPF init raises an SError on T8132. */
-    if (chip_id != T8132)
+    if (chip_id != T8132 && chip_id != T8140)
         dapf_init_all();
 
     printf("Setting SMP mode to WFE...\n");
