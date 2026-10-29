@@ -26,8 +26,9 @@ struct dapf_instance {
     char name[8];
 };
 
-static enum dapf_bank_type dapf_get_bank_type(int node, int index)
+static enum dapf_bank_type dapf_get_bank_type(int node, int index, int *instance)
 {
+    *instance = -1;
     if (chip_id != T8140)
         return DAPF_BANK_LEGACY;
 
@@ -42,8 +43,12 @@ static enum dapf_bank_type dapf_get_bank_type(int node, int index)
         return DAPF_BANK_TRAD;
     if (!memcmp(banks[index].type, "FPAG", 4))
         return DAPF_BANK_FPAG;
-    if (!memcmp(banks[index].type, "FPAD", 4))
+    if (!memcmp(banks[index].type, "FPAD", 4)) {
+        if (banks[index].instance > INT32_MAX)
+            return DAPF_BANK_INVALID;
+        *instance = banks[index].instance;
         return DAPF_BANK_FPAD;
+    }
     return DAPF_BANK_OTHER;
 }
 
@@ -137,20 +142,25 @@ static int dapf_init_t8110b(u64 base, struct dapf_t8110b_config *config, u32 len
     return 0;
 }
 
-static int dapf_init_t8110(const char *path, u64 base, int node)
+static int dapf_init_t8110(const char *path, u64 base, int node, int instance)
 {
     u32 length = 0;
     char prop[32];
     const void *config = NULL;
 
-    // The dapf config is not always under instance 0; find the first present
-    // dapf-instance-N.
-    for (int i = 0; i < 8; i++) {
-        snprintf(prop, sizeof(prop), "dapf-instance-%d", i);
-        length = 0;
+    /* Match the FPAD logical instance, not the reg index. Older ADTs have no
+     * instance descriptors; retain their existing property search. */
+    if (instance >= 0) {
+        snprintf(prop, sizeof(prop), "dapf-instance-%d", instance);
         config = adt_getprop(adt, node, prop, &length);
-        if (config && length)
-            break;
+    } else {
+        for (int i = 0; i < 8; i++) {
+            snprintf(prop, sizeof(prop), "dapf-instance-%d", i);
+            length = 0;
+            config = adt_getprop(adt, node, prop, &length);
+            if (config && length)
+                break;
+        }
     }
 
     if (!config || !length) {
@@ -181,7 +191,8 @@ int dapf_init(const char *path, int index)
         return -1;
     }
 
-    switch (dapf_get_bank_type(node, index)) {
+    int instance;
+    switch (dapf_get_bank_type(node, index, &instance)) {
         case DAPF_BANK_LEGACY:
         case DAPF_BANK_FPAD:
             break;
@@ -225,7 +236,7 @@ int dapf_init(const char *path, int index)
     } else if (adt_is_compatible(adt, node, "dart,t6000")) {
         ret = dapf_init_t8020(path, base, node);
     } else if (adt_is_compatible(adt, node, "dart,t8110")) {
-        ret = dapf_init_t8110(path, base, node);
+        ret = dapf_init_t8110(path, base, node, instance);
     } else {
         printf("dapf: DAPF %s at 0x%lx is of an unknown type\n", path, base);
         ret = -1;
@@ -265,7 +276,8 @@ int dapf_init_all(void)
             entry++;
             continue;
         }
-        switch (dapf_get_bank_type(node, entry->index)) {
+        int instance;
+        switch (dapf_get_bank_type(node, entry->index, &instance)) {
             case DAPF_BANK_LEGACY:
             case DAPF_BANK_FPAD:
             case DAPF_BANK_INVALID: /* Let dapf_init report invalid metadata. */
