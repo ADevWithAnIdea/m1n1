@@ -1,0 +1,96 @@
+{
+  "status": "PASS",
+  "goal": "Send and receive files over Thunderbolt with the Max running Linux",
+  "UTC": "2026-10-29T10:30:08.722415+00:00",
+  "target": {
+    "model": "Mac16,5",
+    "soc": "T6041",
+    "RID": 0,
+    "serial": "JPWWJRX2N0",
+    "cpus": 16
+  },
+  "peer": {
+    "model": "Mac17,3",
+    "os": "macOS",
+    "access": "operator-authorized SSH over Wi-Fi; file payload path explicitly Thunderbolt"
+  },
+  "physical_path": "Max left USB-C nearest MagSafe, ATC0/ACIO0; TB4 cable to M5 Air",
+  "negotiated_link_Gbps": 40,
+  "linux_interface": "thunderbolt0",
+  "linux_ipv4": "169.254.100.1",
+  "air_interface": "bridge0/en4",
+  "air_ipv4": "169.254.219.109",
+  "files": [
+    {
+      "direction": "Air to Linux Max",
+      "bytes": 4194304,
+      "sha256": "3484ee8ddc40f4d1a53c74882630d1479f9b5e9de69c2aa73eb94b8fa1cf06ec",
+      "method": "Linux BusyBox wget to Air TB-only HTTP server; server log records client169.254.100.1"
+    },
+    {
+      "direction": "Linux Max to Air",
+      "bytes": 4194304,
+      "sha256": "fd07fb06ba921d1eb3bbb42d7c6185afde6159e9d172d5aeb65104662e4e8857",
+      "method": "Air curl --interface bridge0 --noproxy * from Linux TB-bound HTTP server"
+    }
+  ],
+  "kernel": {
+    "checkout": "/Users/user/gravity/linux-m4max-experimental",
+    "branch": "experimental/bringup/m4max-thunderbolt-7.3",
+    "runtime_commit": "c0b01a5e69645fa69bf6219974d5c60c4e4d0088",
+    "Image": "build/m4max-devices/thunderbolt-hv-v1/Image-cio2",
+    "DTB": "build/m4max-devices/thunderbolt-hv-v1/t6041-j616c-cio3.dtb",
+    "documentation_commit": "6c6a2497cac2adcf2b9b64fc24afd9356bd99e3d"
+  },
+  "bootloader": {
+    "branch": "repro/m4max-hv-26.6.2",
+    "task_commit": "ea53119ddf0e1a10afef8966f15778336c251ce2",
+    "note": "Preexisting dirty HV/display changes retained; runtime binary hashes in linux-5/launch.json."
+  },
+  "checks": [
+    "Kernel and bootloader builds pass",
+    "all16 CPUs online, spin-table startup",
+    "loader-populated calibration equals independent saved ADT decoding:65 fabric,1 common,19 analog,99 NHI records",
+    "native ring0 capture613TX/340RX; all953 CRC32C and SHA256 checks pass",
+    "IPv4 echoes3/3 after carrier up",
+    "4MiB source and received hashes match in both file directions",
+    "Linux route uses thunderbolt0, Air curl bound bridge0; no Wi-Fi payload fallback",
+    "dt-doc-validate passes with no diagnostics",
+    "Actual Linux5 populated DTB validates against updated PHY binding for both USB4 PHY0 and fixed-DP HDMI PHY3"
+  ],
+  "artifacts": [
+    "build/m4max-devices/thunderbolt-hv-v1/linux-5/dmesg.log",
+    "build/m4max-devices/thunderbolt-hv-v1/linux-5/launch.json",
+    "build/m4max-devices/thunderbolt-hv-v1/linux-5/calibration-validation.json",
+    "build/m4max-devices/thunderbolt-hv-v1/air-linux5-link.log",
+    "build/m4max-devices/thunderbolt-hv-v1/air-max-to-air-transfer.log",
+    "build/m4max-devices/thunderbolt-hv-v1/air-final-transfer-receipt.log",
+    "build/m4max-devices/thunderbolt-hv-v1/native-4/packet-integrity.json",
+    "build/m4max-devices/thunderbolt-hv-v1/native-7/cio-reset-handshake.json",
+    "build/m4max-devices/thunderbolt-hv-v1/binding-doc-validation.log",
+    "build/m4max-devices/thunderbolt-hv-v1/binding-dtb-validation.log"
+  ],
+  "scope_limits": [
+    "Only ATC0 port and captured normal plug orientation qualified",
+    "Physical unplug/replug and module unload not qualified",
+    "USB2/USB3 peripherals, PCIe device tunneling and DP tunnels not qualified",
+    "TB5 80Gb/s cannot be tested with this cable/peer",
+    "Kernel logged suspect GRO implementation warning; throughput tuning remains separate"
+  ],
+  "cleanup": "Temporary HTTP servers stopped after successful transfers; devices/cable remain connected and Linux link remains online.",
+  "input_sha256": {
+    "Image-cio2": "b91759ee09c3fb9866ee844f2477eea40e2e670c3605c3d467920e9185d28f59",
+    "t6041-j616c-cio3.dtb": "cf01666c0f8b0d1e6b12c83d30807b367a1762263844869696db435c9869f3b0"
+  },
+  "link_details": {
+    "rx_Gbps_per_lane": 20,
+    "tx_Gbps_per_lane": 20,
+    "rx_lanes": 2,
+    "tx_lanes": 2,
+    "rx_errors": 0,
+    "tx_errors": 0,
+    "rx_dropped": 0,
+    "tx_dropped": 2,
+    "note": "two TX drops observed after initial pre-carrier ping; both completed file transfers matched hashes"
+  }
+}
