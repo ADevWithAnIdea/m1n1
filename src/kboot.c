@@ -2804,6 +2804,8 @@ int kboot_prepare_dt(void *fdt)
         return -1;
     if (dt_set_cpus())
         return -1;
+    if (dt_set_cpu_opps(dt))
+        return -1;
     if (dt_set_mac_addresses())
         return -1;
     if (dt_set_wifi())

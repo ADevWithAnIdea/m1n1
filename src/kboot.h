@@ -7,6 +7,7 @@
 
 // declarations for kboot_t6020_compat.c
 int dt_fixup_t6020_compat(void *dt);
+int dt_set_cpu_opps(void *dt);
 
 struct kernel_header {
     u32 code[2];     /* Executable code */
