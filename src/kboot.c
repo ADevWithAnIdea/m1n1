@@ -1762,8 +1762,9 @@ static int dt_vram_reserved_region(const char *dcp_alias, const char *disp_alias
                                    disp_reserved_regions_vram, &region, 1);
 }
 
-static int dt_reserve_asc_firmware(const char *adt_path, const char *adt_path_alt,
-                                   const char *fdt_path, bool remap, u64 base)
+static int dt_reserve_asc_firmware_segments(const char *adt_path, const char *adt_path_alt,
+                                            const char *fdt_path, bool remap, u64 base,
+                                            unsigned int segment_limit)
 {
     int ret = 0;
 
@@ -1792,7 +1793,13 @@ static int dt_reserve_asc_firmware(const char *adt_path, const char *adt_path_al
     u32 segments_len;
 
     seg = adt_getprop(adt, node, "segment-ranges", &segments_len);
+    if (!seg || !segments_len || segments_len % sizeof(*seg))
+        bail("ADT: invalid ASC segment ranges for '%s'\n", adt_path);
     unsigned int num_maps = segments_len / sizeof(*seg);
+    if (segment_limit > num_maps)
+        bail("ADT: missing ASC shared segments for '%s'\n", adt_path);
+    if (segment_limit)
+        num_maps = min(num_maps, segment_limit);
 
     for (unsigned i = 0; i < num_maps; i++) {
         u64 iova = (remap ? seg->remap : seg->iova) | base;
@@ -1817,7 +1824,7 @@ static int dt_reserve_asc_firmware(const char *adt_path, const char *adt_path_al
             return ret;
 
         const char *region_name = NULL;
-        if (chip_id == T8140 && !strcmp(fdt_path, "isp"))
+        if (chip_id == T8140 && strcmp(fdt_path, "isp") == 0)
             region_name = i == 0 ? "text" : "data";
         ret = dt_device_add_mem_region(fdt_path, mem_phandle, region_name);
         if (ret < 0)
@@ -1827,6 +1834,12 @@ static int dt_reserve_asc_firmware(const char *adt_path, const char *adt_path_al
     }
 
     return 0;
+}
+
+static int dt_reserve_asc_firmware(const char *adt_path, const char *adt_path_alt,
+                                   const char *fdt_path, bool remap, u64 base)
+{
+    return dt_reserve_asc_firmware_segments(adt_path, adt_path_alt, fdt_path, remap, base, 0);
 }
 
 static const char dcpext_aliases[][8] = {
