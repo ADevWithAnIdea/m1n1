@@ -3251,6 +3251,7 @@ int kboot_prepare_dt(void *fdt)
     if (dt_remain < SZ_16K)
         printf("FDT: free dt buffer space low, %u bytes left\n", dt_remain);
 
+    dc_civac_range(dt, fdt_totalsize(dt));
     printf("FDT prepared at %p\n", dt);
 
     return 0;

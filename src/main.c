@@ -205,6 +205,7 @@ void m1n1_main(void)
 #ifdef USE_FB
     fb_shutdown(next_stage.restore_logo);
 #endif
+    dc_civac_range(&next_stage, sizeof(next_stage));
     mmu_shutdown();
 #endif
 

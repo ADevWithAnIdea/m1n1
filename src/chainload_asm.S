@@ -11,10 +11,13 @@ _chainload_stub_start:
     ldp x5, x6, [x1], #16
     stp x5, x6, [x2]
     dc cvau, x2
-    ic ivau, x2
     add x2, x2, #16
     sub x3, x3, #16
     cbnz x3, 1b
 
+    dsb sy
+    ic iallu
+    dsb sy
+    isb
     br x4
 _chainload_stub_end:

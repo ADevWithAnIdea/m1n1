@@ -12,6 +12,7 @@
 #include "heapblock.h"
 #include "kboot.h"
 #include "mitigations.h"
+#include "memory.h"
 #include "smp.h"
 #include "utils.h"
 
@@ -61,6 +62,10 @@ static void finalize_uncompression(void *dest, size_t dest_len)
         // Explicitly *un*aligned or it'll fail this assert, since 64b alignment is the default
         assert(end == heapblock_alloc_aligned((u8 *)next - (u8 *)end, 1));
     }
+
+    /* Publish newly decompressed instructions before the uncached handoff. */
+    dc_civac_range(dest, dest_len);
+    ic_ivau_range(dest, dest_len);
 }
 
 static void *decompress_gz(void *p, size_t size)

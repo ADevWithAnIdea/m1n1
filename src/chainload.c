@@ -95,10 +95,14 @@ int chainload_image(void *image, size_t size, char **vars, size_t var_cnt)
     // Keep the next heap above both the inherited reservation and the loaded image.
     new_boot_args->top_of_kernel_data = max(cur_boot_args.top_of_kernel_data, new_base + image_size);
 
+    /* The copy stub reads these buffers after the MMU and caches are disabled. */
+    dc_civac_range(new_image, image_size);
+    dc_civac_range(adt, cur_boot_args.devtree_size);
+
     // Copy chainload stub
     void *stub = new_image + image_size;
     memcpy(stub, _chainload_stub_start, stub_size);
-    dc_cvau_range(stub, stub_size);
+    dc_civac_range(stub, stub_size);
     ic_ivau_range(stub, stub_size);
 
     // Set up next stage
