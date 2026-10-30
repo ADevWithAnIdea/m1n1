@@ -162,6 +162,7 @@ static const struct atc_fuse_info atc_fuses_t8112_port1[] = {
 // Order "atc-phy" compatibles in reverse chronologically order to deal with mutliple compatible
 // strings in ADT atc-phy nodes.
 static const struct atc_fuse_hw atc_fuses[] = {
+    {"atc-phy,t8142", -1, NULL, 0},
     {"atc-phy,t8132", -1, NULL, 0},
     {"atc-phy,t8122", -1, NULL, 0},
     {"atc-phy,t6020", -1, NULL, 0},
@@ -301,7 +302,8 @@ static void dt_copy_atc_tunables(void *dt, const char *adt_path, const char *dt_
     }
 
     if (adt_is_compatible_at(adt, adt_node, "atc-phy,t8132", 0) ||
-        adt_is_compatible_at(adt, adt_node, "atc-phy,t8122", 0)) {
+        adt_is_compatible_at(adt, adt_node, "atc-phy,t8122", 0) ||
+        adt_is_compatible_at(adt, adt_node, "atc-phy,t8142", 0)) {
         tunables = &atc_tunables_t8122[0];
         tunable_count = atc_tunables_t8122_count;
     } else {
