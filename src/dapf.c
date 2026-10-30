@@ -128,6 +128,38 @@ static const void *dapf_filter_data(int node, u32 *length)
     return NULL;
 }
 
+static bool dapf_has_clock_gates(const char *path)
+{
+    int node = adt_path_offset(adt, path);
+    u32 len = 0;
+
+    /* mtp and aop on T8132 list an empty set. */
+    return node >= 0 && adt_getprop(adt, node, "clock-gates", &len) && len;
+}
+
+/*
+ * The DAPF is gated with the device behind its DART, whose clock gates are on
+ * the DART or on the device named without "dart-".
+ */
+static bool dapf_power_path(const char *path, char *buf, size_t size)
+{
+    const char *name = strrchr(path, '/');
+
+    if (!name || strlen(path) >= size)
+        return false;
+
+    strcpy(buf, path);
+    if (dapf_has_clock_gates(buf))
+        return true;
+
+    name++;
+    if (strncmp(name, "dart-", 5))
+        return false;
+    strcpy(buf + (name - path), name + 5);
+
+    return dapf_has_clock_gates(buf);
+}
+
 int dapf_init(const char *path, int index)
 {
     int ret;
@@ -159,19 +191,27 @@ int dapf_init(const char *path, int index)
         return 0;
     }
 
-    u32 pwr;
-    if (!adt_getprop(adt, node, "clock-gates", &pwr))
-        pwr = 0;
-    if (pwr && (pmgr_adt_power_enable(path) < 0))
-        return -1;
+    /*
+     * Power the device if it is off, and power it down again after. If its
+     * state is unknown, power it and leave it on.
+     */
+    char power[64];
+    int active = 1;
+    if (dapf_power_path(path, power, sizeof(power))) {
+        active = pmgr_adt_power_is_active(power);
+        if (active != 1 && pmgr_adt_power_enable(power) < 0) {
+            printf("dapf: Error powering %s\n", power);
+            return -1;
+        }
+    }
 
     if (t8110)
         ret = dapf_init_t8110(path, base, data, length);
     else
         ret = dapf_init_t8020(path, base, data, length);
 
-    if (pwr)
-        pmgr_adt_power_disable(path);
+    if (active == 0)
+        pmgr_adt_power_disable(power);
 
     if (!ret)
         printf("dapf: Initialized %s\n", path);
