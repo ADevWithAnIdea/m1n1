@@ -175,6 +175,10 @@ int dapf_init(const char *path, int index)
     return ret;
 }
 
+#define DAPF_REG_NONE    -1
+#define DAPF_REG_UNKNOWN -2
+
+/* DAPF reg indices for DARTs whose ADT has no "instance" list. */
 struct entry {
     const char *path;
     int index;
@@ -188,21 +192,100 @@ struct entry dapf_entries[] = {
     {"/arm-io/dart-ave", 3},     {NULL, -1},
 };
 
+static int dapf_table_index(const char *path)
+{
+    for (struct entry *entry = dapf_entries; entry->path; entry++) {
+        if (!strcmp(entry->path, path))
+            return entry->index;
+    }
+    return DAPF_REG_NONE;
+}
+
+/*
+ * "instance" types a DART's reg ranges by fourcc, as {type, unit, name[8]} for
+ * every range, or as {type, name[8]} for the DART ranges only, where an entry
+ * of type DAPF puts the DAPF in the range after them.
+ */
+struct dapf_instance_short {
+    u32 type;
+    char name[8];
+} PACKED;
+
+struct dapf_instance_long {
+    u32 type;
+    u32 unit;
+    char name[8];
+} PACKED;
+
+#define DAPF_INSTANCE_TYPE 0x44415046 /* DAPF */
+
+static int dapf_reg_index(const char *path)
+{
+    int dart_path[8];
+    int node = adt_path_offset_trace(adt, path, dart_path);
+    if (node < 0)
+        return DAPF_REG_UNKNOWN;
+
+    u32 len = 0;
+    const void *instance = adt_getprop(adt, node, "instance", &len);
+    if (!instance || !len)
+        return DAPF_REG_UNKNOWN;
+
+    u32 regs = 0;
+    while (!adt_get_reg(adt, dart_path, "reg", regs, NULL, NULL))
+        regs++;
+
+    if (len == regs * sizeof(struct dapf_instance_long)) {
+        const struct dapf_instance_long *inst = instance;
+
+        for (u32 i = 0; i < regs; i++) {
+            if (inst[i].type == DAPF_INSTANCE_TYPE)
+                return i;
+        }
+        return DAPF_REG_NONE;
+    }
+
+    if (len % sizeof(struct dapf_instance_short) == 0) {
+        const struct dapf_instance_short *inst = instance;
+        u32 count = len / sizeof(*inst);
+
+        if (count + 1 != regs)
+            return count == regs ? DAPF_REG_NONE : DAPF_REG_UNKNOWN;
+        for (u32 i = 0; i < count; i++) {
+            if (inst[i].type == DAPF_INSTANCE_TYPE)
+                return count;
+        }
+        return DAPF_REG_NONE;
+    }
+
+    return DAPF_REG_UNKNOWN;
+}
+
 int dapf_init_all(void)
 {
     int ret = 0;
     int count = 0;
-    struct entry *entry = dapf_entries;
+    int node = adt_path_offset(adt, "/arm-io");
+    if (node < 0)
+        return -1;
 
-    while (entry->path != NULL) {
-        if (adt_path_offset(adt, entry->path) < 0) {
-            entry++;
+    ADT_FOREACH_CHILD(adt, node)
+    {
+        const char *type = adt_getprop(adt, node, "device_type", NULL);
+        if (!type || strcmp(type, "dart"))
             continue;
-        }
-        if (dapf_init(entry->path, entry->index) < 0) {
+
+        char path[64];
+        snprintf(path, sizeof(path), "/arm-io/%s", adt_get_name(adt, node));
+
+        int index = dapf_reg_index(path);
+        if (index == DAPF_REG_UNKNOWN)
+            index = dapf_table_index(path);
+        if (index == DAPF_REG_NONE)
+            continue;
+
+        if (dapf_init(path, index) < 0)
             ret = -1;
-        }
-        entry++;
         count += 1;
     }
     return ret ? ret : count;
