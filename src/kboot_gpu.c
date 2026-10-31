@@ -617,7 +617,7 @@ static int dt_set_gpu_t8132(void *dt)
 
 /* G16C uses typed OPP/configuration nodes populated here, as the older
  * Asahi driver does. Never pass raw SGX ADT properties to the new driver. */
-static int dt_set_gpu_t6041(void *dt)
+static int dt_set_gpu_t604x(void *dt)
 {
     int gpu = fdt_path_offset(dt, "gpu");
     if (gpu < 0)
@@ -627,7 +627,7 @@ static int dt_set_gpu_t6041(void *dt)
     u32 count, tables, revision, clocks = 0, period = 0, no_gpc = 0;
     if (sgx < 0 || arm_io < 0 ||
         ADT_GETPROP(adt, sgx, "perf-state-count", &count) < 0 || count != 16 ||
-        ADT_GETPROP(adt, sgx, "perf-state-table-count", &tables) < 0 || tables != 4 ||
+        ADT_GETPROP(adt, sgx, "perf-state-table-count", &tables) < 0 || tables != (chip_id == T6040 ? 2 : 4) ||
         ADT_GETPROP(adt, arm_io, "chip-revision", &revision) < 0)
         bail("ADT: GPU: unsupported G16C board properties\n");
     if (ADT_GETPROP(adt, sgx, "gpu-pwr-sample-period-aic-clks", &clocks) < 0) {
@@ -741,8 +741,8 @@ int dt_set_gpu(void *dt)
     if (chip_id == T8140)
         return dt_set_gpu_t8140(dt);
 
-    if (chip_id == T6041)
-        return dt_set_gpu_t6041(dt);
+    if (chip_id == T6040 || chip_id == T6041)
+        return dt_set_gpu_t604x(dt);
     if (chip_id == T8132)
         return dt_set_gpu_t8132(dt);
 

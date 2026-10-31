@@ -5,7 +5,7 @@
 #include "libfdt/libfdt.h"
 
 #define STATES 11
-#define CLUSTERS 4
+#define CLUSTERS 4 /* Maximum wire voltage columns; Pro supplies two. */
 #define RAW_STATES 16
 
 bool gpu_fdt_power_property(const char *name)
@@ -132,8 +132,11 @@ int gpu_fdt_populate_g16c_memory(void *dt, int gpu,
 
 int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
 {
-    if (!in || !in->core || !in->sram || !in->cs ||
-        in->core_size != RAW_STATES * CLUSTERS * sizeof(*in->core) ||
+    if (!in) return -FDT_ERR_BADVALUE;
+    const unsigned clusters = in->core_size / (RAW_STATES * sizeof(*in->core));
+    if (!in->core || !in->sram || !in->cs ||
+        (clusters != 2 && clusters != 4) ||
+        in->core_size != RAW_STATES * clusters * sizeof(*in->core) ||
         in->sram_size != in->core_size || in->cs_size < 24 ||
         in->cs->dies != 1 || !in->cs->count || in->cs->count > RAW_STATES ||
         in->cs_size != 24 + in->cs->count * sizeof(struct aux_perf_state) ||
@@ -174,7 +177,7 @@ int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
     if (groups != STATES)
         return -FDT_ERR_BADVALUE;
     for (unsigned i = 0; i < STATES; i++) {
-        for (unsigned c = 0; c < CLUSTERS; c++) {
+        for (unsigned c = 0; c < clusters; c++) {
             unsigned row = firsts[i] + c * RAW_STATES;
             if (in->core[row].volt > UINT32_MAX / 1000 || in->sram[row].volt > UINT32_MAX / 1000)
                 return -FDT_ERR_BADVALUE;
@@ -202,7 +205,7 @@ int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
         fdt_setprop_u32(dt, gpu, "apple,power-sample-period", in->sample_clocks / 24000) ||
         fdt_setprop_u32(dt, gpu, "apple,pwr-sample-period-aic-clks", in->sample_clocks) ||
         fdt_setprop_u32(dt, gpu, "apple,gpc-enabled", in->gpc) ||
-        fdt_setprop_u32(dt, gpu, "apple,max-power-milliwatt", 132183) ||
+        fdt_setprop_u32(dt, gpu, "apple,max-power-milliwatt", clusters == 2 ? 68444 : 132183) ||
         fdt_setprop_u32(dt, gpu, "apple,csafr-min-sram-microvolt", *minimum) ||
         fdt_setprop_u64(dt, gpu, "apple,firmware-sw-interrupt", in->software_interrupt) ||
         fdt_setprop_u32(dt, gpu, "apple,active-mcc-mask", in->active_mcc_mask))
@@ -228,7 +231,7 @@ int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
     int child;
     fdt_for_each_subnode(child, dt, table) {
         fdt32_t core[CLUSTERS], sram[CLUSTERS];
-        for (unsigned c = 0; c < CLUSTERS; c++) {
+        for (unsigned c = 0; c < clusters; c++) {
             unsigned row = firsts[i] + c * RAW_STATES;
             core[c] = cpu_to_fdt32(in->core[row].volt * 1000);
             sram[c] = cpu_to_fdt32(in->sram[row].volt * 1000);
@@ -237,8 +240,8 @@ int gpu_fdt_populate_g16c(void *dt, int gpu, const struct gpu_fdt_g16c *in)
         fdt32_t relative[2] = {cpu_to_fdt32(relative_a[i]), cpu_to_fdt32(relative_b[i])};
         if (fdt_setprop_inplace_u64(dt, child, "opp-hz", in->core[high[i]].freq) ||
             fdt_setprop_inplace_u64(dt, child, "apple,alternate-opp-hz", in->core[low[i]].freq) ||
-            fdt_setprop_inplace(dt, child, "opp-microvolt", core, sizeof(core)) ||
-            fdt_setprop_inplace(dt, child, "apple,sram-microvolt", sram, sizeof(sram)) ||
+            fdt_setprop_inplace(dt, child, "opp-microvolt", core, clusters * sizeof(*core)) ||
+            fdt_setprop_inplace(dt, child, "apple,sram-microvolt", sram, clusters * sizeof(*sram)) ||
             fdt_setprop_inplace(dt, child, "apple,perf-index", index, sizeof(index)) ||
             fdt_setprop_inplace(dt, child, "apple,relative-power", relative, sizeof(relative)))
             return -FDT_ERR_BADVALUE;
