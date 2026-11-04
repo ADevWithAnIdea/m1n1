@@ -2174,8 +2174,41 @@ static int dt_prepare_neo_display_dart(const char *path)
 }
 
 
+/* Export the current board's opaque display-provider data. The kernel
+ * serves these data properties to firmware without inventing calibration. */
+static int dt_set_neo_display_provider_properties(void)
+{
+    const char *properties[] = {"power-lut-data-x", "power-lut-data-y",
+                                "power-lut-data-xindex", "power-lut-data-yindex",
+                                "power-lut-data-lut"};
+    int anode = adt_path_offset(adt, "/arm-io/disp0");
+    int dcp = fdt_path_offset(dt, "dcp");
+    if (anode < 0 || dcp < 0)
+        bail("DCP: missing Neo display provider\n");
+    int child = fdt_subnode_offset(dt, dcp, "apple,provider-properties");
+    if (child == -FDT_ERR_NOTFOUND)
+        child = fdt_add_subnode(dt, dcp, "apple,provider-properties");
+    if (child < 0)
+        bail("DCP: cannot create Neo provider properties\n");
+    for (size_t i = 0; i < ARRAY_SIZE(properties); i++) {
+        u32 size;
+        const void *value = adt_getprop(adt, anode, properties[i], &size);
+        if (!value)
+            continue;
+        if (!size || size > 3072)
+            bail("DCP: invalid Neo provider property %s\n", properties[i]);
+        dcp = fdt_path_offset(dt, "dcp");
+        child = fdt_subnode_offset(dt, dcp, "apple,provider-properties");
+        if (child < 0 || fdt_setprop(dt, child, properties[i], value, size) < 0)
+            bail("DCP: cannot export Neo provider property %s\n", properties[i]);
+    }
+    return 0;
+}
+
 static int dt_set_neo_scanout_pool(void)
 {
+    if (dt_set_neo_display_provider_properties() < 0)
+        return -1;
     int node = adt_path_offset(adt, "/chosen/carveout-memory-map");
     u64 vram[2];
     if (node < 0 || ADT_GETPROP_ARRAY(adt, node, "region-id-14", vram) != sizeof(vram))
