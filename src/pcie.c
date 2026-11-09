@@ -141,6 +141,7 @@ enum apcie_type {
     APCIE_T8122 = 2,
     APCIE_T6031 = 3,
     APCIE_T8132 = 4,
+    APCIE_T8142 = 5,
 };
 
 struct reg_info {
@@ -213,6 +214,20 @@ static const struct reg_info regs_t8132 = {
     .phy_ip_idx = 3,
     .axi_idx = 4,
     .fuse_idx = 5,
+};
+
+static const struct reg_info regs_t8142 = {
+    .type = APCIE_T8142,
+    .compat = APCIE_T8122,
+    .shared_reg_count = 8,
+    .config_idx = 0,
+    .rc_idx = 1,
+    .phy_common_idx = 2,
+    .phy_idx = 2,
+    .phy_ctrl_reset = APCIE_PHY_CTRL_RESET_T8132,
+    .phy_ip_idx = 4,
+    .axi_idx = 5,
+    .fuse_idx = 6,
 };
 
 static const struct reg_info regs_t6031 = {
@@ -308,6 +323,10 @@ static int pcie_init_controller(int controller, const char *path)
         fuse_bits = NULL;
         state->pcie_regs = &regs_t8132;
         printf("pcie: Initializing t8132 PCIe controller\n");
+    } else if (adt_is_compatible(adt, adt_offset, "apcie,t8142")) {
+        fuse_bits = NULL;
+        state->pcie_regs = &regs_t8142;
+        printf("pcie: Initializing t8142 PCIe controller\n");
     } else if (adt_is_compatible(adt, adt_offset, "apcie,t6040")) {
         fuse_bits = NULL;
         state->pcie_regs = &regs_t8132;
@@ -390,7 +409,7 @@ static int pcie_init_controller(int controller, const char *path)
     if (state->pcie_regs->compat == APCIE_T8122) {
         // The T8122 init seems very similar to the T602X, with different offsets,
         // and with reg[2], [3] and [4] coalesced to reg[2] in the ADT.
-        state->phy_base[0] = state->phy_base[0] + 0x8000;
+        state->phy_base[0] += state->pcie_regs->type == APCIE_T8142 ? 0x20000 : 0x8000;
         state->phy_common_base += 0x4000;
     }
 
@@ -520,6 +539,10 @@ static int pcie_init_controller(int controller, const char *path)
             return -1;
         }
 
+        /* T8142 PHY-IP post-tuning write; the bit's function is unknown. */
+        if (state->pcie_regs->type == APCIE_T8142)
+            clear32(state->phy_ip_base[phy] + 0x90, BIT(16));
+
         if (state->pcie_regs->type == APCIE_T602X || state->pcie_regs->compat == APCIE_T8122) {
             set32(state->phy_base[phy] + 4, 0x10);
         }
@@ -538,6 +561,8 @@ static int pcie_init_controller(int controller, const char *path)
         for (int phy = 0; phy < state->num_phys; phy++) {
             if (state->pcie_regs->type == APCIE_T602X) {
                 set32(state->phy_base[phy] + APCIE_PHY_CTRL, 0x300);
+            } else if (state->pcie_regs->type == APCIE_T8142) {
+                set32(state->phy_base[phy] + APCIE_PHY_CTRL, BIT(27));
             } else if (state->pcie_regs->compat == APCIE_T8122) {
                 set32(state->phy_base[phy] + APCIE_PHY_CTRL, 0x200);
             }
