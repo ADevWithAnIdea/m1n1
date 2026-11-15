@@ -197,9 +197,15 @@ int dapf_init(const char *path, int index)
      */
     char power[64];
     int active = 1;
+    struct pmgr_power_state *saved = NULL;
     if (dapf_power_path(path, power, sizeof(power))) {
         active = pmgr_adt_power_is_active(power);
+        if (active == 0 && pmgr_adt_power_save(power, &saved) < 0) {
+            printf("dapf: Error saving power state for %s\n", power);
+            return -1;
+        }
         if (active != 1 && pmgr_adt_power_enable(power) < 0) {
+            pmgr_adt_power_restore(saved);
             printf("dapf: Error powering %s\n", power);
             return -1;
         }
@@ -210,8 +216,8 @@ int dapf_init(const char *path, int index)
     else
         ret = dapf_init_t8020(path, base, data, length);
 
-    if (active == 0)
-        pmgr_adt_power_disable(power);
+    if (pmgr_adt_power_restore(saved) < 0)
+        ret = -1;
 
     if (!ret)
         printf("dapf: Initialized %s\n", path);
