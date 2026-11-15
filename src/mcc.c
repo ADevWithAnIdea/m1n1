@@ -456,30 +456,15 @@ int mcc_init_m3(int node, int *path)
 {
     u32 reg_len;
     u32 reg_offset = 3;
-    bool t8132 = adt_is_compatible(adt, node, "mcc,t8132");
 
     if (!adt_getprop(adt, node, "reg", &reg_len)) {
         printf("MCC: Failed to get reg property!\n");
         return -1;
     }
 
-    if (t8132) {
-        u32 count;
+    mcc_count = reg_len / 16 - reg_offset;
 
-        /* T8132 places SOCNI before the AMCC apertures and PMP/MCW after them. */
-        if (ADT_GETPROP(adt, node, "amcc_aperture_reg_idx", &reg_offset) < 0 ||
-            ADT_GETPROP(adt, node, "amcc_aperture_count", &count) < 0 || !count ||
-            reg_len % 16 || reg_offset >= reg_len / 16 || count > reg_len / 16 - reg_offset) {
-            printf("MCC: Invalid T8132 AMCC aperture layout!\n");
-            return -1;
-        }
-
-        mcc_count = count;
-    } else {
-        mcc_count = reg_len / 16 - reg_offset;
-    }
-
-    printf("MCC: Initializing M3/M4 MCCs (%d instances)...\n", mcc_count);
+    printf("MCC: Initializing M3* MCCs (%d instances)...\n", mcc_count);
 
     if (mcc_count > MAX_MCC_INSTANCES) {
         printf("MCC: Too many instances, increase MAX_MCC_INSTANCES!\n");
@@ -489,12 +474,12 @@ int mcc_init_m3(int node, int *path)
     u32 plane_count = 0;
     u32 dcs_count = 0;
 
-    if (ADT_GETPROP(adt, node, "dcs-count-per-amcc", &dcs_count) < 0 || !dcs_count) {
+    if (!ADT_GETPROP(adt, node, "dcs-count-per-amcc", &dcs_count)) {
         printf("MCC: Failed to get dcs count!\n");
         return -1;
     }
 
-    if (ADT_GETPROP(adt, node, "plane-count-per-amcc", &plane_count) < 0 || !plane_count) {
+    if (!ADT_GETPROP(adt, node, "plane-count-per-amcc", &plane_count)) {
         printf("MCC: Failed to get plane count!\n");
         return -1;
     }
@@ -502,9 +487,6 @@ int mcc_init_m3(int node, int *path)
     int ret = -1;
     if (adt_is_compatible(adt, node, "mcc,t8122"))
         ret = mcc_init_t8122(path, reg_offset, plane_count, dcs_count, &t8122_tz_regs);
-    else if (t8132)
-        /* T8132's iBoot TZ bounds match the ADT carveouts with the T6030 layout. */
-        ret = mcc_init_t8122(path, reg_offset, plane_count, dcs_count, &t6030_tz_regs);
     else if (adt_is_compatible(adt, node, "mcc,t6030"))
         ret = mcc_init_t8122(path, reg_offset, plane_count, dcs_count, &t6030_tz_regs);
     else if (adt_is_compatible(adt, node, "mcc,t6031"))
@@ -515,7 +497,7 @@ int mcc_init_m3(int node, int *path)
     if (ret)
         return ret;
 
-    printf("MCC: Initialized M3/M4 MCCs (%d instances, %d planes, %d channels)\n", mcc_count,
+    printf("MCC: Initialized M3* MCCs (%d instances, %d planes, %d channels)\n", mcc_count,
            mcc_regs[0].plane_count, mcc_regs[0].dcs_count);
 
     mcc_initialized = true;
@@ -607,8 +589,6 @@ int mcc_init(void)
     } else if (adt_is_compatible(adt, node, "mcc,t6020")) {
         return mcc_init_t6000(node, path, true);
     } else if (adt_is_compatible(adt, node, "mcc,t8122")) {
-        return mcc_init_m3(node, path);
-    } else if (adt_is_compatible(adt, node, "mcc,t8132")) {
         return mcc_init_m3(node, path);
     } else if (adt_is_compatible(adt, node, "mcc,t6030")) {
         return mcc_init_m3(node, path);
