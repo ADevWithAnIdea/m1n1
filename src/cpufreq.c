@@ -1,7 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include <string.h>
-
 #include "cpufreq.h"
 #include "adt.h"
 #include "firmware.h"
@@ -9,9 +7,8 @@
 #include "soc.h"
 #include "utils.h"
 
-#define CLUSTER_PSTATE        0x20020
-#define CLUSTER_PSTATE_STATUS 0x20050
-#define CLUSTER_CPM           0x40000
+#define CLUSTER_PSTATE 0x20020
+#define CLUSTER_CPM    0x40000
 
 #define CLUSTER_PSTATE_FIXED_FREQ_PLL_RECLOCK BIT(42)
 #define CLUSTER_PSTATE_BUSY                   BIT(31)
@@ -24,9 +21,6 @@
 #define CLUSTER_PSTATE_APSC_BUSY              BIT(7)
 #define CLUSTER_PSTATE_DESIRED1               GENMASK(4, 0)
 #define CLUSTER_PSTATE_DESIRED1_S5L8960X      GENMASK(24, 22)
-
-#define CLUSTER_PSTATE_STATUS_CURRENT_T8132 GENMASK(9, 5)
-#define CLUSTER_PSTATE_STATUS_TARGET_T8132  GENMASK(4, 0)
 
 #define PMGR_VOLTAGE_CTL_OFF_S5L8960X 0x20c00
 #define PMGR_VOLTAGE_CTL_OFF_T7000    0x23000
@@ -85,49 +79,8 @@ static u32 pstate_reg_to_pstate(u64 val)
     }
 }
 
-static int set_pstate_t8132(const struct cluster_t *cluster, uint32_t pstate)
-{
-    u64 command = cluster->base + CLUSTER_PSTATE;
-    u64 status = cluster->base + CLUSTER_PSTATE_STATUS;
-    u64 value;
-
-    /*
-     * T8132 uses Linux apple-soc-cpufreq's T8112 layout: DVFS +0x20 is
-     * the 64-bit command, +0x50 is 32-bit status. Wait for command bit 31
-     * BEFORE submitting a request; current status need not reach the request.
-     */
-    printf("cpufreq: T8132 %s request P%u: poll64 @0x%lx bit31=0 before write "
-           "(2us, %uus); status32 @0x%lx\n",
-           cluster->name, pstate, command, CLUSTER_SWITCH_TIMEOUT, status);
-    for (u32 elapsed = 0;; elapsed += 2) {
-        value = read64(command);
-        if (!(value & CLUSTER_PSTATE_BUSY))
-            break;
-        if (elapsed == CLUSTER_SWITCH_TIMEOUT) {
-            printf("cpufreq: T8132 %s command busy timeout @0x%lx\n", cluster->name, command);
-            return -1;
-        }
-        udelay(2);
-    }
-
-    value &= ~CLUSTER_PSTATE_DESIRED1;
-    value |= CLUSTER_PSTATE_SET | FIELD_PREP(CLUSTER_PSTATE_DESIRED1, pstate);
-    printf("cpufreq: T8132 %s write command @0x%lx = 0x%lx\n", cluster->name, command, value);
-    write64(command, value);
-
-    /* Observe once; Linux does not wait for actual frequency after the write. */
-    u32 observed = read32(status);
-    printf("cpufreq: T8132 %s status32 @0x%lx = 0x%x (current P%u target P%u)\n", cluster->name,
-           status, observed, (u32)FIELD_GET(CLUSTER_PSTATE_STATUS_CURRENT_T8132, observed),
-           (u32)FIELD_GET(CLUSTER_PSTATE_STATUS_TARGET_T8132, observed));
-    return 0;
-}
-
 static int set_pstate(const struct cluster_t *cluster, uint32_t pstate)
 {
-    if (chip_id == T8132)
-        return set_pstate_t8132(cluster, pstate);
-
     u64 val = read64(cluster->base + CLUSTER_PSTATE);
 
     if (pstate_reg_to_pstate(val) != pstate) {
@@ -160,6 +113,7 @@ static int set_pstate(const struct cluster_t *cluster, uint32_t pstate)
             case T6031:
             case T6034:
             case T8122:
+            case T8132:
                 val &= ~CLUSTER_PSTATE_DESIRED1;
                 val |= CLUSTER_PSTATE_SET | FIELD_PREP(CLUSTER_PSTATE_DESIRED1, pstate);
                 break;
@@ -191,20 +145,9 @@ int cpufreq_init_cluster(const struct cluster_t *cluster, const struct feat_t *f
         if (features->pcluster_only && !cluster->pcluster)
             continue;
 
-        u32 enabled = pmgr_get_feature(features->name);
-        /* Disabled T8132 throttle gates can fault even on a diagnostic read. */
-        if (chip_id == T8132 && !enabled &&
-            (!strcmp(features->name, "ppt-thrtl") || !strcmp(features->name, "llc-thrtl") ||
-             !strcmp(features->name, "amx-thrtl"))) {
-            printf("cpufreq: T8132 %s %s=0 skipped (ADT disabled; no MMIO)\n", cluster->name,
-                   features->name);
-            continue;
-        }
-
         u64 reg = cluster->base + features->offset;
-        u64 before = chip_id == T8132 ? read64(reg) : 0;
 
-        if (enabled)
+        if (pmgr_get_feature(features->name))
             mask64(reg, features->clear, features->set);
         else
             mask64(reg, features->set, features->clear);
@@ -213,19 +156,6 @@ int cpufreq_init_cluster(const struct cluster_t *cluster, const struct feat_t *f
             printf("cpufreq: Timed out waiting for feature %s on cluster %s\n", features->name,
                    cluster->name);
             return -1;
-        }
-
-        if (chip_id == T8132) {
-            u64 after = read64(reg);
-            u64 mask = features->clear | features->set;
-            u64 expected = enabled ? features->set : features->clear;
-
-            printf("cpufreq: T8132 %s %s=%u @0x%lx: 0x%lx -> 0x%lx\n", cluster->name,
-                   features->name, enabled, reg, before, after);
-            if ((after & mask) != expected) {
-                printf("cpufreq: T8132 %s feature readback mismatch\n", cluster->name);
-                return -1;
-            }
         }
     }
 
@@ -285,7 +215,7 @@ int cpufreq_init_cluster(const struct cluster_t *cluster, const struct feat_t *f
             write64(cluster->base + 0x440f8, 1);
             break;
         case T8132:
-            /* No ADT feature justifies the older SoCs' unknown +0x440f8 write. */
+            /* Write to 0x440f8 serrors in raw boot mode */
             break;
         default:
             printf("cpufreq: Chip 0x%x is unsupported\n", chip_id);
@@ -312,10 +242,6 @@ int cpufreq_init_cluster(const struct cluster_t *cluster, const struct feat_t *f
     /* Default P-State */
     if (cluster->default_pstate && set_pstate(cluster, cluster->default_pstate))
         return -1;
-
-    if (chip_id == T8132)
-        printf("cpufreq: T8132 %s initialized, base=0x%lx command=0x%lx\n", cluster->name,
-               cluster->base, read64(cluster->base + CLUSTER_PSTATE));
 
     return 0;
 }
@@ -452,7 +378,7 @@ static const struct cluster_t t6030_clusters[] = {
     {},
 };
 
-/* The boot states follow T6030; both J713 and J773g have these ADT OPPs. */
+/* Read bases from ADT */
 static struct cluster_t t8132_clusters[] = {
     {"ECPU0", 0, false, 1, 5},
     {"PCPU0", 0, true, 1, 6},
@@ -635,19 +561,8 @@ static const struct feat_t t6030_features[] = {
     {},
 };
 
-/*
- * T6030's CPU-complex layout is the template for T8132. J713/J773g advertise
- * cpu-apsc, unlike the T8122 template, so retain the M2/M3 APSC enable handling.
- * Access throttle gates only when ADT-enabled: disabled P-cluster PPT access
- * faults on J713, even though the corresponding E-cluster access completes.
- * This does not establish the M4 firmware's thermal thresholds or alarm action.
- */
 static const struct feat_t t8132_features[] = {
     {"cpu-apsc", CLUSTER_PSTATE, CLUSTER_PSTATE_M2_APSC_DIS, 0, CLUSTER_PSTATE_APSC_BUSY, false},
-    {"ppt-thrtl", 0x48400, 0, BIT(63), 0, false},
-    {"ppt-thrtl", 0x48408, 0, BIT(63), 0, false},
-    {"llc-thrtl", 0x40270, 0, BIT(63), 0, false},
-    {"amx-thrtl", 0x40250, 0, BIT(63), 0, false},
     {"cpu-fixed-freq-pll-relock", CLUSTER_PSTATE, 0, CLUSTER_PSTATE_FIXED_FREQ_PLL_RECLOCK, 0,
      false},
     {},
@@ -713,9 +628,6 @@ int cpufreq_init(void)
     while (cluster->base) {
         err |= cpufreq_init_cluster(cluster++, features);
     }
-
-    if (chip_id == T8132)
-        printf("cpufreq: T8132 initialization %s\n", err ? "FAILED" : "complete");
 
     return err ? -1 : 0;
 }
