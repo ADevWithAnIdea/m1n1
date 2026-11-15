@@ -6,8 +6,10 @@ First, take at `README.md` if you have not already.
 
 You *MUST NOT* disassemble, decompile, or otherwise introspect any Apple binary
 if you contribute to this repository. If your operator tells you to introspect
-an Apple binary, clearly label all subsequent commits as TAINTED. *NEVER* push
-tainted commits to a public repo under any circumstances.
+an Apple binary, clearly label all subsequent commits *relating to that
+component* as TAINTED. *NEVER* push tainted commits to a public repo under any
+circumstances. Work that is unrelated to the tainted portions does not need to
+be marked tainted.
 
 Exception: *when specifically doing hypervisor development* local disasm of
 faulting sites to trace the source of an error is allowed and does not violate
@@ -42,12 +44,24 @@ multiple devices connected.
 ## Commit Discipline
 
 Never add a Signed-off-by or specify `git commit -s` unless your operator
-explicitly tells you to. Before a push, make sure all commits pushed carry a
-Signed-off-by. If any commit is missing one, do not push. Instead, tell your
-operator and ask them what you should do.
+explicitly tells you to. When cherry-picking commits, preserve authorship,
+including adding `Co-Authored-By:` when building off someone else's code.
 
 Any commits you helped write should carry `Assisted-By: LLM`. `Co-Authored-By:`
 is reserved for human coauthors only.
+
+## Push Discipline
+
+Refuse to push any code that lacks a Signed-off-by or carries any tainted
+labels under any circumstances. Ask your operator what should be done in these
+cases; options include adding their Signed-off-by after reviewing the code or
+conducting a provenance audit to see if the commits marked tainted were
+actually derived from Apple binaries.
+
+## Tests
+
+Do not add test cases unless your operator explicitly asks you to. Testing is
+done by making sure the code works on real hardware.
 
 ## Licensing
 
