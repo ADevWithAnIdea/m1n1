@@ -2930,24 +2930,7 @@ int kboot_boot(void *kernel)
 
     usb_init();
     pcie_init();
-    /*
-     * HACK: initializing every DAPF raises an SError on T8132. The MTP one is
-     * safe and required: its coprocessor DMAs to DRAM before the RTKit HELLO.
-     */
-    if (chip_id != T8132) {
-        dapf_init_all();
-    } else {
-        if (adt_path_offset(adt, "/arm-io/dart-mtp") >= 0)
-            dapf_init("/arm-io/dart-mtp", 1);
-        /*
-         * AOP likewise: with its DART's DAPF empty, the running AOP firmware
-         * never answers the RTKit wake (no HELLO or endpoint map) and the
-         * built-in microphones stay dead. Programming only this DAPF is safe
-         * (J713, 2026-11-08).
-         */
-        if (adt_path_offset(adt, "/arm-io/dart-aop") >= 0)
-            dapf_init("/arm-io/dart-aop", 1);
-    }
+    dapf_init_all();
 
     printf("Setting SMP mode to WFE...\n");
     smp_set_wfe_mode(true);
