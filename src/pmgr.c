@@ -2,6 +2,7 @@
 
 #include "pmgr.h"
 #include "adt.h"
+#include "malloc.h"
 #include "string.h"
 #include "types.h"
 #include "utils.h"
@@ -334,6 +335,100 @@ int pmgr_adt_power_enable_index(const char *path, u32 index)
 int pmgr_adt_power_disable_index(const char *path, u32 index)
 {
     return pmgr_adt_device_set_mode(path, index, PMGR_PS_PWRGATE, false);
+}
+
+struct pmgr_power_state {
+    size_t count;
+    size_t capacity;
+    struct {
+        uintptr_t addr;
+        u32 control;
+    } gates[];
+};
+
+#define PMGR_POWER_CONTROL (PMGR_PS_TARGET | PMGR_PS_AUTO | PMGR_AUTO_ENABLE)
+
+/* Parents are saved first, so restoration can visit children first. */
+static int pmgr_power_save_recursive(struct pmgr_power_state *state, u8 die, u16 id)
+{
+    const struct pmgr_device *device;
+    if (die >= pmgr_dies || pmgr_find_device(id, &device))
+        return -1;
+
+    uintptr_t addr = 0;
+    if (!(device->flags & PMGR_FLAG_VIRTUAL)) {
+        addr = pmgr_device_get_addr(die, device);
+        if (!addr)
+            return -1;
+        for (size_t i = 0; i < state->count; i++)
+            if (state->gates[i].addr == addr)
+                return 0;
+    }
+
+    u16 parents[2];
+    pmgr_adt_get_parents(device, parents);
+    for (int i = 0; i < 2; i++)
+        if (parents[i] && pmgr_power_save_recursive(state, die, parents[i]) < 0)
+            return -1;
+
+    if (addr) {
+        if (state->count == state->capacity)
+            return -1;
+        state->gates[state->count].addr = addr;
+        state->gates[state->count].control = read32(addr) & PMGR_POWER_CONTROL;
+        state->count++;
+    }
+    return 0;
+}
+
+int pmgr_adt_power_save(const char *path, struct pmgr_power_state **state)
+{
+    const u32 *devices;
+    u32 n_devices;
+
+    *state = NULL;
+    if (!pmgr_initialized || pmgr_adt_find_devices(path, &devices, &n_devices) < 0)
+        return -1;
+
+    size_t capacity = (size_t)pmgr_dies * pmgr_devices_len;
+    struct pmgr_power_state *saved = malloc(sizeof(*saved) + capacity * sizeof(saved->gates[0]));
+    if (!saved)
+        return -1;
+    saved->count = 0;
+    saved->capacity = capacity;
+
+    for (u32 i = 0; i < n_devices; i++) {
+        if (pmgr_power_save_recursive(saved, FIELD_GET(PMGR_DIE_ID, devices[i]),
+                                      FIELD_GET(PMGR_DEVICE_ID, devices[i])) < 0) {
+            free(saved);
+            return -1;
+        }
+    }
+    *state = saved;
+    return 0;
+}
+
+/* Consume the snapshot. Keep parents powered if a child cannot be restored. */
+int pmgr_adt_power_restore(struct pmgr_power_state *state)
+{
+    int ret = 0;
+    if (!state)
+        return 0;
+
+    for (size_t i = state->count; i-- > 0;) {
+        uintptr_t addr = state->gates[i].addr;
+        u32 control = state->gates[i].control;
+        if ((read32(addr) & PMGR_POWER_CONTROL) == control)
+            continue;
+        if (pmgr_set_mode(addr, FIELD_GET(PMGR_PS_TARGET, control)) < 0) {
+            ret = -1;
+            break;
+        }
+        mask32(addr, PMGR_PS_AUTO | PMGR_AUTO_ENABLE,
+               control & (PMGR_PS_AUTO | PMGR_AUTO_ENABLE));
+    }
+    free(state);
+    return ret;
 }
 
 static int pmgr_reset_device(int die, const struct pmgr_device *dev)
