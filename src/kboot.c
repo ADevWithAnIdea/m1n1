@@ -2879,13 +2879,6 @@ int kboot_prepare_dt(void *fdt)
         return -1;
     if (dt_set_isp_fwdata())
         return -1;
-    /*
-     * Preserve MTP's firmware reservations. Its identity segment entries
-     * need no DART mappings: on J713, HELLO and input work without them.
-     * Boards without an "mtp" alias are skipped.
-     */
-    if (dt_reserve_asc_firmware("/arm-io/mtp", NULL, "mtp", true, 0))
-        return -1;
     if (dt_set_pmgr())
         return -1;
 #ifndef RELEASE
