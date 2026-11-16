@@ -1846,29 +1846,8 @@ static const char dcpext_aliases[][8] = {
     "dcpext4", "dcpext5", "dcpext6", "dcpext7",
 };
 
-/*
- * Boards whose external DCPs have no working output under Linux. Their
- * firmware is still pre-loaded by iBoot, so its memory stays reserved, but the
- * nodes keep the "disabled" status from the board DT. On J773g (M4 Mac mini)
- * the USB-C DisplayPort path is unused, and both dcpext firmwares crash on
- * ~9% of boots right after shmem setup.
- */
-static const char *const dcpext_disabled_boards[] = {
-    "apple,j773g",
-};
-
-static bool dt_dcpext_disabled_board(void)
-{
-    for (size_t i = 0; i < ARRAY_SIZE(dcpext_disabled_boards); i++)
-        if (!fdt_node_check_compatible(dt, 0, dcpext_disabled_boards[i]))
-            return true;
-    return false;
-}
-
 static int dt_reserve_dcpext_firmware(void)
 {
-    bool keep_disabled = dt_dcpext_disabled_board();
-
     /* reserve asc for all  */
     for (size_t n = 0; n < ARRAY_SIZE(dcpext_aliases); n++) {
         const char *dcpext_alias = dcpext_aliases[n];
@@ -1892,11 +1871,6 @@ static int dt_reserve_dcpext_firmware(void)
         ret = dt_set_dcp_firmware(dcpext_alias);
         if (ret)
             continue;
-
-        if (keep_disabled) {
-            printf("FDT: leaving '%s' disabled on this board\n", dcpext_alias);
-            continue;
-        }
 
         // refresh dcpext_node
         dcpext_node = fdt_path_offset(dt, dcpext_alias);
