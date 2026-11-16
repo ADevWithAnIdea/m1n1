@@ -1824,9 +1824,12 @@ static int dt_reserve_asc_firmware(const char *adt_path, const char *adt_path_al
             return ret;
         uint32_t mem_phandle = fdt_get_phandle(dt, mem_node);
 
-        ret = dt_device_set_reserved_mem(mem_node, node_name, dev_phandle, iova, seg_size);
-        if (ret < 0)
-            return ret;
+        /* Identity segments are reserved data, not existing device mappings. */
+        if (iova != seg->phys) {
+            ret = dt_device_set_reserved_mem(mem_node, node_name, dev_phandle, iova, seg_size);
+            if (ret < 0)
+                return ret;
+        }
 
         ret = dt_device_add_mem_region(fdt_path, mem_phandle, NULL);
         if (ret < 0)
@@ -2877,11 +2880,9 @@ int kboot_prepare_dt(void *fdt)
     if (dt_set_isp_fwdata())
         return -1;
     /*
-     * The MTP coprocessor DMAs to its iBoot-provided segments (__OS_LOG in
-     * DRAM) before it sends the RTKit HELLO, so its DART must map them from
-     * the first instruction. Its DVAs are the segments' remap addresses,
-     * which fall in the DART's vm-base window. Boards without an "mtp"
-     * alias are skipped.
+     * Preserve MTP's firmware reservations. Its identity segment entries
+     * need no DART mappings: on J713, HELLO and input work without them.
+     * Boards without an "mtp" alias are skipped.
      */
     if (dt_reserve_asc_firmware("/arm-io/mtp", NULL, "mtp", true, 0))
         return -1;
