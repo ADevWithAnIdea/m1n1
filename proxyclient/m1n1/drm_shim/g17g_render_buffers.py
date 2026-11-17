@@ -17,6 +17,7 @@ class RenderBuffers:
     metadata: int
     tpc: int
     tpc_size: int
+    auxiliary: int
     end: int
 
     @property
@@ -39,10 +40,11 @@ def render_buffers(params, base):
     metadata = base + tilemap_size
     tpc = align(metadata + 0x200 * params.layers, PAGE) + PAGE
     tpc_size = geometry['size3'] * 4 * 16 * params.layers
-    end = tpc + align(tpc_size, PAGE)
+    auxiliary = tpc + align(tpc_size, PAGE)
+    end = auxiliary + PAGE
     if end > ARENA_END:
         raise MemoryError("G17G render buffers exceed their resource window")
-    return RenderBuffers(base, metadata, tpc, tpc_size, end)
+    return RenderBuffers(base, metadata, tpc, tpc_size, auxiliary, end)
 
 
 def next_render_buffer_base(private_dvas):
