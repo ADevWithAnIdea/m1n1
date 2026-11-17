@@ -89,7 +89,7 @@ def render_parameters(state, *, buffer_base=0x1010000000):
         partial_load_pipeline_bind=0xffff800000000000 | state.partial_bg_rsrc_spec,
         partial_store_pipeline=state.usc_exec_base + state.partial_eot_usc,
         partial_store_pipeline_bind=state.partial_eot_rsrc_spec,
-        auxiliary_object=0x10000300000,
+        auxiliary_object=0,  # placed in the owned scene allocation below
         tiling_lifecycle=0xce010000f3,
         partial_mode=True, tib_bytes=32,
         aux_fb_flags=0x10c000,
@@ -107,7 +107,8 @@ def render_parameters(state, *, buffer_base=0x1010000000):
         depth_bias_is_integer=bool(state.flags & DRM_ASAHI_RENDER_DBIAS_IS_INT),
         vdm_ctrl_stream_base=state.vdm_base)
     from .g17g_render_buffers import render_buffers
-    params = replace(params, buffers=render_buffers(params, buffer_base))
+    buffers = render_buffers(params, buffer_base)
+    params = replace(params, buffers=buffers, auxiliary_object=buffers.auxiliary)
     params.validate()
     return params
 
