@@ -1158,11 +1158,14 @@ class G17GModernDriver:
             seen.add(id(binding.bo))
             bos.append(binding.bo)
         fence.bos = tuple(bos)
-        for bo in bos:
+        fence_bos = {id(bo): bo for bo in bos}
+        fence_bos.update((id(obj.bo), obj.bo) for obj in resources)
+        for bo in fence_bos.values():
+            # Bound live BO bookkeeping without touching mappings or physical
+            # ownership. Device-lost release remains guarded by the adapter;
+            # sync objects keep their own references and terminal results.
+            bo.fences[:] = [prior for prior in bo.fences if not prior.signaled()]
             bo.fences.append(fence)
-        for obj in resources:
-            if fence not in obj.bo.fences:
-                obj.bo.fences.append(fence)
         queue.lifetime.track(fence)
         for obj, value in plan.out_syncs:
             obj.bind(fence, value)
