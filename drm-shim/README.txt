@@ -18,6 +18,9 @@ kernelcache, capture checkpoint or firmware executable code is distributed.
 The backend includes the original macOS 27.0 beta-5 T8142 protocol and the
 macOS 27.3 beta protocol identified by mBoot-20457.60.65.0.1 (26C5035r).
 
+SUBMISSION_FLOW.md records the M5 cold-boot experiments with Neo's
+compute and render publication order, including first-render TVB growth.
+
 Where the firmware-facing code lives
 -----------------------------------
 
