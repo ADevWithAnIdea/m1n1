@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# Unified diffs retain the single-space prefix of empty context lines.
+*.patch -whitespace
